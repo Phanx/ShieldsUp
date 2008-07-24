@@ -1,0 +1,19 @@
+## Interface: 20400
+## Version: 0.6
+
+## Title: ShieldsUp
+## Notes: Shaman shield tracker.
+## Author: Bherasha
+## X-Credits: Based on beSch by Infineon.
+## X-Category: Shaman
+
+## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia
+## SavedVariables: ShieldsUpDB
+
+#embeds.xml
+
+Core.lua
+
+..\TourGuide\tekKonfig\tekKonfig.xml
+xConfig.lua
+Config.lua
