@@ -1,16 +1,13 @@
 --[[
 	ShieldsUp: a shaman shield monitor
 	by Phanx < addons AT phanx net>
-	http://wow.curseforge.com/projects/shieldsup
-	http://www.wowinterface.com/downloads/info
+	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+	http://www.curse.com/downloads/details/13180/
 
-	DO NOT include this addon in compilations or otherwise
-	redistribute it without the consent of its author.
-
-	See the included README.TXT file for more information.
+	See the included README.TXT for license and additional information.
 	
 	TODO:
-	- make bit operators more efficient (need help)
+	- make bit operators more efficient
 --]]
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
@@ -20,13 +17,13 @@ ShieldsUp.version = GetAddOnMetadata("ShieldsUp", "Version")
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, ...) end end)
 ShieldsUp:RegisterEvent("PLAYER_ENTERING_WORLD")
 
+local ShieldsUp = ShieldsUp
+local SharedMedia = LibStub("LibSharedMedia-3.0", true)
+local playerGUID = UnitGUID("player")
+local db
+
 local L = setmetatable(SHIELDSUP_LOCALE or {}, { __index = function(t, k) rawset(t, k, k) return k end })
 L["ShieldsUp"] = GetAddOnMetadata("ShieldsUp", "Title")
-
-local ShieldsUp = ShieldsUp
-local SharedMedia = LibStub and LibStub("LibSharedMedia-3.0", true)
-local playerGUID = UnitGUID("player")
-local db, scan
 
 local EARTH_SHIELD = GetSpellInfo(32594)
 local WATER_SHIELD = GetSpellInfo(33736)
@@ -36,6 +33,7 @@ local FILTER_PET = bit.bor(COMBATLOG_OBJECT_CONTROL_PLAYER, COMBATLOG_OBJECT_AFF
 local FILTER_GUARDIAN = bit.bor(COMBATLOG_OBJECT_CONTROL_PLAYER, COMBATLOG_OBJECT_AFFILIATION_MINE, COMBATLOG_OBJECT_TYPE_GUARDIAN)
 local FILTER_PARTY = bit.bor(COMBATLOG_OBJECT_CONTROL_PLAYER, COMBATLOG_OBJECT_AFFILIATION_PARTY)
 local FILTER_RAID = bit.bor(COMBATLOG_OBJECT_CONTROL_PLAYER, COMBATLOG_OBJECT_AFFILIATION_RAID)
+
 local EARTH_FILTER = bit.bor(FILTER_ME, FILTER_PET, FILTER_GUARDIAN, FILTER_PARTY, FILTER_RAID)
 
 local earthCount = 0
@@ -69,7 +67,7 @@ local function UnitFromGUID(guid)
 	if playerGUID == guid then
 		return "player"
 	end
-	if UnitExists("pet") and UnitGUID("pet") == guid then
+	if HasPetUI() and UnitGUID("pet") == guid then
 		return "pet"
 	end
 	if GetNumRaidMembers() > 0 then
@@ -96,6 +94,7 @@ local function UnitFromGUID(guid)
 end
 
 function ShieldsUp:PLAYER_ENTERING_WORLD()
+	Debug(1, "PLAYER_ENTERING_WORLD")
 	local defaults = {
 		h = 5,
 		v = 0,
@@ -105,6 +104,7 @@ function ShieldsUp:PLAYER_ENTERING_WORLD()
 		color = {
 			alert = { 1, 0, 0 },
 			normal = { 1, 1, 1 },
+			overwritten = { 1, 1, 0 },
 			earth = { 0.65, 1, 0.25 },
 			water = { 0.25, 0.65, 1 }
 		},
@@ -158,6 +158,8 @@ function ShieldsUp:PLAYER_ENTERING_WORLD()
 	end
 	]]
 	db = ShieldsUpDB
+
+	self.L = L
 
 	if SharedMedia then
 		SharedMedia:Register("sound", "Alliance Bell", "Sound\\Doodad\\BellTollAlliance.wav")
@@ -308,6 +310,7 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 end
 
 function ShieldsUp:PARTY_MEMBERS_CHANGED()
+	Debug(3, "PARTY_MEMBERS_CHANGED")
 	if GetTime() - earthTime > 900 then
 		earthName = ""
 	end
@@ -326,6 +329,7 @@ function ShieldsUp:RAID_ROSTER_UPDATE()
 end
 
 function ShieldsUp:ZONE_CHANGED_NEW_AREA()
+	Debug(2, "ZONE_CHANGED_NEW_AREA")
 	if GetTime() - earthTime > 900 then
 		earthName = ""
 		self:Update()
@@ -365,6 +369,7 @@ function ShieldsUp:Scan(buff, guid)
 end
 
 function ShieldsUp:Update()
+	Debug(3, "Update")
 	if GetTime() - earthTime > 900 then
 		earthCount = 0
 		earthName = ""
@@ -424,6 +429,8 @@ function ShieldsUp:Alert(spell)
 end
 
 function ShieldsUp:ApplySettings()
+	Debug(2, "ApplySettings")
+
 	self:SetParent(UIParent)
 	self:SetPoint("CENTER", UIParent, "CENTER", db.x, db.y)
 	self:SetHeight(1)
@@ -460,6 +467,8 @@ function ShieldsUp:ApplySettings()
 end
 
 function ShieldsUp:UpdateVisibility()
+	Debug(2, "UpdateVisiblity")
+
 	if not db.show.auto then return end
 	local instance = select(2, IsInInstance())
 	if ( (GetNumRaidMembers() > 0 and db.show.raid)
