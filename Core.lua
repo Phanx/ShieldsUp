@@ -13,9 +13,9 @@
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
 ShieldsUp = CreateFrame("Frame")
-ShieldsUp.version = GetAddOnMetadata("ShieldsUp", "Version")
+ShieldsUp.version = tonumber(GetAddOnMetadata("ShieldsUp", "Version")) or 0
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, ...) end end)
-ShieldsUp:RegisterEvent("PLAYER_ENTERING_WORLD")
+ShieldsUp:RegisterEvent("VARIABLES_LOADED")
 
 local ShieldsUp = ShieldsUp
 local SharedMedia = LibStub("LibSharedMedia-3.0", true)
@@ -93,8 +93,8 @@ local function UnitFromGUID(guid)
 	return nil
 end
 
-function ShieldsUp:PLAYER_ENTERING_WORLD()
-	Debug(1, "PLAYER_ENTERING_WORLD")
+function ShieldsUp:VARIABLES_LOADED()
+	Debug(1, "VARIABLES_LOADED")
 	local defaults = {
 		h = 5,
 		v = 0,
@@ -115,17 +115,6 @@ function ShieldsUp:PLAYER_ENTERING_WORLD()
 			outline = "NONE",
 			shadow = true
 		},
-		show = {
-			auto = false,
-			solo = false,
-			party = true,
-			raid = true,
-			world = false,
-			dungeon = true,
-			raiddungeon = true,
-			battleground = false,
-			arena = false
-		},
 		alert = {
 			earth = {
 				text = true,
@@ -140,10 +129,20 @@ function ShieldsUp:PLAYER_ENTERING_WORLD()
 			output = {
 				sink20OutputSink = "RaidWarning"
 			}
+		},
+		show = {
+			auto = false,
+			solo = false,
+			party = true,
+			raid = true,
+			world = false,
+			dungeon = true,
+			raiddungeon = true,
+			battleground = false,
+			arena = false
 		}
 	}
 	ShieldsUpDB = defaults
-	--[[
 	if not ShieldsUpDB then
 		ShieldsUpDB = defaults
 	elseif ShieldsUpDB.version ~= self.version then
@@ -156,7 +155,6 @@ function ShieldsUp:PLAYER_ENTERING_WORLD()
 		temp.version = self.version
 		ShieldsUpDB = temp
 	end
-	]]
 	db = ShieldsUpDB
 
 	self.L = L
@@ -210,8 +208,8 @@ function ShieldsUp:PLAYER_ENTERING_WORLD()
 	self:RegisterEvent("RAID_ROSTER_UPDATE")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
-	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-	self.PLAYER_ENTERING_WORLD = nil
+	self:UnregisterEvent("VARIABLES_LOADED")
+	self.VARIABLES_LOADED = nil
 end
 
 function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName)
@@ -297,7 +295,7 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 			end
 		end
 	elseif event == "UNIT_DIED" then
-		if destName == earthGUID and earthCount > 0 then
+		if destGUID == earthGUID and earthCount > 0 then
 			Debug(1, "%s died with Earth Shield on.", destName)
 			earthCount = 0
 			self:Update()
