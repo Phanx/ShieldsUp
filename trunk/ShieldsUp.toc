@@ -1,5 +1,5 @@
 ## Interface: 20400
-## Version: 2.4.3.4
+## Version: 2.4.3.wowi:revision
 
 ## Title: ShieldsUp
 ## Notes: Shaman shield tracker.

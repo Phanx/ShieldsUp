@@ -1,175 +1,392 @@
---[[
-	ShieldsUp: a shaman shield monitor
-	by Phanx < addons AT phanx net>
-	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-	http://www.curse.com/downloads/details/13180/
-
-	See the included README.TXT for license and additional information.
---]]
-
 if not ShieldsUp then return end
-if not (GetRealmName() == "Sargeras" and UnitName("player") == "Bherasha") then return end
 
-local ShieldsUp = ShieldsUp
-local SharedMedia = LibStub("LibSharedMedia-3.0", true)
-local Sink = LibStub("LibSink-2.0", true)
-local tekHeading = LibStub("tekKonfig-Heading")
-local tekCheck = LibStub("tekKonfig-Checkbox")
-local xSlider = LibStub("xConfig-Slider")
+local config = LibStub("AceConfigRegistry-3.0", true)
+local dialog = LibStub("AceConfigDialog-3.0", true)
 
-local frame = CreateFrame("Frame", "ShieldsUpConfig", UIParent)
-frame.name = GetAddOnMetadata("ShieldsUp", "Title")
-frame:SetScript("OnShow", function(self)
-	local db, L = ShieldsUpDB, ShieldsUp.L
+if not (config and dialog) then return end
 
-	local title, notes = tekHeading.new(self, self.name, GetAddOnMetadata("ShieldsUp", "Notes"))
+local media = LibStub("LibSharedMedia-3.0", true)
+local sink = LibStub("LibSink-2.0", true)
 
-	local max_width = math.floor(UIParent:GetWidth() / 3)
-	local max_height = math.floor(UIParent:GetHeight() / 3)
+local registered = false
+local options
 
-	local x = xSlider.new(self, L["Horizontal Position"], -max_width, max_width, 0.05, "TOPLEFT", notes, "BOTTOMLEFT", -3, -8)
-	x.tip = L["Set the horizontal offset from the center of the screen"]
-	x.slider:SetValue(floor(db.x + 0.05))
-	x.current:SetText(db.x)
-	x.func = function(v)
-		db.x = v
-		ShieldsUp:SetPoint("CENTER", db.x, db.y)
+local function getOptions()
+	local self = ShieldsUp
+	local db = self.db.profile
+
+	local maxHeight = floor(UIParent:GetHeight() / 3)
+	local maxWidth = floor(UIParent:GetWidth() / 3)
+
+	local frameOptions = {
+		name = "Frame",
+		type = "group",
+		args = {
+			x = {
+				order = 10,
+				name = "Horizontal Position",
+				desc = "Set the horizontal placement relative to the center of the screen",
+				type = "range", min = -maxWidth, max = maxWidth, step = 1, bigStep = 20,
+				get = function() return db.x end,
+				set = function(t, v)
+					db.x = v
+					self:ClearAllPoints()
+					self:SetPoint("CENTER", v, db.y)
+				end
+			},
+			y = {
+				order = 20,
+				name = "Vertical Position",
+				desc = "Set the vertical placement relative to the center of the screen",
+				type = "range", min = -maxHeight, max = maxHeight, step = 1, bigStep = 20,
+				get = function() return db.y end,
+				set = function(t, v)
+					db.y = v
+					self:ClearAllPoints()
+					self:SetPoint("CENTER", db.x, v)
+				end
+			},
+			hspace = {
+				order = 30,
+				name = "Horizontal Spacing",
+				desc = "Set the horizontal spacing between text elements",
+				type = "range", min = -10, max = maxWidth * 2, step = 1, bigStep = 20,
+				get = function() return db.y end,
+				set = function(t, v)
+					db.h = v
+					self.earthText:ClearAllPoints()
+					self.earthText:SetPoint("TOPRIGHT", self, "TOPLEFT", -v / 2, 0)
+					self.waterText:ClearAllPoints()
+					self.waterText:SetPoint("TOPLEFT", self, "TOPRIGHT", v / 2, 0)
+				end
+			},
+			vspace = {
+				order = 40,
+				arg = "v",
+				name = "Vertical Spacing",
+				desc = "Set the vertical spacing between text elements",
+				type = "range", min = -10, max = maxHeight * 2, step = 1, bigStep = 20,
+				get = function() return db.y end,
+				set = function(t, v)
+					db.v = v
+					self.earthName:ClearAllPoints()
+					self.earthName:SetPoint("BOTTOM", self, "TOP", 0, v)
+				end
+			},
+			alpha = {
+				order = 50,
+				name = "Alpha",
+				desc = "Set the opacity level",
+				type = "range", min = 0.1, max = 1, step = 0.05, bigStep = 0.1, isPercent = true,
+				get = function() return db.alpha end,
+				set = function(t, v)
+					db.alpha = v
+					self:SetAlpha(v)
+				end
+			}
+		}
+	}
+
+	local fontOptions = {
+		name = "Font",
+		type = "group",
+		args = {
+			outline = {
+				order = 20,
+				name = "Outline",
+				type = "select", values = { ["NONE"] = "None", ["OUTLINE"] = "Thin", ["THICKOUTLINE"] = "Thick" },
+				get = function() return db.font.outline end,
+				set = function(t, v)
+					db.font.outline = v
+					local face = media and media:Fetch("font", db.font.face) or "Fonts\\FRIZQT__.ttf"
+					self.earthName:SetFont(face, db.font.small, v)
+					self.earthText:SetFont(face, db.font.large, v)
+					self.waterText:SetFont(face, db.font.large, v)
+				end
+			},
+			large = {
+				order = 30,
+				name = "Count Size",
+				desc = "Set the font size for the counters",
+				type = "range", min = 4, max = 32, step = 1, bigStep = 4,
+				get = function() return db.font.large end,
+				set = function(t, v)
+					db.font.large = v
+					local face = media and media:Fetch("font", db.font.face) or "Fonts\\FRIZQT__.ttf"
+					self.earthName:SetFont(face, db.font.small, db.font.outline)
+					self.earthText:SetFont(face, v, db.font.outline)
+					self.waterText:SetFont(face, v, db.font.outline)
+				end
+			},
+			small = {
+				order = 40,
+				name = "Name Size",
+				desc = "Set the font size for the name",
+				type = "range", min = 4, max = 32, step = 1, bigStep = 4,
+				get = function() return db.font.small end,
+				set = function(t, v)
+					db.font.small = v
+					local face = media and media:Fetch("font", db.font.face) or "Fonts\\FRIZQT__.ttf"
+					self.earthName:SetFont(face, v, db.font.outline)
+					self.earthText:SetFont(face, db.font.large, db.font.outline)
+					self.waterText:SetFont(face, db.font.large, db.font.outline)
+				end
+			},
+			shadow = {
+				order = 50,
+				arg = "fontShadow",
+				name = "Shadow Offset",
+				type = "range", min = 0, max = 2, step = 1,
+				get = function() return db.font.shadow end,
+				set = function(t, v)
+					db.font.shadow = v
+					self.earthName:SetShadowOffset(0, 0)
+					self.earthName:SetShadowOffset(v, -v)
+					self.earthText:SetShadowOffset(0, 0)
+					self.earthText:SetShadowOffset(v, -v)
+					self.waterText:SetShadowOffset(0, 0)
+					self.waterText:SetShadowOffset(v, -v)
+				end
+			}
+		}
+	}
+
+	local colorOptions = {
+		name = "Colors",
+		type = "group",
+		args = {
+			normal = {
+				order = 10,
+				arg = "colorNormal",
+				name = "Normal",
+				type = "color",
+			},
+			alert = {
+				order = 20,
+				arg = "colorAlert",
+				name = "Alert",
+				type = "color",
+			},
+			earth = {
+				order = 30,
+				arg = "colorEarth",
+				name = "Earth Shield",
+				type = "color",
+			},
+			water = {
+				order = 40,
+				arg = "colorWater",
+				name = "Water Shield",
+				type = "color",
+			}
+		}
+	}
+
+	options.alert = {
+		name = "Alerts",
+		type = "group",
+		get = function(k)
+			return db[k.arg]
+		end,
+		set = function(k, v)
+			db[k.arg] = v
+		end,
+		args = {
+			earth = {
+				order = 10,
+				name = "Earth Shield",
+				type = "group", inline = true,
+				args = {
+					text = {
+						arg = "alertEarthText",
+						name = "Text",
+						type = "toggle",
+					},
+					sound = {
+						arg = "alertEarthSound",
+						name = "Sound",
+						type = "toggle",
+					}
+				}
+			},
+			water = {
+				order = 20,
+				name = "Water Shield",
+				type = "group", inline = true,
+				args = {
+					text = {
+						arg = "alertWaterText",
+						name = "Text",
+						type = "toggle",
+					},
+					sound = {
+						arg = "alertWaterSound",
+						name = "Sound",
+						type = "toggle",
+					}
+				}
+			}
+		}
+	}
+
+	if media then
+		options.font.args.face = {
+			order = 10,
+			arg = "fontFace",
+			name = "Face",
+			type = "select", values = self.fonts, dialogControl = "LSM30_Font",
+			get = function(k)
+				return db.fontFace
+			end,
+			set = function(k, v)
+				db.fontFace = v
+				self:ApplySettings()
+			end,
+		}
+		options.alert.args.earth.args.soundFile = {
+			arg = "alertEarthSoundFile",
+			name = "Sound File",
+			type = "select", values = self.sounds, dialogControl = "LSM30_Sound",
+			get = function(k)
+				return db.alertEarthSoundFile
+			end,
+			set = function(k, v)
+				db.alertEarthSoundFile = v
+				PlaySoundFile(media:Fetch("sound", self.sounds[v]))
+			end,
+		}
+		options.alert.args.water.args.soundFile = {
+			arg = "alertWaterSoundFile",
+			name = "Sound File",
+			type = "select", values = self.sounds, dialogControl = "LSM30_Sound",
+			get = function(k)
+				return db.alertWaterSoundFile
+			end,
+			set = function(k, v)
+				db.alertWaterSoundFile = v
+				PlaySoundFile(media:Fetch("sound", self.sounds[v]))
+			end,
+		}
 	end
 
-	local y = xSlider.new(self, L["Horizontal Position"], -max_width, max_width, 0.05, "TOPLEFT", x, "TOPRIGHT", 8, 0)
-	y.tip = L["Set the horizontal offset from the center of the screen"]
-	y.slider:SetValue(floor(db.x + 0.05))
-	y.current:SetText(db.x)
-	y.func = function(v)
-		db.y = v
-		ShieldsUp:SetPoint("CENTER", db.x, db.y)
+	if sink then
+		options.alert.args.output = self:GetSinkAce3OptionsDataTable()
+		options.alert.args.output.inline = true
+		options.alert.args.output.order = 30
 	end
+--[[
+	options.show = {
+		order = 500,
+		name = "Visibility",
+		type = "group",
+		get = function(k)
+			return db[k.arg]
+		end,
+		set = function(k, v)
+			db[k.arg] = v
+		end,
+		args = {
+			auto = {
+			},
+			group = {
+				name = "Group Size",
+				type = "group", inline = true,
+				args = {
+					solo = {
+					},
+					party = {
+					},
+					raid = {
+					}
+				}
+			},
+			zone = {
+				name = "Zone Type",
+				type = "group", inline = true,
+				args = {
+					world = {
+					},
+					dungeon = {
+					},
+					raid = {
+					},
+					arena = {
+					},
+					battleground = {
+					}
+				}
+			}
+		}
+	}
+]]
+	options.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+	options.profile.order = 600
 
-	local h = xSlider.new(self, L["Horizontal Spacing"], 0, max_width * 2, 10, "TOPLEFT", y, "BOTTOMLEFT", 0, -8)
-	h.tip = L["Set the horizontal distance between text elements"]
-	h.slider:SetValue(floor(db.h + 0.05))
-	h.current:SetText(db.h)
-	h.func = function(v)
-		db.h = v
-		ShieldsUp:ApplySettings()
-	end
+	return options
+end
 
-	local v = xSlider.new(self, L["Vertical Spacing"], 0, max_heigh * 2, 10, "TOPLEFT", h, "BOTTOMLEFT", 0, -8)
-	v.tip = L["Set the horizontal distance between text elements"]
-	v.slider:SetValue(floor(db.v + 0.05))
-	v.current:SetText(db.v)
-	v.func = function(v)
-		db.v = v
-		ShieldsUp:ApplySettings()
-	end
+local function initOptions()
+	if registered then return end
 
-	local a = xSlider.new(self, L["Transparency"], 0.05, 1, 0.5, "TOPLEFT", h, "BOTTOMLEFT", 0, -8)
-	a.isPercent = true
-	a.tip = L["Set the transparency level"]
-	a.slider:SetValue(floor(db.a + 0.05))
-	a.current:SetText(db.a)
-	a.func = function(v)
-		db.alpha = v
-		ShieldsUp:SetAlpha(v)
-	end
+	options = options or getOptions()
 
-	self:SetScript("OnShow", nil)
-end)
-ShieldsUp.configFrame = frame
-InterfaceOptions_AddCategory(frame)
+	config:RegisterOptionsTable("ShieldsUp", {
+		name = GetAddOnMetadata("ShieldsUp", "Title"),
+		type = "group",
+		args = {
+			intro = {
+				order = 1,
+				type = "description", name = [[
+ShieldsUp is a shaman shield monitor that provides text displays of remaining charges on Water Shield and Earth Shield, as well as the name of the person your Earth Shield is currently active (or was last active) on.
 
-local frame2 = CreateFrame("Frame", nil, UIParent)
-frame2.name = "Colors"
-frame2.parent = frame.name
-frame2:SetScript("OnShow", function(self)
-	local db, L = ShieldsUpDB, ShieldsUp.L
+The appearance, behavior, and placement are all configurable through the options presented here.
 
-	local title, notes = tekHeading.new(self, "Colors", "Configure the colors used for various states")
+|cffffcc00Please note that ShieldsUp is currently in beta stages|r and may or may not be fully functional; it is certainly not yet complete!
 
-	-- normal (default: white)
+|cffffcc00Credits|r
+ShieldsUp is written by Bherasha @ US Sargeras Horde, and based on beSch by Infineon.
+]]
+			}
+		}
+	})
 
-	-- overwritten (default: yellow)
+	optionsFrame = dialog:AddToBlizOptions("ShieldsUp")
+	dialog:SetDefaultSize("ShieldsUp", 500, 400)
 
-	-- alert (default: red)
+	config:RegisterOptionsTable("ShieldsUp-Profile", options.profile)
+	dialog:AddToBlizOptions("ShieldsUp-Profile", "Profile", "ShieldsUp")
 
-	-- earth (default: brown)
+--	config:RegisterOptionsTable("ShieldsUp-ShowHide", options.show)
+--	dialog:AddToBlizOptions("ShieldsUp-ShowHide", "Visibility", "ShieldsUp")
 
-	-- water (default: blue)
+	config:RegisterOptionsTable("ShieldsUp-Alert", options.alert)
+	dialog:AddToBlizOptions("ShieldsUp-Alert", "Alert", "ShieldsUp")
 
-	self:SetScript("OnShow", nil)
-end)
-InterfaceOptions_AddCategory(frame2)
+	config:RegisterOptionsTable("ShieldsUp-Color", options.color)
+	dialog:AddToBlizOptions("ShieldsUp-Color", "Color", "ShieldsUp")
 
-local frame3 = CreateFrame("Frame", nil, UIParent)
-frame3.name = "Fonts"
-frame3.parent = frame.name
-frame3:SetScript("OnShow", function(self)
-	local db, L = ShieldsUpDB, ShieldsUp.L
+	config:RegisterOptionsTable("ShieldsUp-Font", options.font)
+	dialog:AddToBlizOptions("ShieldsUp-Font", "Font", "ShieldsUp")
 
-	local title, notes = tekHeading.new(self, "Fonts", "Configure how you'd like the monitor fonts to look")
-
-	-- large size
-
-	-- small size
-
-	-- face
-
-	-- outline
-
-	-- shadow
-
-	self:SetScript("OnShow", nil)
-end)
-InterfaceOptions_AddCategory(frame3)
-
-local frame4 = CreateFrame("Frame", nil, UIParent)
-frame4.name = "Alerts"
-frame4.parent = frame.name
-frame4:SetScript("OnShow", function(self)
-	local db, L = ShieldsUpDB, ShieldsUp.L
-
-	local title, notes = tekHeading.new(self, "Alerts", "Configure how you'd like to be alerted of lost shields")
-
-	-- earth text
-
-	-- earth sound
-
-	-- earth sound file
-
-	-- water text
-
-	-- water sound
-
-	-- water sound file
-
-	-- sink output (some magic needed here)
-
-	self:SetScript("OnShow", nil)
-end)
-InterfaceOptions_AddCategory(frame4)
-
-local frame5 = CreateFrame("Frame", nil, UIParent)
-frame5.name = "Show/Hide"
-frame5.parent = frame.name
-frame5:SetScript("OnShow", function(self)
-	local db, L = ShieldsUpDB, ShieldsUp.L
-
-	local title, notes = tekHeading.new(self, "Show/Hide", "Configure when you'd like ShieldsUp to hide or show itself")
-
-	-- enable
-
-	-- group types
-
-	-- instance types
-
-	self:SetScript("OnShow", nil)
-end)
-InterfaceOptions_AddCategory(frame5)
-
-LibStub("tekKonfig-AboutPanel").new("ShieldsUp", "ShieldsUp")
+	config:RegisterOptionsTable("ShieldsUp-Frame", options.frame)
+	dialog:AddToBlizOptions("ShieldsUp-Frame", "Frame", "ShieldsUp")
+	
+	registered = true
+end
 
 SLASH_SHIELDSUP1 = "/shieldsup"
 SLASH_SHIELDSUP2 = "/sup"
-SlashCmdList.SHIELDSUP = function()
-	InterfaceOptionsFrame_OpenToFrame(ShieldsUp.configFrame)
+SlashCmdList.SHIELDSUP = function(input)
+	if not registered then
+		initOptions()
+	end
+	InterfaceOptionsFrame_OpenToFrame(dialog.BlizOptions["ShieldsUp"].frame)
 end
+
+local hax = CreateFrame("Frame", nil, InterfaceOptionsFrame)
+hax:SetScript("OnShow", function()
+	if not registered then
+		initOptions()
+		hax:Hide()
+	end
+end)
