@@ -56,7 +56,7 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 3 then return end
+	if lvl > 0 then return end
 	if select("#", ...) > 0 then
 		str = str:format(...)
 	end
