@@ -19,5 +19,5 @@ Core.lua
 
 #Libs\LibStub.lua
 #Libs\tekKonfig.xml
-Libs\xConfig-Slider.lua
+#Libs\xConfig-Slider.lua
 Config.lua
