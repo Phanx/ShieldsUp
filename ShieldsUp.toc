@@ -7,6 +7,9 @@
 ## X-Credits: Based on beSch by Infineon.
 ## X-Category: Shaman
 
+## X-LoadOn-Class: Shaman
+## LoadManagers: AddonLoader
+
 ## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia, LibStub, tekKonfig
 ## SavedVariables: ShieldsUpDB
 

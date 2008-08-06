@@ -1,24 +1,23 @@
 if not ShieldsUp then return end
 
-local config = LibStub("AceConfigRegistry-3.0", true)
-local dialog = LibStub("AceConfigDialog-3.0", true)
-
-if not (config and dialog) then return end
+local config = LibStub("AceConfigRegistry-3.0")
+local dialog = LibStub("AceConfigDialog-3.0")
 
 local media = LibStub("LibSharedMedia-3.0", true)
 local sink = LibStub("LibSink-2.0", true)
 
 local registered = false
-local options
 
 local function getOptions()
 	local self = ShieldsUp
-	local db = self.db.profile
+	local db = ShieldsUpDB
 
 	local maxHeight = floor(UIParent:GetHeight() / 3)
 	local maxWidth = floor(UIParent:GetWidth() / 3)
 
-	local frameOptions = {
+	local options = {}
+
+	options.frame = {
 		name = "Frame",
 		type = "group",
 		args = {
@@ -87,7 +86,7 @@ local function getOptions()
 		}
 	}
 
-	local fontOptions = {
+	options.font = {
 		name = "Font",
 		type = "group",
 		args = {
@@ -151,32 +150,43 @@ local function getOptions()
 		}
 	}
 
-	local colorOptions = {
+	options.color = {
 		name = "Colors",
 		type = "group",
+		get = function(t) return db.color[t.arg] end,
+		set = function(t, v)
+			db.color[t.arg] = v
+			self:Update()
+		end,
 		args = {
 			normal = {
 				order = 10,
-				arg = "colorNormal",
-				name = "Normal",
+				arg = "normal",
+				name = "Normal", desc = "Use this color for the Earth Shield target name",
 				type = "color",
 			},
-			alert = {
+			over = {
 				order = 20,
-				arg = "colorAlert",
-				name = "Alert",
+				arg = "overwritten",
+				name = "Overwritten", desc = "Use this color for the Earth Shield target name when someone overwrites your shield",
 				type = "color",
 			},
 			earth = {
 				order = 30,
-				arg = "colorEarth",
-				name = "Earth Shield",
+				arg = "earth",
+				name = "Earth Shield", desc = "Use this color for the Earth Shield charge counter",
 				type = "color",
 			},
 			water = {
 				order = 40,
-				arg = "colorWater",
-				name = "Water Shield",
+				arg = "water",
+				name = "Water Shield", desc = "Use this color for the Water Shield charge counter",
+				type = "color",
+			},
+			alert = {
+				order = 50,
+				arg = "alert",
+				name = "Alert", desc = "Use this color for the shield charge counters when at zero",
 				type = "color",
 			}
 		}
@@ -185,12 +195,6 @@ local function getOptions()
 	options.alert = {
 		name = "Alerts",
 		type = "group",
-		get = function(k)
-			return db[k.arg]
-		end,
-		set = function(k, v)
-			db[k.arg] = v
-		end,
 		args = {
 			earth = {
 				order = 10,
@@ -198,14 +202,17 @@ local function getOptions()
 				type = "group", inline = true,
 				args = {
 					text = {
-						arg = "alertEarthText",
 						name = "Text",
 						type = "toggle",
+						get = function() return db.alert.earth.text end,
+						set = function(v) db.alert.earth.text = v end
 					},
 					sound = {
 						arg = "alertEarthSound",
 						name = "Sound",
 						type = "toggle",
+						get = function() return db.alert.earth.sound end,
+						set = function(v) db.alert.earth.sound = v end
 					}
 				}
 			},
@@ -215,14 +222,16 @@ local function getOptions()
 				type = "group", inline = true,
 				args = {
 					text = {
-						arg = "alertWaterText",
 						name = "Text",
 						type = "toggle",
+						get = function() return db.alert.water.text end,
+						set = function(v) db.alert.water.text = v end
 					},
 					sound = {
-						arg = "alertWaterSound",
 						name = "Sound",
 						type = "toggle",
+						get = function() return db.alert.water.sound end,
+						set = function(v) db.alert.water.sound = v end
 					}
 				}
 			}
@@ -232,40 +241,35 @@ local function getOptions()
 	if media then
 		options.font.args.face = {
 			order = 10,
-			arg = "fontFace",
 			name = "Face",
 			type = "select", values = self.fonts, dialogControl = "LSM30_Font",
-			get = function(k)
-				return db.fontFace
-			end,
-			set = function(k, v)
+			get = function() return db.font.face end,
+			set = function(t, v)
 				db.fontFace = v
-				self:ApplySettings()
+				local font = media:Fetch("font", v)
+				self.earthName:SetFont(font, db.font.small, db.font.outline)
+				self.earthText:SetFont(font, db.font.large, db.font.outline)
+				self.waterText:SetFont(font, db.font.large, db.font.outline)
 			end,
 		}
 		options.alert.args.earth.args.soundFile = {
-			arg = "alertEarthSoundFile",
 			name = "Sound File",
 			type = "select", values = self.sounds, dialogControl = "LSM30_Sound",
-			get = function(k)
-				return db.alertEarthSoundFile
-			end,
-			set = function(k, v)
-				db.alertEarthSoundFile = v
+			get = function() return db.alertEarthSoundFile end,
+			set = function(t, v)
+				db.alert.earth.soundFile = v
 				PlaySoundFile(media:Fetch("sound", self.sounds[v]))
-			end,
+			end
 		}
 		options.alert.args.water.args.soundFile = {
 			arg = "alertWaterSoundFile",
 			name = "Sound File",
 			type = "select", values = self.sounds, dialogControl = "LSM30_Sound",
-			get = function(k)
-				return db.alertWaterSoundFile
-			end,
-			set = function(k, v)
-				db.alertWaterSoundFile = v
+			get = function() return db.alert.water.soundFile end,
+			set = function(t, v)
+				db.alert.water.soundFile = v
 				PlaySoundFile(media:Fetch("sound", self.sounds[v]))
-			end,
+			end
 		}
 	end
 
@@ -274,53 +278,93 @@ local function getOptions()
 		options.alert.args.output.inline = true
 		options.alert.args.output.order = 30
 	end
---[[
-	options.show = {
+
+	options.visibility = {
 		order = 500,
 		name = "Visibility",
 		type = "group",
-		get = function(k)
-			return db[k.arg]
-		end,
-		set = function(k, v)
-			db[k.arg] = v
-		end,
 		args = {
 			auto = {
+				order = 10,
+				name = "Enable",
+				type = "toggle",
+				get = function() return db.show.auto end,
+				set = function(t, v) db.show.auto = v end
 			},
 			group = {
+				order = 20,
 				name = "Group Size",
 				type = "group", inline = true,
+				disabled = function() return not db.show.auto end,
 				args = {
 					solo = {
+						order = 10,
+						name = "Solo", desc = "Show while not in a group",
+						type = "toggle",
+						get = function() return db.show.solo end,
+						set = function(t, v) db.show.solo = v end
 					},
 					party = {
+						order = 20,
+						name = "Party", desc = "Show while in a 5-man party",
+						type = "toggle",
+						get = function() return db.show.party end,
+						set = function(t, v) db.show.party = v end
 					},
 					raid = {
+						order = 30,
+						name = "Raid", desc = "Show while in a raid group",
+						type = "toggle",
+						get = function() return db.show.raid end,
+						set = function(t, v) db.show.raid = v end
 					}
 				}
 			},
 			zone = {
+				order = 30,
 				name = "Zone Type",
 				type = "group", inline = true,
+				disabled = function() return not db.show.auto end,
 				args = {
 					world = {
+						order = 10,
+						name = "World", desc = "Show while in the great wide world",
+						type = "toggle",
+						get = function() return db.show.world end,
+						set = function(t, v) db.show.world = v end
 					},
 					dungeon = {
+						order = 20,
+						name = "Dungeon", desc = "Show while in a 5-man dungeon",
+						type = "toggle",
+						get = function() return db.show.dungeon end,
+						set = function(t, v) db.show.dungeon = v end
 					},
 					raid = {
+						order = 30,
+						name = "Raid Dungeon", desc = "Show while in a raid dungeon",
+						type = "toggle",
+						get = function() return db.show.raidDungeon end,
+						set = function(t, v) db.show.raidDungeon = v end
 					},
 					arena = {
+						order = 40,
+						name = "Arena", desc = "Show while in a PvP arena",
+						type = "toggle",
+						get = function() return db.show.arena end,
+						set = function(t, v) db.show.arena = v end
 					},
 					battleground = {
+						order = 50,
+						name = "Battleground", desc = "Show while in a PvP battleground",
+						type = "toggle",
+						get = function() return db.show.battleground end,
+						set = function(t, v) db.show.battleground = v end
 					}
 				}
 			}
 		}
 	}
-]]
-	options.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-	options.profile.order = 600
 
 	return options
 end
@@ -328,7 +372,7 @@ end
 local function initOptions()
 	if registered then return end
 
-	options = options or getOptions()
+	local options = options or getOptions()
 
 	config:RegisterOptionsTable("ShieldsUp", {
 		name = GetAddOnMetadata("ShieldsUp", "Title"),
@@ -353,9 +397,6 @@ ShieldsUp is written by Bherasha @ US Sargeras Horde, and based on beSch by Infi
 	optionsFrame = dialog:AddToBlizOptions("ShieldsUp")
 	dialog:SetDefaultSize("ShieldsUp", 500, 400)
 
-	config:RegisterOptionsTable("ShieldsUp-Profile", options.profile)
-	dialog:AddToBlizOptions("ShieldsUp-Profile", "Profile", "ShieldsUp")
-
 --	config:RegisterOptionsTable("ShieldsUp-ShowHide", options.show)
 --	dialog:AddToBlizOptions("ShieldsUp-ShowHide", "Visibility", "ShieldsUp")
 
@@ -376,7 +417,7 @@ end
 
 SLASH_SHIELDSUP1 = "/shieldsup"
 SLASH_SHIELDSUP2 = "/sup"
-SlashCmdList.SHIELDSUP = function(input)
+SlashCmdList.SHIELDSUP = function()
 	if not registered then
 		initOptions()
 	end
@@ -387,6 +428,7 @@ local hax = CreateFrame("Frame", nil, InterfaceOptionsFrame)
 hax:SetScript("OnShow", function()
 	if not registered then
 		initOptions()
+		hax:SetScript("OnShow", nil)
 		hax:Hide()
 	end
 end)

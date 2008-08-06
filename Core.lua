@@ -15,11 +15,11 @@ if select(2, UnitClass("player")) ~= "SHAMAN" then return end
 ShieldsUp = CreateFrame("Frame")
 ShieldsUp.version = tonumber(GetAddOnMetadata("ShieldsUp", "Version")) or 0
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, ...) end end)
-ShieldsUp:RegisterEvent("VARIABLES_LOADED")
+ShieldsUp:RegisterEvent("ADDON_LOADED")
 
 local ShieldsUp = ShieldsUp
 local SharedMedia = LibStub("LibSharedMedia-3.0", true)
-local playerGUID = UnitGUID("player")
+local playerGUID
 local db
 
 local L = setmetatable(SHIELDSUP_LOCALE or {}, { __index = function(t, k) rawset(t, k, k) return k end })
@@ -56,7 +56,7 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 2 then return end
+	if lvl > 3 then return end
 	if select("#", ...) > 0 then
 		str = str:format(...)
 	end
@@ -93,8 +93,24 @@ local function UnitFromGUID(guid)
 	return nil
 end
 
-function ShieldsUp:VARIABLES_LOADED()
-	Debug(1, "VARIABLES_LOADED")
+local function GroupChange()
+	if GetTime() - earthTime > 900 then
+		earthName = ""
+	end
+	if earthName ~= "" then
+		earthUnit = UnitFromGUID(earthGUID)
+		if not earthUnit then
+			earthCount = 0
+			earthName = ""
+			self:Update()
+		end
+	end
+end
+
+function ShieldsUp:ADDON_LOADED(addon)
+	if addon ~= "ShieldsUp" then return end
+	Debug(1, "ADDON_LOADED")
+
 	local defaults = {
 		h = 5,
 		v = 0,
@@ -159,6 +175,21 @@ function ShieldsUp:VARIABLES_LOADED()
 
 	self.L = L
 
+	self:UnregisterEvent("ADDON_LOADED")
+	self.ADDON_LOADED = nil
+
+	if IsLoggedIn() then
+		self:PLAYER_LOGIN()
+	else
+		self:RegisterEvent("PLAYER_LOGIN")
+	end	
+end
+
+function ShieldsUp:PLAYER_LOGIN()
+	Debug(1, "PLAYER_LOGIN")
+
+	playerGUID = UnitGUID("player")
+
 	if SharedMedia then
 		SharedMedia:Register("sound", "Alliance Bell", "Sound\\Doodad\\BellTollAlliance.wav")
 		SharedMedia:Register("sound", "Horde Bell", "Sound\\Doodad\\BellTollHorde.wav")
@@ -208,12 +239,39 @@ function ShieldsUp:VARIABLES_LOADED()
 	self:RegisterEvent("RAID_ROSTER_UPDATE")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
-	self:UnregisterEvent("VARIABLES_LOADED")
-	self.VARIABLES_LOADED = nil
+	self:UnregisterEvent("PLAYER_LOGIN")
+	self.PLAYER_LOGIN = nil
 end
 
 function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName)
 	Debug(3, "COMBAT_LOG_EVENT_UNFILTERED, %s, %s, source = %s, %s, %s, dest = %s, %s, %s, spell = %s", tostring(time), tostring(event), tostring(sourceGUID), tostring(sourceName), tostring(sourceFlags), tostring(destGUID), tostring(destName), tostring(destFlags), tostring(spellName))
+
+	if event == "SPELL_HEAL" then
+		if earthCount > 0 and spellName == EARTH_SHIELD and destGUID == earthGUID then
+			Debug(2, "Earth Shield healed %s.", destName)
+			earthCount = earthCount - 1
+			if earthCount < 0 then
+				Debug(1, "Earth Shield count < 0, WTF?")
+				earthCount = 0
+			end
+			self:Update()
+		end
+	reutrn end
+
+	if event == "SPELL_ENERGIZE" and waterCount > 0 then
+		if spellName == WATER_SHIELD then
+			if destGUID == playerGUID then
+				Debug(2, "Water Shield energized me.")
+				waterCount = waterCount - 1
+				if waterCount < 0 then
+					Debug(1, "Water Shield count < 0, WTF?")
+					waterCount = 0
+				end
+				self:Update()
+			end
+		end
+	return end
+
 	if event == "SPELL_CAST_SUCCESS" then
 		if spellName == EARTH_SHIELD then
 			if sourceGUID == playerGUID then
@@ -252,7 +310,9 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 				self:Update()
 			end
 		end
-	elseif event == "SPELL_AURA_REMOVED" then
+	return end
+
+	if event == "SPELL_AURA_REMOVED" then
 		if spellName == EARTH_SHIELD then
 			if earthCount > 0 and destGUID == earthGUID then
 				self:Scan(EARTH_SHIELD, earthGUID, earthName)
@@ -270,31 +330,9 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 				end
 			end
 		end
-	elseif event == "SPELL_HEAL" and earthCount > 0 then
-		if spellName == EARTH_SHIELD then
-			if destGUID == earthGUID then
-				Debug(2, "Earth Shield healed %s.", destName)
-				earthCount = earthCount - 1
-				if earthCount < 0 then
-					Debug(1, "Earth Shield count < 0, WTF?")
-					earthCount = 0
-				end
-				self:Update()
-			end
-		end
-	elseif event == "SPELL_ENERGIZE" and waterCount > 0 then
-		if spellName == WATER_SHIELD then
-			if destGUID == playerGUID then
-				Debug(2, "Water Shield energized me.")
-				waterCount = waterCount - 1
-				if waterCount < 0 then
-					Debug(1, "Water Shield count < 0, WTF?")
-					waterCount = 0
-				end
-				self:Update()
-			end
-		end
-	elseif event == "UNIT_DIED" then
+	return end
+
+	if event == "UNIT_DIED" then
 		if destGUID == earthGUID and earthCount > 0 then
 			Debug(1, "%s died with Earth Shield on.", destName)
 			earthCount = 0
@@ -304,26 +342,22 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 			waterCount = 0
 			self:Update()
 		end
-	end
+	return end
+end
+
+function ShieldsUp:PARTY_LEADER_CHANGED()
+	Debug(3, "PARTY_LEADER_CHANGED")
+	GroupChange()
 end
 
 function ShieldsUp:PARTY_MEMBERS_CHANGED()
 	Debug(3, "PARTY_MEMBERS_CHANGED")
-	if GetTime() - earthTime > 900 then
-		earthName = ""
-	end
-	if earthName ~= "" then
-		earthUnit = UnitFromGUID(earthGUID)
-		if not earthUnit then
-			earthCount = 0
-			earthName = ""
-			self:Update()
-		end
-	end
+	GroupChange()
 end
 
 function ShieldsUp:RAID_ROSTER_UPDATE()
-	self:PARTY_MEMBERS_CHANGED()
+	Debug(3, "RAID_ROSTER_UPDATE")
+	GroupChange()
 end
 
 function ShieldsUp:ZONE_CHANGED_NEW_AREA()
