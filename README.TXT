@@ -13,12 +13,12 @@ Download:
 
 Feedback:
 	- For general feedback, feature requests, bug reports, version
-	  history, and planned features, please see the download page.
+	  history, and planned features, see the WoWI download page.
 
 Contact:
 	- addons AT phanx net
 	- Bherasha @ US Sargeras Horde
-	- Please use the download page for feedback if possible.
+	- Please use the WoWI download page for feedback if possible.
 
 Credits:
 	- Based on beSch by Infineon
