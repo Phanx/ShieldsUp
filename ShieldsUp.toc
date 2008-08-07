@@ -13,7 +13,7 @@
 ## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia, LibStub, tekKonfig
 ## SavedVariables: ShieldsUpDB
 
-#embeds.xml
+embeds.xml
 
 Core.lua
 
