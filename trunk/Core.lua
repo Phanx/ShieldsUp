@@ -13,16 +13,17 @@
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
 ShieldsUp = CreateFrame("Frame")
+ShieldsUp.L = setmetatable(SHIELDSUP_LOCALE or {}, { __index = function(t, k) rawset(t, k, k) return k end })
 ShieldsUp.version = tonumber(GetAddOnMetadata("ShieldsUp", "Version")) or 0
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, ...) end end)
 ShieldsUp:RegisterEvent("ADDON_LOADED")
 
 local ShieldsUp = ShieldsUp
 local SharedMedia = LibStub("LibSharedMedia-3.0", true)
+local L = ShieldsUp.L
 local playerGUID
 local db
 
-local L = setmetatable(SHIELDSUP_LOCALE or {}, { __index = function(t, k) rawset(t, k, k) return k end })
 L["ShieldsUp"] = GetAddOnMetadata("ShieldsUp", "Title")
 
 local EARTH_SHIELD = GetSpellInfo(32594)
@@ -135,12 +136,12 @@ function ShieldsUp:ADDON_LOADED(addon)
 			earth = {
 				text = true,
 				sound = true,
-				soundfile = "Tribal Bell"
+				soundFile = "Tribal Bell"
 			},
 			water = {
 				text = true,
 				sound = true,
-				soundfile = "Tribal Bell"
+				soundFile = "Tribal Bell"
 			},
 			output = {
 				sink20OutputSink = "RaidWarning"
@@ -172,8 +173,6 @@ function ShieldsUp:ADDON_LOADED(addon)
 		ShieldsUpDB = temp
 	end
 	db = ShieldsUpDB
-
-	self.L = L
 
 	self:UnregisterEvent("ADDON_LOADED")
 	self.ADDON_LOADED = nil
@@ -246,32 +245,6 @@ end
 function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName)
 	Debug(3, "COMBAT_LOG_EVENT_UNFILTERED, %s, %s, source = %s, %s, %s, dest = %s, %s, %s, spell = %s", tostring(time), tostring(event), tostring(sourceGUID), tostring(sourceName), tostring(sourceFlags), tostring(destGUID), tostring(destName), tostring(destFlags), tostring(spellName))
 
-	if event == "SPELL_HEAL" then
-		if earthCount > 0 and spellName == EARTH_SHIELD and destGUID == earthGUID then
-			Debug(2, "Earth Shield healed %s.", destName)
-			earthCount = earthCount - 1
-			if earthCount < 0 then
-				Debug(1, "Earth Shield count < 0, WTF?")
-				earthCount = 0
-			end
-			self:Update()
-		end
-	reutrn end
-
-	if event == "SPELL_ENERGIZE" and waterCount > 0 then
-		if spellName == WATER_SHIELD then
-			if destGUID == playerGUID then
-				Debug(2, "Water Shield energized me.")
-				waterCount = waterCount - 1
-				if waterCount < 0 then
-					Debug(1, "Water Shield count < 0, WTF?")
-					waterCount = 0
-				end
-				self:Update()
-			end
-		end
-	return end
-
 	if event == "SPELL_CAST_SUCCESS" then
 		if spellName == EARTH_SHIELD then
 			if sourceGUID == playerGUID then
@@ -307,6 +280,32 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 				Debug(1, "I cast Water Shield.")
 				waterCount = 3
 				waterTime = time
+				self:Update()
+			end
+		end
+	return end
+
+	if event == "SPELL_HEAL" then
+		if earthCount > 0 and spellName == EARTH_SHIELD and destGUID == earthGUID then
+			Debug(2, "Earth Shield healed %s.", destName)
+			earthCount = earthCount - 1
+			if earthCount < 0 then
+				Debug(1, "Earth Shield count < 0, WTF?")
+				earthCount = 0
+			end
+			self:Update()
+		end
+	return end
+
+	if event == "SPELL_ENERGIZE" and waterCount > 0 then
+		if spellName == WATER_SHIELD then
+			if destGUID == playerGUID then
+				Debug(2, "Water Shield energized me.")
+				waterCount = waterCount - 1
+				if waterCount < 0 then
+					Debug(1, "Water Shield count < 0, WTF?")
+					waterCount = 0
+				end
 				self:Update()
 			end
 		end
@@ -366,6 +365,7 @@ function ShieldsUp:ZONE_CHANGED_NEW_AREA()
 		earthName = ""
 		self:Update()
 	end
+	self:UpdateVisibility()
 end
 
 function ShieldsUp:Scan(buff, guid)

@@ -12,8 +12,8 @@ local function getOptions()
 	local self = ShieldsUp
 	local db = ShieldsUpDB
 
-	local maxHeight = floor(UIParent:GetHeight() / 3)
-	local maxWidth = floor(UIParent:GetWidth() / 3)
+	local maxHeight = floor(UIParent:GetHeight() / 300) * 100
+	local maxWidth = floor(UIParent:GetWidth() / 300) * 100
 
 	local options = {}
 
@@ -50,7 +50,7 @@ local function getOptions()
 				name = "Horizontal Spacing",
 				desc = "Set the horizontal spacing between text elements",
 				type = "range", min = -10, max = maxWidth * 2, step = 1, bigStep = 20,
-				get = function() return db.y end,
+				get = function() return db.h end,
 				set = function(t, v)
 					db.h = v
 					self.earthText:ClearAllPoints()
@@ -65,11 +65,11 @@ local function getOptions()
 				name = "Vertical Spacing",
 				desc = "Set the vertical spacing between text elements",
 				type = "range", min = -10, max = maxHeight * 2, step = 1, bigStep = 20,
-				get = function() return db.y end,
+				get = function() return db.v end,
 				set = function(t, v)
 					db.v = v
-					self.earthName:ClearAllPoints()
-					self.earthName:SetPoint("BOTTOM", self, "TOP", 0, v)
+					self.nameText:ClearAllPoints()
+					self.nameText:SetPoint("BOTTOM", self, "TOP", 0, v)
 				end
 			},
 			alpha = {
@@ -98,7 +98,7 @@ local function getOptions()
 				set = function(t, v)
 					db.font.outline = v
 					local face = media and media:Fetch("font", db.font.face) or "Fonts\\FRIZQT__.ttf"
-					self.earthName:SetFont(face, db.font.small, v)
+					self.nameText:SetFont(face, db.font.small, v)
 					self.earthText:SetFont(face, db.font.large, v)
 					self.waterText:SetFont(face, db.font.large, v)
 				end
@@ -107,12 +107,12 @@ local function getOptions()
 				order = 30,
 				name = "Count Size",
 				desc = "Set the font size for the counters",
-				type = "range", min = 4, max = 32, step = 1, bigStep = 4,
+				type = "range", min = 4, max = 32, step = 1, bigStep = 2,
 				get = function() return db.font.large end,
 				set = function(t, v)
 					db.font.large = v
 					local face = media and media:Fetch("font", db.font.face) or "Fonts\\FRIZQT__.ttf"
-					self.earthName:SetFont(face, db.font.small, db.font.outline)
+					self.nameText:SetFont(face, db.font.small, db.font.outline)
 					self.earthText:SetFont(face, v, db.font.outline)
 					self.waterText:SetFont(face, v, db.font.outline)
 				end
@@ -121,12 +121,12 @@ local function getOptions()
 				order = 40,
 				name = "Name Size",
 				desc = "Set the font size for the name",
-				type = "range", min = 4, max = 32, step = 1, bigStep = 4,
+				type = "range", min = 4, max = 32, step = 1, bigStep = 2,
 				get = function() return db.font.small end,
 				set = function(t, v)
 					db.font.small = v
 					local face = media and media:Fetch("font", db.font.face) or "Fonts\\FRIZQT__.ttf"
-					self.earthName:SetFont(face, v, db.font.outline)
+					self.nameText:SetFont(face, v, db.font.outline)
 					self.earthText:SetFont(face, db.font.large, db.font.outline)
 					self.waterText:SetFont(face, db.font.large, db.font.outline)
 				end
@@ -139,8 +139,8 @@ local function getOptions()
 				get = function() return db.font.shadow end,
 				set = function(t, v)
 					db.font.shadow = v
-					self.earthName:SetShadowOffset(0, 0)
-					self.earthName:SetShadowOffset(v, -v)
+					self.nameText:SetShadowOffset(0, 0)
+					self.nameText:SetShadowOffset(v, -v)
 					self.earthText:SetShadowOffset(0, 0)
 					self.earthText:SetShadowOffset(v, -v)
 					self.waterText:SetShadowOffset(0, 0)
@@ -153,9 +153,11 @@ local function getOptions()
 	options.color = {
 		name = "Colors",
 		type = "group",
-		get = function(t) return db.color[t.arg] end,
-		set = function(t, v)
-			db.color[t.arg] = v
+		get = function(t) return unpack(db.color[t.arg]) end,
+		set = function(t, r, g, b)
+			db.color[t.arg][1] = r
+			db.color[t.arg][2] = g
+			db.color[t.arg][3] = b
 			self:Update()
 		end,
 		args = {
@@ -205,14 +207,13 @@ local function getOptions()
 						name = "Text",
 						type = "toggle",
 						get = function() return db.alert.earth.text end,
-						set = function(v) db.alert.earth.text = v end
+						set = function() db.alert.earth.text = not db.alert.earth.text end
 					},
 					sound = {
-						arg = "alertEarthSound",
 						name = "Sound",
 						type = "toggle",
 						get = function() return db.alert.earth.sound end,
-						set = function(v) db.alert.earth.sound = v end
+						set = function() db.alert.earth.sound = not db.alert.earth.sound end
 					}
 				}
 			},
@@ -245,9 +246,9 @@ local function getOptions()
 			type = "select", values = self.fonts, dialogControl = "LSM30_Font",
 			get = function() return db.font.face end,
 			set = function(t, v)
-				db.fontFace = v
+				db.font.face = v
 				local font = media:Fetch("font", v)
-				self.earthName:SetFont(font, db.font.small, db.font.outline)
+				self.nameText:SetFont(font, db.font.small, db.font.outline)
 				self.earthText:SetFont(font, db.font.large, db.font.outline)
 				self.waterText:SetFont(font, db.font.large, db.font.outline)
 			end,
@@ -255,7 +256,7 @@ local function getOptions()
 		options.alert.args.earth.args.soundFile = {
 			name = "Sound File",
 			type = "select", values = self.sounds, dialogControl = "LSM30_Sound",
-			get = function() return db.alertEarthSoundFile end,
+			get = function() return db.alert.earth.soundFile end,
 			set = function(t, v)
 				db.alert.earth.soundFile = v
 				PlaySoundFile(media:Fetch("sound", self.sounds[v]))
@@ -397,11 +398,8 @@ ShieldsUp is written by Bherasha @ US Sargeras Horde, and based on beSch by Infi
 	optionsFrame = dialog:AddToBlizOptions("ShieldsUp")
 	dialog:SetDefaultSize("ShieldsUp", 500, 400)
 
---	config:RegisterOptionsTable("ShieldsUp-ShowHide", options.show)
---	dialog:AddToBlizOptions("ShieldsUp-ShowHide", "Visibility", "ShieldsUp")
-
-	config:RegisterOptionsTable("ShieldsUp-Alert", options.alert)
-	dialog:AddToBlizOptions("ShieldsUp-Alert", "Alert", "ShieldsUp")
+	config:RegisterOptionsTable("ShieldsUp-Frame", options.frame)
+	dialog:AddToBlizOptions("ShieldsUp-Frame", "Frame", "ShieldsUp")
 
 	config:RegisterOptionsTable("ShieldsUp-Color", options.color)
 	dialog:AddToBlizOptions("ShieldsUp-Color", "Color", "ShieldsUp")
@@ -409,8 +407,11 @@ ShieldsUp is written by Bherasha @ US Sargeras Horde, and based on beSch by Infi
 	config:RegisterOptionsTable("ShieldsUp-Font", options.font)
 	dialog:AddToBlizOptions("ShieldsUp-Font", "Font", "ShieldsUp")
 
-	config:RegisterOptionsTable("ShieldsUp-Frame", options.frame)
-	dialog:AddToBlizOptions("ShieldsUp-Frame", "Frame", "ShieldsUp")
+--	config:RegisterOptionsTable("ShieldsUp-ShowHide", options.show)
+--	dialog:AddToBlizOptions("ShieldsUp-ShowHide", "Visibility", "ShieldsUp")
+
+	config:RegisterOptionsTable("ShieldsUp-Alert", options.alert)
+	dialog:AddToBlizOptions("ShieldsUp-Alert", "Alert", "ShieldsUp")
 	
 	registered = true
 end
