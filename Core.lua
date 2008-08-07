@@ -159,7 +159,6 @@ function ShieldsUp:ADDON_LOADED(addon)
 			arena = false
 		}
 	}
-	ShieldsUpDB = defaults
 	if not ShieldsUpDB then
 		ShieldsUpDB = defaults
 	elseif ShieldsUpDB.version ~= self.version then
