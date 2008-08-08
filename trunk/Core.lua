@@ -24,8 +24,6 @@ local L = ShieldsUp.L
 local playerGUID
 local db
 
-L["ShieldsUp"] = GetAddOnMetadata("ShieldsUp", "Title")
-
 local EARTH_SHIELD = GetSpellInfo(32594)
 local WATER_SHIELD = GetSpellInfo(33736)
 
@@ -47,6 +45,10 @@ local earthUnit = ""
 
 local waterCount = 0
 local waterTime = 0
+
+L["ShieldsUp"] = GetAddOnMetadata("ShieldsUp", "Title")
+L["Earth Shield"] = EARTH_SHIELD
+L["Water Shield"] = WATER_SHIELD
 
 local chatprefix = "|cff00ddba"..L["ShieldsUp"]..":|r "
 local function Print(str, ...)
