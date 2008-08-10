@@ -213,7 +213,7 @@ local function getOptions()
 					},
 					sound = {
 						order = 20,
-						name = L["Sound"], desc = L["Play an alert sound when Earth Shield Fades"].
+						name = L["Sound"], desc = L["Play an alert sound when Earth Shield Fades"],
 						type = "toggle",
 						get = function() return db.alert.earth.sound end,
 						set = function() db.alert.earth.sound = not db.alert.earth.sound end
@@ -291,7 +291,7 @@ local function getOptions()
 		args = {
 			auto = {
 				order = 10,
-				name = L["Enable"], desc = L["Allow the display to hide or show itself based on the conditions below"]
+				name = L["Enable"], desc = L["Allow the display to hide or show itself based on the conditions below"],
 				type = "toggle",
 				get = function() return db.show.auto end,
 				set = function(t, v) db.show.auto = v end
