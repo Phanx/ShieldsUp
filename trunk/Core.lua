@@ -105,7 +105,7 @@ local function GroupChange()
 		if not earthUnit then
 			earthCount = 0
 			earthName = ""
-			self:Update()
+			ShieldsUp:Update()
 		end
 	end
 end
