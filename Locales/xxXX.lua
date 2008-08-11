@@ -4,7 +4,7 @@
 	Last updated DATE
 --]]
 
-if GetLocale() ~= "xxXX" then return end
+if select(2, UnitClass("player")) ~= "SHAMAN" or GetLocale() ~= "xxXX" then return end
 
 SHIELDSUP_LOCALE = {
 	["%s faded from %s!"] = "%s faded from %s!", -- The first %s = localized Earth Shield; the second %s = name of the person it was on.
