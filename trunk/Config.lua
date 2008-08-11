@@ -377,6 +377,7 @@ end
 local function initOptions()
 	if registered then return end
 
+	local L = ShieldsUp.L
 	local options = options or getOptions()
 
 	config:RegisterOptionsTable("ShieldsUp", {
