@@ -1,11 +1,12 @@
-## Interface: 20400
-## Version: 2.4.3.wowi:revision
+## Interface: 30000
+## Version: 3.0.2.wowi:revision
 
 ## Title: ShieldsUp
-## Notes: Shaman shield tracker.
+## Notes: Shaman shield monitor.
 ## Author: Phanx
 ## X-Credits: Based on beSch by Infineon.
 ## X-Category: Shaman
+## X-License: See included README.TXT file.
 
 ## X-LoadOn-Class: Shaman
 ## LoadManagers: AddonLoader
@@ -13,11 +14,8 @@
 ## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia, LibStub, tekKonfig
 ## SavedVariables: ShieldsUpDB
 
+## X-Embeds: LibStub, Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0
 embeds.xml
 
 Core.lua
-
-#Libs\LibStub.lua
-#Libs\tekKonfig.xml
-#Libs\xConfig-Slider.lua
 Config.lua

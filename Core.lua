@@ -26,6 +26,7 @@ local db
 
 local EARTH_SHIELD = GetSpellInfo(32594)
 local WATER_SHIELD = GetSpellInfo(33736)
+local LIGHTNING_SHIELD = GetSpellInfo(324)
 
 local FILTER_ME = bit.bor(COMBATLOG_OBJECT_CONTROL_PLAYER, COMBATLOG_OBJECT_AFFILIATION_MINE, COMBATLOG_OBJECT_TYPE_PLAYER)
 local FILTER_PET = bit.bor(COMBATLOG_OBJECT_CONTROL_PLAYER, COMBATLOG_OBJECT_AFFILIATION_MINE, COMBATLOG_OBJECT_TYPE_PET)
@@ -45,10 +46,12 @@ local earthUnit = ""
 
 local waterCount = 0
 local waterTime = 0
+local waterSpell = ""
 
 L["ShieldsUp"] = GetAddOnMetadata("ShieldsUp", "Title")
 L["Earth Shield"] = EARTH_SHIELD
 L["Water Shield"] = WATER_SHIELD
+L["Lightning Shield"] = LIGHTNING_SHIELD
 
 local chatprefix = "|cff00ddba"..L["ShieldsUp"]..":|r "
 local function Print(str, ...)
@@ -125,6 +128,7 @@ function ShieldsUp:ADDON_LOADED(addon)
 			normal = { 1, 1, 1 },
 			overwritten = { 1, 1, 0 },
 			earth = { 0.65, 1, 0.25 },
+			lightning = { 0.25, 0.65, 1 },
 			water = { 0.25, 0.65, 1 }
 		},
 		font = {
@@ -163,15 +167,12 @@ function ShieldsUp:ADDON_LOADED(addon)
 	}
 	if not ShieldsUpDB then
 		ShieldsUpDB = defaults
-	elseif ShieldsUpDB.version ~= self.version then
-		local temp = defaults
-		for k, v in pairs(ShieldsUpDB) do
-			if defaults[k] then
-				temp[k] = v
+	else
+		for k, v in pairs(defaults) do
+			if ShieldsUpDB[k] == nil or type(ShieldsUpDB[k]) ~= type(v) then
+				ShieldsUpDB[k] = v
 			end
 		end
-		temp.version = self.version
-		ShieldsUpDB = temp
 	end
 	db = ShieldsUpDB
 
@@ -281,6 +282,15 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 				Debug(1, "I cast Water Shield.")
 				waterCount = 3
 				waterTime = time
+				waterSpell = WATER_SHIELD
+				self:Update()
+			end
+		elseif spellName == LIGHTNING_SHIELD then
+			if sourceGUID == playerGUID then
+				Debug(1, "I cast Lightning Shield.")
+				waterCount = 3
+				waterTime = time
+				waterSpell = LIGHTNING_SHIELD
 				self:Update()
 			end
 		end
@@ -298,13 +308,27 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 		end
 	return end
 
-	if event == "SPELL_ENERGIZE" and waterCount > 0 then
+	if event == "SPELL_ENERGIZE" and waterSpell == WATER_SHIELD and waterCount > 0 then
 		if spellName == WATER_SHIELD then
 			if destGUID == playerGUID then
 				Debug(2, "Water Shield energized me.")
 				waterCount = waterCount - 1
 				if waterCount < 0 then
 					Debug(1, "Water Shield count < 0, WTF?")
+					waterCount = 0
+				end
+				self:Update()
+			end
+		end
+	return end
+
+	if event == "SPELL_DAMAGE" and waterSpell == LIGHTNING_SHIELD and waterCount > 0 then
+		if spellName == LIGHTNING_SHIELD then
+			if sourceGUID == playerGUID then
+				Debug(2, "Lightning Shield dealt damage.")
+				waterCount = waterCount - 1
+				if waterCount < 0 then
+					Debug(1, "Lightning Shield count < 0, WTF?")
 					waterCount = 0
 				end
 				self:Update()
@@ -326,7 +350,15 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 				self:Scan(WATER_SHIELD)
 				if waterCount < 1 then
 					Debug(1, "Water Shield was removed from me.")
-					self:Scan(WATER_SHIELD)
+					self:Alert(WATER_SHIELD)
+				end
+			end
+		elseif spellName == LIGHTNING_SHIELD then
+			if waterCount > 0 and destGUID == playerGUID then
+				self:Scan(LIGHTNING_SHIELD)
+				if waterCount < 1 then
+					Debug(1, "Lightning Shield was removed from me.")
+					self:Alert(LIGHTNING_SHIELD)
 				end
 			end
 		end
@@ -394,7 +426,7 @@ function ShieldsUp:Scan(buff, guid)
 			earthCount = 0
 			earthTime = GetTime() - 600
 			self:Update()
-		elseif buff == WATER_SHIELD then
+		elseif buff == WATER_SHIELD or buff == LIGHTNING_SHIELD then
 			waterCount = 0
 			self:Update()
 		end
@@ -423,7 +455,11 @@ function ShieldsUp:Update()
 	self.earthText:SetText(earthCount)
 
 	if waterCount > 0 then
-		self.waterText:SetTextColor(unpack(db.color.water))
+		if waterSpell == LIGHTNING_SHIELD then
+			self.waterText:SetTextColor(unpack(db.color.lightning))
+		else
+			self.waterText:SetTextColor(unpack(db.color.water))
+		end
 	else
 		self.waterText:SetTextColor(unpack(db.color.alert))
 	end
@@ -440,9 +476,9 @@ function ShieldsUp:Alert(spell)
 		if db.alert.earth.sound then
 			sound = SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundfile) or "Sound\\Doodad\\BellTollHorde.wav"
 		end
-	elseif spell == WATER_SHIELD then
+	elseif spell == WATER_SHIELD or spell == LIGHTNING_SHIELD then
 		if db.alert.water.text then
-			r, g, b = unpack(db.color.water)
+			r, g, b = unpack(spell == LIGHTNING_SHIELD and db.color.lightning or db.color.water)
 			msg = string.format(L["%s faded!"], spell)
 		end
 		if db.alert.water.sound then

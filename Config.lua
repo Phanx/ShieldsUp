@@ -180,6 +180,12 @@ local function getOptions()
 				name = L["Earth Shield"], desc = L["Use this color for the Earth Shield charge counter"],
 				type = "color",
 			},
+			lightning = {
+				order = 40,
+				arg = "lightning",
+				name = L["Lightning Shield"], desc = L["Use this color for the Lightning Shield charge counter"],
+				type = "color",
+			},
 			water = {
 				order = 40,
 				arg = "water",
@@ -427,7 +433,7 @@ SlashCmdList.SHIELDSUP = function()
 	if not registered then
 		initOptions()
 	end
-	InterfaceOptionsFrame_OpenToFrame(dialog.BlizOptions["ShieldsUp"].frame)
+	InterfaceOptionsFrame_OpenToCategory(dialog.BlizOptions["ShieldsUp"].frame)
 end
 
 local hax = CreateFrame("Frame", nil, InterfaceOptionsFrame)
