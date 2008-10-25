@@ -21,8 +21,7 @@ ShieldsUp:RegisterEvent("ADDON_LOADED")
 local ShieldsUp = ShieldsUp
 local SharedMedia = LibStub("LibSharedMedia-3.0", true)
 local L = ShieldsUp.L
-local playerGUID
-local db
+local playerGUID, db, solo
 
 local EARTH_SHIELD = GetSpellInfo(32594)
 local WATER_SHIELD = GetSpellInfo(33736)
@@ -35,6 +34,10 @@ local FILTER_PARTY = bit.bor(COMBATLOG_OBJECT_CONTROL_PLAYER, COMBATLOG_OBJECT_A
 local FILTER_RAID = bit.bor(COMBATLOG_OBJECT_CONTROL_PLAYER, COMBATLOG_OBJECT_AFFILIATION_RAID)
 
 local EARTH_FILTER = bit.bor(FILTER_ME, FILTER_PET, FILTER_GUARDIAN, FILTER_PARTY, FILTER_RAID)
+
+local earthCharges = 3
+local waterCharges = 3
+local lightningCharges = 3
 
 local earthCount = 0
 local earthGUID = ""
@@ -97,20 +100,6 @@ local function UnitFromGUID(guid)
 		return nil
 	end
 	return nil
-end
-
-local function GroupChange()
-	if GetTime() - earthTime > 900 then
-		earthName = ""
-	end
-	if earthName ~= "" then
-		earthUnit = UnitFromGUID(earthGUID)
-		if not earthUnit then
-			earthCount = 0
-			earthName = ""
-			ShieldsUp:Update()
-		end
-	end
 end
 
 function ShieldsUp:ADDON_LOADED(addon)
@@ -232,6 +221,9 @@ function ShieldsUp:PLAYER_LOGIN()
 		self:SetSinkStorage(db.alert.output)
 	end
 
+	self:CHARACTER_POINTS_CHANGED()
+	self:GLYPH_ADDED()
+
 	self:ApplySettings()
 	self:Update()
 
@@ -239,6 +231,10 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
 	self:RegisterEvent("RAID_ROSTER_UPDATE")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
+	self:RegisterEvent("GLYPH_ADDED")
+	self:RegisterEvent("GLYPH_REMOVED")
+	self:RegisterEvent("GLYPH_UPDATED")
 
 	self:UnregisterEvent("PLAYER_LOGIN")
 	self.PLAYER_LOGIN = nil
@@ -256,7 +252,7 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 				or bit.band(destFlags, FILTER_PARTY) == FILTER_PARTY
 				or bit.band(destFlags, FILTER_RAID) == FILTER_RAID then
 					Debug(1, "I cast Earth Shield on %s.", destName)
-					earthCount = 6
+					earthCount = earthCharges
 					earthGUID = destGUID
 					earthName = destName
 					earthOverwritten = false
@@ -271,7 +267,7 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 				self:Update()
 			elseif destGUID == earthGUID and earthCount > 0 then
 				Debug(1, "%s cast Earth Shield on %s.", sourceName, destName)
-				earthCount = 6
+				earthCount = earthCharges
 				earthOverwritten = true
 				earthOverwrittenBy = sourceName
 				earthTime = time
@@ -280,7 +276,7 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 		elseif spellName == WATER_SHIELD then
 			if sourceGUID == playerGUID then
 				Debug(1, "I cast Water Shield.")
-				waterCount = 3
+				waterCount = waterCharges
 				waterTime = time
 				waterSpell = WATER_SHIELD
 				self:Update()
@@ -288,7 +284,7 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 		elseif spellName == LIGHTNING_SHIELD then
 			if sourceGUID == playerGUID then
 				Debug(1, "I cast Lightning Shield.")
-				waterCount = 3
+				waterCount = lightningCharges
 				waterTime = time
 				waterSpell = LIGHTNING_SHIELD
 				self:Update()
@@ -377,20 +373,36 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 	return end
 end
 
-function ShieldsUp:PARTY_LEADER_CHANGED()
-	Debug(3, "PARTY_LEADER_CHANGED")
-	GroupChange()
+local function onGroupChange(event)
+	Debug(3, event)
+	if GetTime() - earthTime > 900 then
+		earthName = ""
+		self:Update()
+	end
+	if earthName ~= "" then
+		earthUnit = UnitFromGUID(earthGUID)
+		if not earthUnit then
+			earthCount = 0
+			earthName = ""
+			self:Update()
+		end
+	end
+	if GetNumRaidMembers() > 0 and GetNumPartyMembers() > 0 then
+		if solo then
+			self:ApplySettings()
+		end
+		solo = false
+	else
+		if not solo then
+			self:ApplySettings()
+		end
+		solo = true
+	end
 end
 
-function ShieldsUp:PARTY_MEMBERS_CHANGED()
-	Debug(3, "PARTY_MEMBERS_CHANGED")
-	GroupChange()
-end
-
-function ShieldsUp:RAID_ROSTER_UPDATE()
-	Debug(3, "RAID_ROSTER_UPDATE")
-	GroupChange()
-end
+function ShieldsUp:PARTY_LEADER_CHANGED()  onGroupChange("PARTY_LEADER_CHANGED")  end
+function ShieldsUp:PARTY_MEMBERS_CHANGED() onGroupChange("PARTY_MEMBERS_CHANGED") end
+function ShieldsUp:RAID_ROSTER_UPDATE()	   onGroupChange("RAID_ROSTER_UPDATE")    end
 
 function ShieldsUp:ZONE_CHANGED_NEW_AREA()
 	Debug(2, "ZONE_CHANGED_NEW_AREA")
@@ -400,6 +412,32 @@ function ShieldsUp:ZONE_CHANGED_NEW_AREA()
 	end
 	self:UpdateVisibility()
 end
+
+function ShieldsUp:CHARACTER_POINTS_CHANGED()
+	Debug(2, "CHARACTER_POINTS_CHANGED")
+	if select(5, GetTalentInfo(3, 23)) > 0 then
+		earthCharges = 3 + select(5, GetTalentInfo(3, 24))
+	else
+		earthCharges = 0
+	end
+
+	lightningCharges = select(5, GetTalentInfo(2, 24)) > 0 and 5 or 3
+end
+
+local function onGlyphChange(event)
+	Debug(2, event)
+	waterCharges = 3
+	for i = 1, 6 do
+		local _, _, glyph = GetGlyphSocketInfo(i)
+		if glyph == 58266 then -- Glyph of Water Shield
+			waterCharges = 4
+		end
+	end
+end
+
+function ShieldsUp:GLYPH_ADDED()   onGlyphChange("GLYPH_UPDATED") end
+function ShieldsUp:GLYPH_REMOVED() onGlyphChange("GLYPH_UPDATED") end
+function ShieldsUp:GLYPH_UPDATED() onGlyphChange("GLYPH_UPDATED") end
 
 function ShieldsUp:Scan(buff, guid)
 	Debug(1, "Scanning for %s...", buff)
@@ -495,6 +533,7 @@ function ShieldsUp:Alert(spell)
 	if sound then
 		PlaySoundFile(sound)
 	end
+	Debug(1, "Alert, %s, %s, %s", spell, msg, sound)
 end
 
 function ShieldsUp:ApplySettings()
@@ -513,18 +552,27 @@ function ShieldsUp:ApplySettings()
 	if not self.waterText then
 		self.waterText = self:CreateFontString(nil, "OVERLAY")
 	end
-	self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -db.h / 2, 0)
 	self.waterText:SetFont(face, db.font.large, outline)
 	self.waterText:SetShadowOffset(0, 0)
 	self.waterText:SetShadowOffset(shadow, -shadow)
+	if not solo and earthCharges > 0 then
+		self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -db.h / 2, 0)
+	else
+		self.waterText:SetPoint("CENTER")
+	end
 
 	if not self.earthText then
 		self.earthText = self:CreateFontString(nil, "OVERLAY")
 	end
-	self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", db.h / 2, 0)
 	self.earthText:SetFont(face, db.font.large, outline)
 	self.earthText:SetShadowOffset(0, 0)
 	self.earthText:SetShadowOffset(shadow, -shadow)
+	self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", db.h / 2, 0)
+	if not solo and earthCharges > 0 then
+		self.earthText:Show()
+	else
+		self.earthText:Hide()
+	end
 
 	if not self.nameText then
 		self.nameText = self:CreateFontString(nil, "OVERLAY")
@@ -533,6 +581,11 @@ function ShieldsUp:ApplySettings()
 	self.nameText:SetFont(face, db.font.small, outline)
 	self.nameText:SetShadowOffset(0, 0)
 	self.nameText:SetShadowOffset(shadow, -shadow)
+	if not solo and earthCharges > 0 then
+		self.nameText:Show()
+	else
+		self.nameText:Hide()
+	end
 end
 
 function ShieldsUp:UpdateVisibility()
