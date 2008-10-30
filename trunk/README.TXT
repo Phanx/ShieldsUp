@@ -1,5 +1,5 @@
 
-ShieldsUp is a World of Warcraft user interface addon to provide simple
+ShieldsUp is a World of Warcraft user interface addon to provide textual
 self-monitoring of shaman shield buffs.
 
 ------------------------------------------------------------------------
@@ -14,20 +14,30 @@ Features:
 Download:
 
 - http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-- http://www.curse.com/downloads/details/shieldsup/
+- http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
+
+------------------------------------------------------------------------
+Localization:
+
+Compatible with: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
+Translated into: enUS, ruRU
+
+If you would like to assist with translation for another locale, please
+contact me using the contact information below.
 
 ------------------------------------------------------------------------
 Feedback:
 
-For general feedback, feature requests, bug reports, a list of planned
-features, and a full version history, see this addon's download page.
+Please use the bug report and feature request ticket systems on either
+download page to report specific problems and request specific features.
 
-------------------------------------------------------------------------
-Contact:
+Use the comments section on WoWInterface for general feedback; note that
+I do not read comments on Curse at all.
 
-- Email: addons AT phanx net
-- Game mail: Phanx @ US Blackrock Horde
-- Private message: "Phanx" on wowinterface.com or wowace.com
+If private communication is necessary, I can be contacted...
+- by email: addons AT phanx net
+- by in-game mail: Phanx on US Blackrock Horde
+- by private message: Phanx on wowinterface.com or wowace.com
 
 ------------------------------------------------------------------------
 Credits:
@@ -37,7 +47,7 @@ ShieldsUp is based on beSch, by Infineon.
 ------------------------------------------------------------------------
 License:
 
-Copyright© 2007-2008 Alyssa Kinley, aka Phanx
+Copyright © 2006-2008 Alyssa Kinley, aka Phanx
 
 This addon is copyrighted, with all rights reserved, to its author under
 United States and international copyright law.
