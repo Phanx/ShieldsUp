@@ -375,6 +375,7 @@ end
 
 local function onGroupChange(event)
 	Debug(3, event)
+	local self = ShieldsUp
 	if GetTime() - earthTime > 900 then
 		earthName = ""
 		self:Update()

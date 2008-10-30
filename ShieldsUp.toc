@@ -3,18 +3,25 @@
 
 ## Title: ShieldsUp
 ## Notes: Shaman shield monitor.
-## Author: Phanx
+## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 ## X-Category: Shaman
+
+## Author: Phanx
 ## X-Copyright: Copyright© 2008 Alyssa Kinley, aka Phanx
+## X-License: Do not distribute in any form without prior consent. See included README for full license text.
 ## X-Credits: Based on beSch by Infineon.
-## X-License: Do not redistribute. See included README text file for more details.
-## X-LoadOn-Class: Shaman
+
 ## LoadManagers: AddonLoader
-## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia, LibStub, tekKonfig
+## X-LoadOn-Class: Shaman
+
 ## SavedVariables: ShieldsUpDB
 
+## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia, LibStub, tekKonfig
 ## X-Embeds: LibStub, Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0
+
 embeds.xml
+
+Locales\Locales.xml
 
 Core.lua
 Config.lua
