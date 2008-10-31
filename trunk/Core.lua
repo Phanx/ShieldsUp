@@ -2,10 +2,8 @@
 	ShieldsUp: a shaman shield monitor
 	by Phanx < addons AT phanx net>
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-	http://www.curse.com/downloads/details/13180/
+	See the included README for full license text and additional information.
 
-	See the included README.TXT for license and additional information.
-	
 	TODO:
 	- make bit operators more efficient
 --]]
@@ -172,7 +170,7 @@ function ShieldsUp:ADDON_LOADED(addon)
 		self:PLAYER_LOGIN()
 	else
 		self:RegisterEvent("PLAYER_LOGIN")
-	end	
+	end
 end
 
 function ShieldsUp:PLAYER_LOGIN()
@@ -365,8 +363,8 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 			Debug(1, "%s died with Earth Shield on.", destName)
 			earthCount = 0
 			self:Update()
-		elseif destGUID == playerGUID and waterCount > 0 then
-			Debug(1, "I died with Water Shield on.")
+		elseif destGUID == playerGUID and waterCount > 0 or lightningCount > 0 then
+			Debug(1, "I died with Water or Lightning Shield on.")
 			waterCount = 0
 			self:Update()
 		end
@@ -417,7 +415,7 @@ end
 function ShieldsUp:CHARACTER_POINTS_CHANGED()
 	Debug(2, "CHARACTER_POINTS_CHANGED")
 	if select(5, GetTalentInfo(3, 23)) > 0 then
-		earthCharges = 3 + select(5, GetTalentInfo(3, 24))
+		earthCharges = 6 + select(5, GetTalentInfo(3, 24))
 	else
 		earthCharges = 0
 	end
@@ -430,14 +428,14 @@ local function onGlyphChange(event)
 	waterCharges = 3
 	for i = 1, 6 do
 		local _, _, glyph = GetGlyphSocketInfo(i)
-		if glyph == 58266 then -- Glyph of Water Shield
+		if glyph == 58063 then		-- Glyph of Water Shield: Increases the number of charges on your Water Shield spell by 1.
 			waterCharges = 4
 		end
 	end
 end
 
-function ShieldsUp:GLYPH_ADDED()   onGlyphChange("GLYPH_UPDATED") end
-function ShieldsUp:GLYPH_REMOVED() onGlyphChange("GLYPH_UPDATED") end
+function ShieldsUp:GLYPH_ADDED()   onGlyphChange("GLYPH_ADDED")   end
+function ShieldsUp:GLYPH_REMOVED() onGlyphChange("GLYPH_REMOVED") end
 function ShieldsUp:GLYPH_UPDATED() onGlyphChange("GLYPH_UPDATED") end
 
 function ShieldsUp:Scan(buff, guid)
