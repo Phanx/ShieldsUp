@@ -2,22 +2,23 @@
 ## Version: 3.0.2.wowi:revision
 
 ## Title: ShieldsUp
-## Notes: Shaman shield monitor.
-## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
 ## X-Category: Shaman
+## X-Copyright: Copyright © 2008 Alyssa S. Kinley, a.k.a Phanx
+## X-License: Do not redistribute. See README for complete license terms.
+## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 
 ## Author: Phanx
-## X-Copyright: Copyright© 2008 Alyssa Kinley, aka Phanx
-## X-License: Do not distribute in any form without prior consent. See included README for full license text.
 ## X-Credits: Based on beSch by Infineon.
+## X-Email: addons@phanx.net
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Class: Shaman
 
 ## SavedVariables: ShieldsUpDB
 
-## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia, LibStub, tekKonfig
-## X-Embeds: LibStub, Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0
+## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia, tekKonfig
+## X-Embeds: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0
 
 embeds.xml
 
