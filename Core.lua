@@ -1,8 +1,8 @@
 --[[
 	ShieldsUp: a shaman shield monitor
-	by Phanx < addons AT phanx net>
+	by Phanx < addons@phanx.net>
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-	See the included README for full license text and additional information.
+	See README for license terms and other information.
 
 	TODO:
 	- make bit operators more efficient
@@ -226,6 +226,7 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:Update()
 
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	self:RegisterEvent("PARTY_LEADER_CHANGED")
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
 	self:RegisterEvent("RAID_ROSTER_UPDATE")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -239,7 +240,7 @@ function ShieldsUp:PLAYER_LOGIN()
 end
 
 function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags, spellID, spellName)
-	Debug(3, "COMBAT_LOG_EVENT_UNFILTERED, %s, %s, source = %s, %s, %s, dest = %s, %s, %s, spell = %s", tostring(time), tostring(event), tostring(sourceGUID), tostring(sourceName), tostring(sourceFlags), tostring(destGUID), tostring(destName), tostring(destFlags), tostring(spellName))
+	Debug(4, "COMBAT_LOG_EVENT_UNFILTERED, %s, %s, source = %s, %s, %s, dest = %s, %s, %s, spell = %s", tostring(time), tostring(event), tostring(sourceGUID), tostring(sourceName), tostring(sourceFlags), tostring(destGUID), tostring(destName), tostring(destFlags), tostring(spellName))
 
 	if event == "SPELL_CAST_SUCCESS" then
 		if spellName == EARTH_SHIELD then
@@ -363,7 +364,7 @@ function ShieldsUp:COMBAT_LOG_EVENT_UNFILTERED(time, event, sourceGUID, sourceNa
 			Debug(1, "%s died with Earth Shield on.", destName)
 			earthCount = 0
 			self:Update()
-		elseif destGUID == playerGUID and waterCount > 0 or lightningCount > 0 then
+		elseif destGUID == playerGUID and waterCount > 0 then
 			Debug(1, "I died with Water or Lightning Shield on.")
 			waterCount = 0
 			self:Update()
@@ -375,33 +376,39 @@ local function onGroupChange(event)
 	Debug(3, event)
 	local self = ShieldsUp
 	if GetTime() - earthTime > 900 then
+		Debug(2, "Earth Shield hasn't been cast recently, clearing name")
 		earthName = ""
 		self:Update()
 	end
 	if earthName ~= "" then
 		earthUnit = UnitFromGUID(earthGUID)
 		if not earthUnit then
+			Debug(2, "Earth Shield target no longer in group, clearing name")
 			earthCount = 0
 			earthName = ""
 			self:Update()
 		end
 	end
-	if GetNumRaidMembers() > 0 and GetNumPartyMembers() > 0 then
+	if GetNumRaidMembers() > 0 or GetNumPartyMembers() > 0 then
+		Debug(2, "In a group")
 		if solo then
+			Debug(1, "Joined a group")
 			self:ApplySettings()
 		end
 		solo = false
 	else
+		Debug(2, "Not in a group")
 		if not solo then
+			Debug(1, "Left a group")
 			self:ApplySettings()
 		end
 		solo = true
 	end
 end
 
-function ShieldsUp:PARTY_LEADER_CHANGED()  onGroupChange("PARTY_LEADER_CHANGED")  end
-function ShieldsUp:PARTY_MEMBERS_CHANGED() onGroupChange("PARTY_MEMBERS_CHANGED") end
-function ShieldsUp:RAID_ROSTER_UPDATE()	   onGroupChange("RAID_ROSTER_UPDATE")    end
+function ShieldsUp:PARTY_LEADER_CHANGED()  return onGroupChange("PARTY_LEADER_CHANGED")  end
+function ShieldsUp:PARTY_MEMBERS_CHANGED() return onGroupChange("PARTY_MEMBERS_CHANGED") end
+function ShieldsUp:RAID_ROSTER_UPDATE()	   return onGroupChange("RAID_ROSTER_UPDATE")    end
 
 function ShieldsUp:ZONE_CHANGED_NEW_AREA()
 	Debug(2, "ZONE_CHANGED_NEW_AREA")
@@ -434,9 +441,9 @@ local function onGlyphChange(event)
 	end
 end
 
-function ShieldsUp:GLYPH_ADDED()   onGlyphChange("GLYPH_ADDED")   end
-function ShieldsUp:GLYPH_REMOVED() onGlyphChange("GLYPH_REMOVED") end
-function ShieldsUp:GLYPH_UPDATED() onGlyphChange("GLYPH_UPDATED") end
+function ShieldsUp:GLYPH_ADDED()   return onGlyphChange("GLYPH_ADDED")   end
+function ShieldsUp:GLYPH_REMOVED() return onGlyphChange("GLYPH_REMOVED") end
+function ShieldsUp:GLYPH_UPDATED() return onGlyphChange("GLYPH_UPDATED") end
 
 function ShieldsUp:Scan(buff, guid)
 	Debug(1, "Scanning for %s...", buff)
