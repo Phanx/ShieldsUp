@@ -9,7 +9,7 @@
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 
 ## Author: Phanx
-## X-Credits: Based on beSch by Infineon.
+## X-Credits: Inspired by Infineon's beSch
 ## X-Email: addons@phanx.net
 
 ## LoadManagers: AddonLoader
@@ -20,9 +20,13 @@
 ## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0, SharedMedia, tekKonfig
 ## X-Embeds: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibSink-2.0
 
-embeds.xml
-
-Locales\Locales.xml
+# Locales\deDE.lua
+# Locales\esES.lua
+# Locales\frFR.lua
+# Locales\koKR.lua
+# Locales\ruRU.lua
+# Locales\zhCN.lua
+# Locales\zhTW.lua
 
 Core.lua
-Config.lua
+Options.lua
