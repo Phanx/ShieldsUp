@@ -191,12 +191,73 @@ function ShieldsUp:PLAYER_LOGIN()
 
 	self:CHARACTER_POINTS_CHANGED()
 
-	if GetNumRaidMembers() > 0 or GetNumPartyMembers() > 0 then
+	if GetNumRaidMembers() > 0 then
 		Debug(2, "isInGroup = true")
 		isInGroup = true
+		local name, charges, duration, expires, mine, _
+		for i = 1, GetNumRaidMembers() do
+			name, _, _, charges, _, duration, expires, mine, _ = UnitAura("raid"..i, EARTH_SHIELD)
+			if name and mine then
+				earthCount = charges
+				earthGUID = UnitGUID("raid"..i)
+				earthName = UnitName("raid"..i)
+				earthUnit = "raid"..i
+				earthTime = expires - duration
+				break
+			end
+			name, _, _, charges, _, duration, expires, mine, _ = UnitAura("raid"..i.."pet", EARTH_SHIELD)
+			if name and mine then
+				earthCount = charges
+				earthGUID = UnitGUID("raid"..i.."pet")
+				earthName = UnitName("raid"..i.."pet")
+				earthUnit = "raid"..i.."pet"
+				earthTime = expires - duration
+				break
+			end
+		end
+	elseif GetNumPartyMembers() > 0 then
+		Debug(2, "isInGroup = true")
+		isInGroup = true
+		local name, charges, duration, expires, mine, _
+		for i = 1, GetNumPartyMembers() do
+			name, _, _, charges, _, duration, expires, mine, _ = UnitAura("party"..i, EARTH_SHIELD)
+			if name and mine then
+				earthCount = charges
+				earthGUID = UnitGUID("party"..i)
+				earthName = UnitName("party"..i)
+				earthUnit = "party"..i
+				earthTime = expires - duration
+				break
+			end
+			name, _, _, charges, _, duration, expires, mine, _ = UnitAura("party"..i.."pet", EARTH_SHIELD)
+			if name and mine then
+				earthCount = charges
+				earthGUID = UnitGUID("party"..i.."pet")
+				earthName = UnitName("party"..i.."pet")
+				earthUnit = "party"..i.."pet"
+				earthTime = expires - duration
+				break
+			end
+		end
 	else
 		Debug(2, "isInGroup = false")
 		isInGroup = false
+	end
+
+	if earthName ~= playerName then
+		local name, charges, _
+		
+		name, _, _, charges = UnitAura("player", WATER_SHIELD)
+		if name then
+			waterCount = charges
+			waterSpell = WATER_SHIELD
+		end
+		
+		name, _, _, charges = UnitAura("player", LIGHTNING_SHIELD)
+		if name then
+			waterCount = charges
+			waterSpell = LIGHTNING_SHIELD
+		end
 	end
 
 	self:ApplySettings()
