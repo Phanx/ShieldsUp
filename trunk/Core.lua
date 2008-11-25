@@ -10,7 +10,7 @@
 -- TO DO:
 -- Add automatic visibility states.
 
-if select(2, UnitClass("player")) ~= "SHAMAN" then return end
+if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn("ShieldsUp") end
 
 local ShieldsUp = CreateFrame("Frame", "ShieldsUp", UIParent)
 local SharedMedia
@@ -104,7 +104,7 @@ local function GetAuraCharges(unit, aura)
 end
 
 ShieldsUp.L = L
-ShieldsUp.debug = 5
+ShieldsUp.debug = 0
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, ...) end)
 ShieldsUp:RegisterEvent("ADDON_LOADED")
 
@@ -196,7 +196,7 @@ function ShieldsUp:PLAYER_LOGIN()
 		isInGroup = true
 		local name, charges, duration, expires, mine, _
 		for i = 1, GetNumRaidMembers() do
-			name, _, _, charges, _, duration, expires, mine, _ = UnitAura("raid"..i, EARTH_SHIELD)
+			name, _, _, charges, _, duration, expires, mine = UnitAura("raid"..i, EARTH_SHIELD)
 			if name and mine then
 				earthCount = charges
 				earthGUID = UnitGUID("raid"..i)
@@ -205,7 +205,7 @@ function ShieldsUp:PLAYER_LOGIN()
 				earthTime = expires - duration
 				break
 			end
-			name, _, _, charges, _, duration, expires, mine, _ = UnitAura("raid"..i.."pet", EARTH_SHIELD)
+			name, _, _, charges, _, duration, expires, mine = UnitAura("raid"..i.."pet", EARTH_SHIELD)
 			if name and mine then
 				earthCount = charges
 				earthGUID = UnitGUID("raid"..i.."pet")
@@ -220,7 +220,7 @@ function ShieldsUp:PLAYER_LOGIN()
 		isInGroup = true
 		local name, charges, duration, expires, mine, _
 		for i = 1, GetNumPartyMembers() do
-			name, _, _, charges, _, duration, expires, mine, _ = UnitAura("party"..i, EARTH_SHIELD)
+			name, _, _, charges, _, duration, expires, mine = UnitAura("party"..i, EARTH_SHIELD)
 			if name and mine then
 				earthCount = charges
 				earthGUID = UnitGUID("party"..i)
@@ -229,7 +229,7 @@ function ShieldsUp:PLAYER_LOGIN()
 				earthTime = expires - duration
 				break
 			end
-			name, _, _, charges, _, duration, expires, mine, _ = UnitAura("party"..i.."pet", EARTH_SHIELD)
+			name, _, _, charges, _, duration, expires, mine = UnitAura("party"..i.."pet", EARTH_SHIELD)
 			if name and mine then
 				earthCount = charges
 				earthGUID = UnitGUID("party"..i.."pet")
@@ -261,7 +261,6 @@ function ShieldsUp:PLAYER_LOGIN()
 	end
 
 	self:ApplySettings()
-	self:Update()
 
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	self:RegisterEvent("PARTY_LEADER_CHANGED")
@@ -305,7 +304,12 @@ do
 		end
 
 		if spell == WATER_SHIELD or spell == LIGHTNING_SHIELD then
-			waterSpell = spell
+			if spell ~= waterSpell then
+				waterSpell = spell
+				self:Update()
+			else
+				waterSpell = spell
+			end
 		elseif spell == EARTH_SHIELD then
 			earthTime = GetTime()
 			if target ~= earthName then
@@ -341,8 +345,11 @@ do
 
 		local update = false
 		if unit == earthUnit then
-			charges, mine = GetAuraCharges(unit, EARTH_SHIELD)
-			if charges < earthCount then
+			local charges, mine = GetAuraCharges(unit, EARTH_SHIELD)
+			Debug(4, "UNIT_AURA, charges = %d, earthCount = %d, mine = %s, earthOverwritten = %s, UnitIsVisible = %s", charges, earthCount, tostring(mine), tostring(earthOverwritten), tostring(UnitIsVisible(unit)))
+			if charges == 1 and not mine and not UnitIsVisible(unit) then
+				-- Do nothing!
+			elseif charges < earthCount then
 				if charges == 0 then
 					Debug(2, "Earth Shield faded from %s.", earthName)
 					self:Alert(EARTH_SHIELD)
@@ -354,17 +361,21 @@ do
 			elseif charges > earthCount then
 				Debug(3, "Earth Shield charges increased.")
 				if mine and not earthOverwritten then
+					-- This buff is mine, and it was mine before
 					Debug(2, "I refreshed Earth Shield on %s.", earthName)
 					earthCount = charges
 				elseif mine and earthOverwritten then
+					-- The buff is mine, and it was not mine before
 					Debug(2, "I overwrote someone's Earth Shield on %s.", earthName)
 					earthCount = charges
 					earthOverwritten = false
 				elseif not mine and not earthOverwritten then
+					-- This buff is not mine, and it was mine before
 					Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
 					earthCount = charges
 					earthOverwritten = true
 				elseif not mine and earthOverwritten then
+					-- This buff is not mine, and it was not mine before
 					Debug(2, "Someone refreshed their Earth Shield on %s.", earthName)
 					earthCount = charges
 				end
@@ -380,6 +391,8 @@ do
 					earthOverwritten = true
 					update = true
 				end
+			else
+				Debug(4, "Earth Shield charges did not change from zero.")
 			end
 		end
 
@@ -615,4 +628,6 @@ function ShieldsUp:ApplySettings()
 	else
 		self.nameText:Hide()
 	end
+
+	self:Update()
 end
