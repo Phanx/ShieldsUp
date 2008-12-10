@@ -29,4 +29,4 @@
 # Locales\zhTW.lua
 
 Core.lua
-# Options.lua
+Options.lua

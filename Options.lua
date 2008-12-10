@@ -27,8 +27,7 @@ local CreateSlider = LibStub("tekKonfig-Slider").new
 
 local CreatePanel
 do
-	local panelBackdrop = {
-	}
+	local panelBackdrop = GameTooltip:GetBackdrop()
 	function CreatePanel(parent, width, height, ...)
 		local f = CreateFrame("Frame", nil, parent)
 		
@@ -36,8 +35,8 @@ do
 		f:SetBackdropColor(0.2, 0.2, 0.2, 0.5)
 		f:SetBackdropBorderColor(0.8, 0.8, 0.8, 0.5)
 
-		if width then f:SetWidth(width) end
-		if height then f:SetHeight(height) end
+		f:SetWidth(width or 1)
+		f:SetHeight(height or 1)
 		if select(1, ...) then f:SetPoint(...) end
 
 		return f
@@ -74,8 +73,10 @@ generaloptions:SetScript("OnShow", function(f)
 	--	Basic settings
 	--
 
-	local x, xvalue, xcontainer = CreateSlider(f, L["Horizontal Position"], 0, floor(screenwidth / 10) / 2 * 10, "TOPLEFT", subtitle, "BOTTOMLEFT", -2, -8)
+	local x, xvalue, xcontainer = CreateSlider(f, L["Horizontal Position"], floor(screenwidth / 10) / 2 * -10, floor(screenwidth / 10) / 2 * 10)
 	x.tiptext = L["Set the horizontal distance from the center of the screen."]
+	xcontainer:SetPoint("TOPLEFT", subtitle, "BOTTOMLEFT", -2, -8)
+	xcontainer:SetPoint("TOPRIGHT", subtitle, "BOTTOM", -8, -8)
 	x:SetValueStep(1)
 	x:SetValue(db.x or 0)
 	x:EnableMouseWheel(true)
@@ -86,8 +87,10 @@ generaloptions:SetScript("OnShow", function(f)
 		ShieldsUp:ApplySettings()
 	end)
 
-	local y, yvalue, ycontainer = CreateSlider(f, L["Vertical Position"], 0, floor(screenheight / 10) / 2 * 10, "TOPLEFT", xcontainer, "BOTTOMLEFT", 0, -8)
+	local y, yvalue, ycontainer = CreateSlider(f, L["Vertical Position"], floor(screenheight / 10) / 2 * -10, floor(screenheight / 10) / 2 * 10)
 	y.tiptext = L["Set the vertical distance from the center of the screen."]
+	ycontainer:SetPoint("TOPLEFT", xcontainer, "BOTTOMLEFT", 0, -8)
+	ycontainer:SetPoint("TOPRIGHT", xcontainer, "BOTTOMRIGHT", 0, -8)
 	y:SetValueStep(1)
 	y:SetValue(db.y or -150)
 	y:EnableMouseWheel(true)
@@ -98,8 +101,10 @@ generaloptions:SetScript("OnShow", function(f)
 		ShieldsUp:ApplySettings()
 	end)
 
-	local h, hvalue, hcontainer = CreateSlider(f, L["Horizontal Padding"], 0, floor(screenwidth / 10) / 2 * 10, "TOPLEFT", ycontainer, "BOTTOMLEFT", 0, -8)
+	local h, hvalue, hcontainer = CreateSlider(f, L["Horizontal Padding"], 0, floor(screenwidth / 10) / 2 * 10)
 	h.tiptext = L["Set the horizontal space between display elements."]
+	hcontainer:SetPoint("TOPLEFT", ycontainer, "BOTTOMLEFT", 0, -16)
+	hcontainer:SetPoint("TOPRIGHT", ycontainer, "BOTTOMRIGHT", 0, -16)
 	h:SetValueStep(1)
 	h:SetValue(db.h or 0)
 	h:EnableMouseWheel(true)
@@ -110,8 +115,10 @@ generaloptions:SetScript("OnShow", function(f)
 		ShieldsUp:ApplySettings()
 	end)
 
-	local v, vvalue, vcontainer = CreateSlider(f, L["Horizontal Padding"], 0, floor(screenwidth / 10) / 2 * 10, "TOPLEFT", ycontainer, "BOTTOMLEFT", 0, -8)
+	local v, vvalue, vcontainer = CreateSlider(f, L["Vertical Padding"], 0, floor(screenwidth / 10) / 2 * 10)
 	v.tiptext = L["Set the vertical space between display elements."]
+	vcontainer:SetPoint("TOPLEFT", hcontainer, "BOTTOMLEFT", 0, -8)
+	vcontainer:SetPoint("TOPRIGHT", hcontainer, "BOTTOMRIGHT", 0, -8)
 	v:SetValueStep(1)
 	v:SetValue(db.v or 0)
 	v:EnableMouseWheel(true)
@@ -126,8 +133,10 @@ generaloptions:SetScript("OnShow", function(f)
 	--	Font settings
 	--
 
-	local font, fontvalue, fontcontainer = CreateDropdown(f, L["Text Typeface"], "TOPLEFT", subtitle, "BOTTOM", 2, -8)
+	local font, fontvalue, fontcontainer = CreateDropdown(f, L["Text Typeface"])
 	font.tiptext = L["Select a font face."]
+	fontcontainer:SetPoint("TOPLEFT", subtitle, "BOTTOM", 8, -8)
+	fontcontainer:SetPoint("TOPRIGHT", subtitle, "BOTTOMRIGHT", 2, -8)
 	fontvalue:SetText(db.font.face or "Friz Quadrata TT")
 	do
 		local function OnClick(self)
@@ -139,7 +148,7 @@ generaloptions:SetScript("OnShow", function(f)
 			local selected = UIDropDownMenu_GetSelectedValue(font) or fontvalue:GetText()
 			local info = UIDropDownMenu_CreateInfo()
 
-			for name in ipairs(ShieldsUp.fonts) do
+			for i, name in ipairs(ShieldsUp.fonts) do
 				info.text = name
 				info.value = name
 				info.func = OnClick
@@ -163,7 +172,7 @@ generaloptions:SetScript("OnShow", function(f)
 			local selected = outlines[UIDropDownMenu_GetSelectedValue(outline)] or outlinevalue:GetText()
 			local info = UIDropDownMenu_CreateInfo()
 
-			for value, name in ipairs(ShieldsUp.outlines) do
+			for value, name in ipairs(outlines) do
 				info.text = name
 				info.value = value
 				info.func = OnClick
@@ -173,7 +182,7 @@ generaloptions:SetScript("OnShow", function(f)
 		end)
 	end
 
-	local shadow = CreateCheckbox(f, L["Text Shadow"], "TOPLEFT", outlinecontainer, "BOTTOMLEFT", 0, -8)
+	local shadow = CreateCheckbox(f, nil, L["Text Shadow"], "TOPLEFT", outlinecontainer, "BOTTOMLEFT", 0, -8)
 	shadow.tiptext = L["Toggle the drop shadow effect."]
 	shadow:SetChecked(db.font.shadow)
 	shadow:SetScript("OnClick", function(self)
@@ -206,7 +215,7 @@ generaloptions:SetScript("OnShow", function(f)
 
 	checksound = shadow:GetScript("OnClick")
 
-	self:SetScript("OnShow", nil)
+	f:SetScript("OnShow", nil)
 end)
 
 InterfaceOptions_AddCategory(generaloptions)
