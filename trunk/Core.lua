@@ -36,7 +36,7 @@ local EARTH_SHIELD = GetSpellInfo(32594)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 local WATER_SHIELD = GetSpellInfo(33736)
 
-local L = setmetatable(SHIELDSUP_LOCALE or {}, { __index = function(t, k) rawset(t, k, k) return k end })
+local L = setmetatable(SHIELDSUP_STRINGS or {}, { __index = function(t, k) rawset(t, k, k) return k end })
 L["Earth Shield"] = EARTH_SHIELD
 L["Lightning Shield"] = LIGHTNING_SHIELD
 L["Water Shield"] = WATER_SHIELD
@@ -110,6 +110,10 @@ ShieldsUp:RegisterEvent("ADDON_LOADED")
 
 function ShieldsUp:ADDON_LOADED(addon)
 	if addon ~= "ShieldsUp" then return end
+
+	if SHIELDSUP_STRINGS then
+		SHIELDSUP_STRINGS = nil
+	end
 
 	if not ShieldsUpDB then
 		ShieldsUpDB = defaults
@@ -598,7 +602,7 @@ function ShieldsUp:ApplySettings()
 	self.waterText:SetShadowOffset(shadow, -shadow)
 	self.waterText:ClearAllPoints()
 	if hasEarthShield and isInGroup then
-		self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -db.h / 2, 0)
+		self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -db.padh / 2, 0)
 	else
 		self.waterText:SetPoint("TOP", self, "TOP", 0, 0)
 	end
@@ -609,7 +613,7 @@ function ShieldsUp:ApplySettings()
 	self.earthText:SetFont(face, db.font.large, outline)
 	self.earthText:SetShadowOffset(0, 0)
 	self.earthText:SetShadowOffset(shadow, -shadow)
-	self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", db.h / 2, 0)
+	self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", db.padh / 2, 0)
 	if hasEarthShield and isInGroup then
 		self.earthText:Show()
 	else
@@ -622,7 +626,7 @@ function ShieldsUp:ApplySettings()
 	self.nameText:SetFont(face, db.font.small, outline)
 	self.nameText:SetShadowOffset(0, 0)
 	self.nameText:SetShadowOffset(shadow, -shadow)
-	self.nameText:SetPoint("BOTTOM", self, "TOP", 0, db.v)
+	self.nameText:SetPoint("BOTTOM", self, "TOP", 0, db.padv)
 	if hasEarthShield and isInGroup then
 		self.nameText:Show()
 	else
