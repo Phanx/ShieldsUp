@@ -30,7 +30,7 @@ do
 	local panelBackdrop = GameTooltip:GetBackdrop()
 	function CreatePanel(parent, width, height, ...)
 		local f = CreateFrame("Frame", nil, parent)
-		
+
 		f:SetBackdrop(panelBackdrop)
 		f:SetBackdropColor(0.2, 0.2, 0.2, 0.5)
 		f:SetBackdropBorderColor(0.8, 0.8, 0.8, 0.5)
@@ -50,6 +50,66 @@ local function Slider_OnMouseWheel(self, delta)
 		self:SetValue(min(self:GetValue() + step, select(2, self:GetMinMaxValues())))
 	else
 		self:SetValue(max(self:GetValue() + step, select(1, self:GetMinMaxValues())))
+	end
+end
+
+local CreateColorSelector
+do
+	local function SetColor(self, ...)
+		self:GetNormalTexture():SetVertexColor(...)
+		self.value = { ... }
+	end
+
+	local function OnClick(self)
+		if ColorPickerFrame:IsShown() then
+			ColorPickerFrame:Hide()
+		else
+			self.r, self.g, self.b = self.value[1], self.value[2], self.value[3]
+
+			UIDropDownMenuButton_OpenColorPicker(self)
+			ColorPickerFrame:SetFrameStrata("TOOLTIP")
+			ColorPickerFrame:Raise()
+		end
+	end
+
+	local function OnEnter(self)
+		local color = NORMAL_FONT_COLOR
+		self.bg:SetVertexColor(color.r, color.g, color.b)
+
+		if self.tiptext then
+			GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+			GameTooltip:SetText(self.tiptext)
+			GameTooltip:Show()
+		end
+	end
+
+	local function OnLeave(self)
+		local color = HIGHLIGHT_FONT_COLOR
+		self.bg:SetVertexColor(color.r, color.g, color.b)
+
+		GameTooltip:Hide()
+	end
+
+	function CreateColorSelector(parent, label)
+		local f = CreateFrame("Button", nil, parent)
+		f:SetWidth(16)
+		f:SetHeight(16)
+		f:SetNormalTexture("Interface\\ChatFrame\\ChatFrameColorSwatch")
+
+		f.bg = f:CreateTexture(nil, "BACKGROUND")
+		f.bg:SetWidth(14)
+		f.bg:SetHeight(14)
+		f.bg:SetPoint("CENTER")
+
+		f.SetColor = ColorSelector_SetColor
+		f.swatchFunc = function() f:SetColor(ColorPickerFrame:GetColorRGB()) end
+		f.cancelFunc = function() f:SetColor(f.r, f.g, f.b) end
+
+		f:SetScript("OnClick", OnClick)
+		f:SetScript("OnEnter", OnEnter)
+		f:SetScript("OnLeave", OnLeave)
+
+		return f
 	end
 end
 
@@ -139,12 +199,12 @@ generaloptions:SetScript("OnShow", function(f)
 	fontcontainer:SetPoint("TOPRIGHT", subtitle, "BOTTOMRIGHT", 2, -8)
 	fontvalue:SetText(db.font.face or "Friz Quadrata TT")
 	do
-		local function OnClick(self)
-			UIDropDownMenu_SetSelectedValue(font, self.value)
+		local function FontDropdown_OnClick(self)
 			fontvalue:SetText(self.value)
+			UIDropDownMenu_SetSelectedValue(font, self.value)
 			ShieldsUp:ApplySettings()
 		end
-		UIDropDownMenu_Initialize(font, function()
+		local function FontDropdown_Initialize()
 			local selected = UIDropDownMenu_GetSelectedValue(font) or fontvalue:GetText()
 			local info = UIDropDownMenu_CreateInfo()
 
@@ -155,7 +215,9 @@ generaloptions:SetScript("OnShow", function(f)
 				info.checked = name == selected
 				UIDropDownMenu_AddButton(info)
 			end
-		end)
+		end
+		UIDropDownMenu_Initialize(font, FontDropdown_Initialize)
+		UIDropDownMenu_SetSelectedValue(font, db.font.face or "Friz Quadrata TT")
 	end
 
 	local outline, outlinevalue, outlinecontainer = CreateDropdown(f, L["Text Outline"], "TOPLEFT", fontcontainer, "BOTTOMLEFT", 0, -8)
@@ -195,7 +257,10 @@ generaloptions:SetScript("OnShow", function(f)
 	--	Color settings
 	--
 
-	local earth
+	local earth = CreateColorSelector(f, L["Earth Shield"])
+	earth.tiptext = L["Set the color for the Earth Shield charge counter"]
+	earth:SetValue(unpack(db.color.earth))
+	earth:SetPoint("TOPLEFT", vcontainer, 0, -24)
 
 	local lightning
 

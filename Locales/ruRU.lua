@@ -6,7 +6,7 @@
 
 if select(2, UnitClass("player")) ~= "SHAMAN" or GetLocale() ~= "ruRU" then return end
 
-SHIELDSUP_LOCALE = {
+SHIELDSUP_STRINGS = {
 	["%s faded from %s!"] = "%s спал с %s!",
 	["YOU"] = "ВАС",
 	["%s faded!"] = "%s спал!", -- %s = localized Water Shield.
@@ -82,5 +82,5 @@ ShieldsUp дает шаману возможность отслеживать с
 |cffffcc00Обратите внимание, ShieldsUp в данный момент на этапе бета-тестирования|r и может частично или полностью не функционировать; работа еще ведется!
 
 |cffffcc00Имена|r
-ShieldsUp написан Bherasha @ US Sargeras Орда, и основнан на beSch от Infineon.
+ShieldsUp написан Bherasha @ US Blackrock Орда, и основнан на beSch от Infineon.
 ]]
