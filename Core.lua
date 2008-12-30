@@ -42,8 +42,8 @@ L["Lightning Shield"] = LIGHTNING_SHIELD
 L["Water Shield"] = WATER_SHIELD
 
 local defaults = {
-	x = 0,
-	y = -150,
+	posx = 0,
+	posy = -150,
 	padh = 5,
 	padv = 0,
 	alpha = 1,
@@ -105,6 +105,7 @@ end
 
 ShieldsUp.L = L
 ShieldsUp.debug = 0
+ShieldsUp.defaults = defaults
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, ...) end)
 ShieldsUp:RegisterEvent("ADDON_LOADED")
 
@@ -155,23 +156,29 @@ function ShieldsUp:PLAYER_LOGIN()
 
 		self.fonts = {}
 		for i, v in pairs(SharedMedia:List("font")) do
-			self.fonts[v] = v
+			tinsert(self.fonts, v)
 		end
+		table.sort(self.fonts)
 
 		self.sounds = {}
 		for i, v in pairs(SharedMedia:List("sound")) do
-			self.sounds[v] = v
+			tinsert(self.sounds, v)
 		end
+		table.sort(self.sounds)
 
 		function ShieldsUp:SharedMedia_Registered(mediatype)
 			if mediatype == "font" then
+				wipe(self.fonts)
 				for i, v in pairs(SharedMedia:List("font")) do
-					self.fonts[v] = v
+					tinsert(self.fonts, v)
 				end
+				table.sort(self.fonts)
 			elseif mediatype == "sound" then
+				wipe(self.sounds)
 				for i, v in pairs(SharedMedia:List("sound")) do
-					self.sounds[v] = v
+					tinsert(self.sounds, v)
 				end
+				table.sort(self.sounds)
 			end
 		end
 
@@ -585,7 +592,7 @@ end
 function ShieldsUp:ApplySettings()
 	Debug(1, "ApplySettings")
 	
-	self:SetPoint("CENTER", UIParent, "CENTER", db.x, db.y)
+	self:SetPoint("CENTER", UIParent, "CENTER", db.posx, db.posy)
 	self:SetAlpha(db.alpha)
 	self:SetHeight(1)
 	self:SetWidth(1)
