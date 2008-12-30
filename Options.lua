@@ -22,7 +22,7 @@ do
 		frame:SetFrameLevel(parent:GetFrameLevel() + 1)
 
 		frame:SetBackdrop(panelBackdrop)
-		frame:SetBackdropColor(0.2, 0.2, 0.2, 0.5)
+		frame:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
 		frame:SetBackdropBorderColor(0.8, 0.8, 0.8, 0.5)
 
 		frame:SetWidth(width or 1)
@@ -504,7 +504,6 @@ panel:SetScript("OnShow", function(self)
 	colors:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", -4, -32)
 	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 4, -16 - posx:GetHeight() - 24 - posy:GetHeight() - 24 - padh:GetHeight() - 24 - padv:GetHeight() - 24 - padv.label:GetHeight() - 32)
 	colors:SetHeight(8 + 19 + 8 + 19 + 8 + 19 + 8)
---	colors:SetAlpha(0.5)
 
 	colors.label = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	colors.label:SetPoint("BOTTOMLEFT", colors, "TOPLEFT", 8, 0)
@@ -523,8 +522,6 @@ panel:SetScript("OnShow", function(self)
 	end
 	earth:SetPoint("TOPLEFT", colors, 8, -8)
 	earth:SetPoint("TOPRIGHT", colors, "TOP", -8, -8)
---	earth:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", 0, -32)
---	earth:SetPoint("TOPRIGHT", padv, "BOTTOMRIGHT", 0, -32)
 	earth:SetColor(unpack(db.color.earth))
 
 	-------------------------------------------------------------------
@@ -632,6 +629,289 @@ panel:SetScript("OnShow", function(self)
 end)
 
 InterfaceOptions_AddCategory(panel)
+
+------------------------------------------------------------------------
+
+local panel2 = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
+panel2.name = ShieldsUp.L["Alerts"]
+panel2.parent = panel.name
+panel2:Hide()
+panel2:SetScript("OnShow", function(self)
+	local L = ShieldsUp.L
+	local db = ShieldsUpDB
+	local sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+
+	-------------------------------------------------------------------
+
+	local title = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 16, -16)
+	title:SetText(self.name)
+
+	local notes = self:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	notes:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+	notes:SetPoint("RIGHT", self, -32, 0)
+	notes:SetHeight(32)
+	notes:SetJustifyH("LEFT")
+	notes:SetJustifyV("TOP")
+	notes:SetNonSpaceWrap(true)
+	notes:SetText(L["Use these settings to configure how ShieldsUp alerts you when a shield expires or is removed."])
+
+	-------------------------------------------------------------------
+
+	local textlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	textlabel:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -16)
+	textlabel:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -16)
+	textlabel:SetJustifyH("LEFT")
+	textlabel:SetText(L["Text Alerts"])
+
+	local textpanel = CreatePanel(self)
+	textpanel:SetPoint("TOPLEFT", textlabel, "BOTTOMLEFT", -4, 0)
+	textpanel:SetPoint("TOPRIGHT", textlabel, "BOTTOMRIGHT", 4, 0)
+
+	-------------------------------------------------------------------
+
+	local earthtext = CreateCheckbox(self, L["Earth Shield"])
+	earthtext.tiptext = L["Show a text message when %s expires."]:format(L["Earth Shield"])
+	earthtext:SetPoint("TOPLEFT", textpanel, 8, -8)
+	earthtext:SetChecked(db.alert.earth.text)
+	earthtext:SetScript("OnClick", function()
+		local checked = self:GetChecked()
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.alert.earth.text = checked and true or false
+	end)
+
+	-------------------------------------------------------------------
+
+	local watertext = CreateCheckbox(self, L["Water Shield"])
+	watertext.tiptext = L["Show a text message when %s expires."]:format(L["Water Shield"])
+	watertext:SetPoint("TOPLEFT", textpanel, "TOP", 8, -8)
+	watertext:SetChecked(db.alert.water.text)
+	watertext:SetScript("OnClick", function()
+		local checked = self:GetChecked()
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.alert.water.text = checked and true or false
+	end)
+
+	-------------------------------------------------------------------
+
+	textpanel:SetHeight(8 + earthtext:GetHeight() + 8)
+
+	-------------------------------------------------------------------
+
+	local output, scrollarea, sticky
+	if ShieldsUp.Pour then
+		output = CreateDropdown(self, sinkOptions.name)
+		output.tiptext = sinkOptions.desc
+		output:SetPoint("TOPLEFT", earthtext, "BOTTOMLEFT", 0, -8)
+		output:SetPoint("TOPRIGHT", watertext, "BOTTOMLEFT", -16, -8)
+		output.value:SetText(db.alert.output.sink20OutputSink or L["Raid Warning"])
+		do
+			local function OnClick(self)
+				sinkOptions.set(self.value, true)
+
+				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+				if sinkOptions.args.ScrollArea.disabled then
+					scrollarea:Hide()
+				else
+					scrollarea:Show()
+				end
+				if sinkOptions.args.Sticky.disabled then
+					sticky:Hide()
+					textpanel:SetHeight(8 + earthtext:GetHeight() + 8 + output:GetHeight() + 8)
+				else
+					sticky:Show()
+					textpanel:SetHeight(8 + earthtext:GetHeight() + 8 + output:GetHeight() + 8 + sticky:GetHeight() + 8)
+				end
+
+				output.value:SetText(self.text)
+				UIDropDownMenu_SetSelectedValue(output.dropdown, self.value)
+			end
+
+			UIDropDownMenu_Initialize(output.dropdown, function()
+				local selected = db.alert.output.sink20OutputSink or output.value:GetText()
+				local info = UIDropDownMenu_CreateInfo()
+
+				for k, v in pairs(sinkOptions.args) do
+					if k ~= "Default" and v.isRadio and not (v.hidden and v.hidden()) then
+						info.text = v.name
+						info.value = k
+						info.func = OnClick
+						info.checked = v.name == selected
+						UIDropDownMenu_AddButton(info)
+					end
+				end
+			end)
+
+			UIDropDownMenu_SetSelectedValue(output.dropdown, db.alert.output.sink20OutputSink or "RaidWarning")
+		end
+
+		--------------------------------------------------------------
+
+		scrollarea = CreateDropdown(self, sinkOptions.args.ScrollArea.name)
+		scrollarea.tiptext = sinkOptions.args.ScrollArea.desc
+		scrollarea:SetPoint("TOPLEFT", watertext, "BOTTOMLEFT", 0, -8)
+		scrollarea:SetPoint("TOPRIGHT", textpanel, -8, -8 - watertext:GetHeight() - 8)
+		scrollarea.value:SetText(db.alert.output.sink20ScrollArea)
+		do
+			local function OnClick(self)
+				sinkOptions.set(self.value, true)
+
+				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+
+				scrollarea.value:SetText(self.text)
+				UIDropDownMenu_SetSelectedValue(scrollarea.dropdown, self.value)
+			end
+
+			UIDropDownMenu_Initialize(scrollarea.dropdown, function()
+				local selected = db.alert.output.sink20ScrollArea or scrollarea.value:GetText()
+				local info = UIDropDownMenu_CreateInfo()
+
+				for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
+					info.text = v
+					info.value = v
+					info.func = OnClick
+					info.checked = v == selected
+					UIDropDownMenu_AddButton(info)
+				end
+			end)
+
+			UIDropDownMenu_SetSelectedValue(scrollarea.dropdown, db.alert.output.sink20ScrollArea)
+		end
+
+		--------------------------------------------------------------
+
+		sticky = CreateCheckbox(self, sinkOptions.args.Sticky.name)
+		sticky.tiptext = sinkOptions.args.Sticky.desc
+		sticky:SetPoint("TOPLEFT", scrollarea, "BOTTOMLEFT", 0, -8)
+		sticky:SetChecked(db.alert.output.sink20Sticky)
+		sticky:SetScript("OnClick", function(self)
+			local checked = self:GetChecked()
+			PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+			db.alert.output.sink20Sticky = checked and true or false
+		end)
+
+		--------------------------------------------------------------
+--[[
+		if sinkOptions.args.ScrollArea.disabled then
+			scrollarea:Hide()
+		end
+		if sinkOptions.args.Sticky.disabled then
+			sticky:Hide()
+		end
+]]
+		textpanel:SetHeight(8 + earthtext:GetHeight() + 8 + output:GetHeight() + 8 + (sticky:IsShown() and (sticky:GetHeight() + 8) or 0))
+	end
+
+	-------------------------------------------------------------------
+
+	local soundlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	soundlabel:SetPoint("TOPLEFT", textpanel, "BOTTOMLEFT", 0, -32)
+	soundlabel:SetPoint("TOPRIGHT", textpanel, "BOTTOMRIGHT", 0, -32)
+	soundlabel:SetJustifyH("LEFT")
+	soundlabel:SetText(L["Sound Alerts"])
+
+	local soundpanel = CreatePanel(self)
+	soundpanel:SetPoint("TOPLEFT", soundlabel, "BOTTOMLEFT", -4, 0)
+	soundpanel:SetPoint("TOPRIGHT", soundlabel, "BOTTOMRIGHT", 4, 0)
+
+	-------------------------------------------------------------------
+
+	local earthsound = CreateCheckbox(self, L["Earth Shield"])
+	earthsound.tiptext = L["Play a sound when %s expires."]:format(L["Earth Shield"])
+	earthsound:SetPoint("TOPLEFT", soundpanel, 8, -8)
+	earthsound:SetChecked(db.alert.earth.sound)
+	earthsound:SetScript("OnClick", function()
+		local checked = self:GetChecked()
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.alert.earth.sound = checked and true or false
+	end)
+
+	-------------------------------------------------------------------
+
+	local watersound = CreateCheckbox(self, L["Water Shield"])
+	watersound.tiptext = L["Play a sound when when %s expires."]:format(L["Water Shield"])
+	watersound:SetPoint("TOPLEFT", soundpanel, "TOP", 8, -8)
+	watersound:SetChecked(db.alert.water.sound)
+	watersound:SetScript("OnClick", function()
+		local checked = self:GetChecked()
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.alert.water.sound = checked and true or false
+	end)
+
+	-------------------------------------------------------------------
+
+	local esoundfile = CreateDropdown(self, L["Sound File"])
+	esoundfile.tiptext = L["Select the sound file to play when %s expires."]:format(L["Earth Shield"])
+	esoundfile:SetPoint("TOPLEFT", earthsound, "BOTTOMLEFT", 0, -8)
+	esoundfile:SetPoint("TOPRIGHT", watersound, "BOTTOMLEFT", -16, -8)
+	esoundfile.value:SetText(db.alert.earth.soundFile)
+	do
+		local function OnClick(self)
+			db.alert.earth.soundFile = self.value
+			esoundfile.value:SetText(self.text)
+			UIDropDownMenu_SetSelectedValue(esoundfile.dropdown, self.value)
+		end
+
+		UIDropDownMenu_Initialize(esoundfile.dropdown, function()
+			local selected = UIDropDownMenu_GetSelectedValue(font.dropdown) or esoundfile.value:GetText()
+			local info = UIDropDownMenu_CreateInfo()
+
+			for i, sound in ipairs(ShieldsUp.sounds) do
+				info.text = sound
+				info.value = sound
+				info.func = OnClick
+				info.checked = sound == selected
+				UIDropDownMenu_AddButton(info)
+			end
+		end)
+
+		UIDropDownMenu_SetSelectedValue(esoundfile.dropdown, db.alert.earth.soundFile)
+	end
+
+	-------------------------------------------------------------------
+
+	local wsoundfile = CreateDropdown(self, L["Sound File"])
+	wsoundfile.tiptext = L["Select the sound file to play when %s expires."]:format(L["Water Shield"])
+	wsoundfile.tiptext = L["Select
+	wsoundfile:SetPoint("TOPLEFT", earthsound, "BOTTOMLEFT", 0, -8)
+	wsoundfile:SetPoint("TOPRIGHT", watersound, "BOTTOMLEFT", -16, -8)
+	wsoundfile.value:SetText(db.alert.water.soundFile)
+	do
+		local function OnClick(self)
+			db.alert.water.soundFile = self.value
+			wsoundfile.value:SetText(self.text)
+			UIDropDownMenu_SetSelectedValue(wsoundfile.dropdown, self.value)
+		end
+
+		UIDropDownMenu_Initialize(wsoundfile.dropdown, function()
+			local selected = UIDropDownMenu_GetSelectedValue(font.dropdown) or wsoundfile.value:GetText()
+			local info = UIDropDownMenu_CreateInfo()
+
+			for i, sound in ipairs(ShieldsUp.sounds) do
+				info.text = sound
+				info.value = sound
+				info.func = OnClick
+				info.checked = sound == selected
+				UIDropDownMenu_AddButton(info)
+			end
+		end)
+
+		UIDropDownMenu_SetSelectedValue(wsoundfile.dropdown, db.alert.water.soundFile)
+	end
+
+	-------------------------------------------------------------------
+
+	soundpanel:SetHeight(8 + earthsound:GetHeight() + 8)
+
+	-------------------------------------------------------------------
+
+	self.refresh = function()
+	end
+
+	self:SetScript("OnShow", nil)
+end)
+
+InterfaceOptions_AddCategory(panel2)
 
 ------------------------------------------------------------------------
 
