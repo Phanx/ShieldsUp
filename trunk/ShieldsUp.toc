@@ -19,6 +19,8 @@
 ## OptionalDeps: LibSharedMedia-3.0, LibSink-2.0
 ## X-Embeds: LibSharedMedia-3.0, LibSink-2.0
 
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
 Libs\LibSink-2.0\LibSink-2.0.lua
 
