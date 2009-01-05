@@ -1,5 +1,5 @@
 ## Interface: 30000
-## Version: wowi:revision-beta
+## Version: 3.0.3.wowi:revision-beta
 
 ## Title: ShieldsUp
 ## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
