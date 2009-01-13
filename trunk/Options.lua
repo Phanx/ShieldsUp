@@ -1,4 +1,4 @@
---[[
+--[[--------------------------------------------------------------------
 	ShieldsUp
 	Simple shaman shield monitor.
 	by Phanx < addons@phanx.net >
@@ -7,7 +7,7 @@
 	See included README for license terms and additional information.
 
 	This file adds GUI configuration for ShieldsUp via the Blizzard Interface Options frame.
---]]
+----------------------------------------------------------------------]]
 
 if not ShieldsUp then return end
 
