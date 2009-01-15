@@ -194,7 +194,7 @@ do
 		frame:SetScript("OnLeave", OnLeave)
 		frame:SetScript("OnHide", OnHide)
 
-		local dropdown = CreateFrame("Frame", "ShieldsUp" .. name:gsub(" %a", string.upper):gsub(" ", "") .. "Dropdown", frame)
+		local dropdown = CreateFrame("Frame", "ShieldsUpDropdown" .. GetTime() * 1000, frame)
 		dropdown:SetPoint("TOPLEFT", frame, -16, -14)
 		dropdown:SetPoint("TOPRIGHT", frame, 16, -14)
 		dropdown:SetHeight(32)
@@ -245,11 +245,18 @@ do
 		button:GetHighlightTexture():SetBlendMode("ADD")
 
 		frame.dropdown = dropdown
+		frame.button = button
 		frame.label = label
 		frame.value = value
 
 		return frame
 	end
+end
+
+------------------------------------------------------------------------
+
+local CreateScrollingDropdown
+do
 end
 
 ------------------------------------------------------------------------
@@ -698,10 +705,10 @@ panel2:SetScript("OnShow", function(self)
 	esoundfile.value:SetText(db.alert.earth.soundFile)
 	do
 		local function OnClick(self)
+			PlaySoundFile(LibStub:GetLibrary("LibSharedMedia-3.0"):Fetch("sound", self.value))
 			db.alert.earth.soundFile = self.value
 			esoundfile.value:SetText(self.text)
 			UIDropDownMenu_SetSelectedValue(esoundfile.dropdown, self.value)
-			PlaySoundFile(LibStub:GetLibrary("LibSharedMedia-3.0"):Fetch("sound", self.text))
 		end
 
 		UIDropDownMenu_Initialize(esoundfile.dropdown, function()
@@ -769,10 +776,10 @@ panel2:SetScript("OnShow", function(self)
 	wsoundfile.value:SetText(db.alert.water.soundFile)
 	do
 		local function OnClick(self)
+			PlaySoundFile(LibStub:GetLibrary("LibSharedMedia-3.0"):Fetch("sound", self.value))
 			db.alert.water.soundFile = self.value
 			wsoundfile.value:SetText(self.text)
 			UIDropDownMenu_SetSelectedValue(wsoundfile.dropdown, self.value)
-			PlaySoundFile(LibStub:GetLibrary("LibSharedMedia-3.0"):Fetch("sound", self.text))
 		end
 
 		UIDropDownMenu_Initialize(wsoundfile.dropdown, function()
@@ -796,7 +803,7 @@ panel2:SetScript("OnShow", function(self)
 	wpanel:SetHeight(8 + wtext:GetHeight() + 8 + wsound:GetHeight() + 8)
 
 	-------------------------------------------------------------------
-	
+
 	local olabel, opanel, output, scrollarea, sticky
 	if ShieldsUp.Pour then
 		sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
@@ -810,7 +817,7 @@ panel2:SetScript("OnShow", function(self)
 		opanel = CreatePanel(self)
 		opanel:SetPoint("TOPLEFT", olabel, "BOTTOMLEFT", -4, 0)
 		opanel:SetPoint("TOPRIGHT", olabel, "BOTTOMRIGHT", 4, 0)
-		 
+
 		output = CreateDropdown(self, sinkOptions.name)
 		output.tiptext = sinkOptions.desc
 		output:SetPoint("TOPLEFT", opanel, 8, -8)
@@ -828,10 +835,10 @@ panel2:SetScript("OnShow", function(self)
 				end
 				if sinkOptions.args.Sticky.disabled then
 					sticky:Hide()
-					textpanel:SetHeight(8 + earthtext:GetHeight() + 8 + output:GetHeight() + 8)
+					opanel:SetHeight(8 + output:GetHeight() + 8)
 				else
 					sticky:Show()
-					textpanel:SetHeight(8 + earthtext:GetHeight() + 8 + output:GetHeight() + 8 + sticky:GetHeight() + 8)
+					opanel:SetHeight(8 + output:GetHeight() + 8 + sticky:GetHeight() + 8)
 				end
 
 				output.value:SetText(self.text)
