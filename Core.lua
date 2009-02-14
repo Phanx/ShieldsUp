@@ -117,21 +117,20 @@ function ShieldsUp:ADDON_LOADED(addon)
 	end
 
 	if not ShieldsUpDB then
-		ShieldsUpDB = defaults
-	else
-		local function safecopy(src, dst)
-			for k, v in pairs(src) do
-				if type(v) == "table" then
-					v = safecopy(v, dst[k])
-				end
-				if dst[k] == nil or type(dst[k]) ~= type(v) then
-					dst[k] = v
-				end
-			end
-			return dst
-		end
-		db = safecopy(defaults, ShieldsUpDB)
+		ShieldsUpDB = { }
 	end
+	local function safecopy(src, dst)
+		for k, v in pairs(src) do
+			if type(v) == "table" then
+				v = safecopy(v, dst[k])
+			end
+			if dst[k] == nil or type(dst[k]) ~= type(v) then
+				dst[k] = v
+			end
+		end
+		return dst
+	end
+	db = safecopy(defaults, ShieldsUpDB)
 
 	self:UnregisterEvent("ADDON_LOADED")
 	self.ADDON_LOADED = nil
