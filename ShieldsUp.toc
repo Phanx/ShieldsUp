@@ -16,16 +16,18 @@
 ## X-LoadOn-Class: Shaman
 
 ## SavedVariables: ShieldsUpDB
+
 ## OptionalDeps: LibSharedMedia-3.0, LibSink-2.0
 ## X-Embeds: LibSharedMedia-3.0, LibSink-2.0
 
-Libs\LibStub\LibStub.lua
-Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
-Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
-Libs\LibSink-2.0\LibSink-2.0.lua
+# Libs\LibStub\LibStub.lua
+# Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+# Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
+# Libs\LibSink-2.0\LibSink-2.0.lua
 
 # Locales\Locale-deDE.lua
 # Locales\Locale-esES.lua
+# Locales\Locale-esMX.lua
 # Locales\Locale-frFR.lua
 # Locales\Locale-koKR.lua
 # Locales\Locale-ruRU.lua
@@ -33,4 +35,6 @@ Libs\LibSink-2.0\LibSink-2.0.lua
 # Locales\Locale-zhTW.lua
 
 Core.lua
+
+Widgets.lua
 Options.lua
