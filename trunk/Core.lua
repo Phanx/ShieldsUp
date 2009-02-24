@@ -120,11 +120,13 @@ function ShieldsUp:ADDON_LOADED(addon)
 		ShieldsUpDB = { }
 	end
 	local function safecopy(src, dst)
+		if type(src) ~= "table" then return { } end
+		if type(dst) ~= "table" then dst = { } end
+
 		for k, v in pairs(src) do
 			if type(v) == "table" then
-				v = safecopy(v, dst[k])
-			end
-			if dst[k] == nil or type(dst[k]) ~= type(v) then
+				dst[k] = safecopy(v, dst[k])
+			elseif dst[k] == nil or type(dst[k]) ~= type(v) then
 				dst[k] = v
 			end
 		end
@@ -287,7 +289,6 @@ function ShieldsUp:PLAYER_LOGIN()
 end
 
 function ShieldsUp:PLAYER_LOGOUT()
-	-- Possible workaround to annoying issue of Earth Shield clearing itself (thus generating a fade warning) when logging out.
 	self:UnregisterAllEvents()
 end
 
