@@ -205,6 +205,34 @@ panel:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
+	local large = self:CreateSlider(L["Counter Size"], 6, 32, 1)
+	large.hint = L["Set the charge counter size."]
+	large:GetParent():SetPoint("TOPLEFT", outline:GetParent(), "BOTTOMLEFT", -8, -8 - shadow:GetHeight() - 8)
+	large:GetParent():SetPoint("TOPRIGHT", outline:GetParent(), "BOTTOMRIGHT", 8, -8 - shadow:GetHeight() - 8)
+	large:SetValue(db.font.large or 0)
+	large.value:SetText(db.font.large or 0)
+	large:SetScript("OnValueChanged", function(self)
+		db.font.large = floor(self:GetValue())
+		self.value:SetText(db.font.large)
+		ShieldsUp:ApplySettings()
+	end)
+
+	-------------------------------------------------------------------
+
+	local small = self:CreateSlider(L["Name Size"], 6, 32, 1)
+	small.hint = L["Set the target name size."]
+	small:GetParent():SetPoint("TOPLEFT", large:GetParent(), "BOTTOMLEFT", 0, -24)
+	small:GetParent():SetPoint("TOPRIGHT", large:GetParent(), "BOTTOMRIGHT", 0, -24)
+	small:SetValue(db.font.small or 0)
+	small.value:SetText(db.font.small or 0)
+	small:SetScript("OnValueChanged", function(self)
+		db.font.small = floor(self:GetValue())
+		self.value:SetText(db.font.small)
+		ShieldsUp:ApplySettings()
+	end)
+
+	-------------------------------------------------------------------
+
 	local colors = self:CreatePanel()
 	colors:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", -4, -32)
 	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 4, -16 - posx:GetHeight() - 24 - posy:GetHeight() - 24 - padh:GetHeight() - 24 - padv:GetHeight() - 24 - padv.label:GetHeight() - 32)
