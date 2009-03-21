@@ -1,18 +1,17 @@
---[[
+--[[--------------------------------------------------------------------
 	ShieldsUp
 	Basic shaman shield monitor.
 	by Phanx < addons@phanx.net >
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	Copyright © 2008 Alyssa S. Kinley, a.k.a Phanx
 	See included README for license terms and additional information.
---]]
+----------------------------------------------------------------------]]
 
 -- TO DO:
 -- Add automatic visibility states.
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn("ShieldsUp") end
 
-local ShieldsUp = CreateFrame("Frame", "ShieldsUp", UIParent)
 local SharedMedia
 local Sink
 
@@ -36,10 +35,15 @@ local EARTH_SHIELD = GetSpellInfo(32594)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 local WATER_SHIELD = GetSpellInfo(33736)
 
-local L = setmetatable(SHIELDSUP_STRINGS or {}, { __index = function(t, k) rawset(t, k, k) return k end })
+local L = setmetatable(ShieldsUpStrings or {}, { __index = function(t, k)
+	t[k] = k
+	return k
+end })
 L["Earth Shield"] = EARTH_SHIELD
 L["Lightning Shield"] = LIGHTNING_SHIELD
 L["Water Shield"] = WATER_SHIELD
+
+------------------------------------------------------------------------
 
 local defaults = {
 	posx = 0,
@@ -80,20 +84,24 @@ local defaults = {
 	},
 }
 
+------------------------------------------------------------------------
+
+local DEBUG_LEVEL = 0
+
 local function Print(str, ...)
 	if select(1, ...) then str = str:format(...) end
 	print("|cff00ddbaShieldsUp:|r "..str)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > ShieldsUp.debug then return end
+	if lvl > DEBUG_LEVEL then return end
 	if select(1, ...) then str = str:format(...) end
 	print("|cffff6666ShieldsUp:|r "..str)
 end
 
 local function GetAuraCharges(unit, aura)
 	local name, _, _, charges, _, _, _, mine = UnitAura(unit, aura)
---	Debug(3, "GetAuraCharges, %s, %s = %s, %s", unit, aura, tostring(charges), tostring(mine))
+--	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(mine))
 	if not name then
 		return 0, nil
 	elseif charges > 0 then
@@ -102,6 +110,10 @@ local function GetAuraCharges(unit, aura)
 		return 1, mine and true
 	end
 end
+
+------------------------------------------------------------------------
+
+local ShieldsUp = CreateFrame("Frame", nil, UIParent)
 
 ShieldsUp.L = L
 ShieldsUp.debug = 0
@@ -112,8 +124,8 @@ ShieldsUp:RegisterEvent("ADDON_LOADED")
 function ShieldsUp:ADDON_LOADED(addon)
 	if addon ~= "ShieldsUp" then return end
 
-	if SHIELDSUP_STRINGS then
-		SHIELDSUP_STRINGS = nil
+	if ShieldsUpStrings then
+		ShieldsUpStrings = nil
 	end
 
 	if not ShieldsUpDB then
@@ -126,7 +138,7 @@ function ShieldsUp:ADDON_LOADED(addon)
 		for k, v in pairs(src) do
 			if type(v) == "table" then
 				dst[k] = safecopy(v, dst[k])
-			elseif dst[k] == nil or type(dst[k]) ~= type(v) then
+			elseif type(dst[k]) ~= type(v) then
 				dst[k] = v
 			end
 		end
@@ -143,6 +155,8 @@ function ShieldsUp:ADDON_LOADED(addon)
 		self:RegisterEvent("PLAYER_LOGIN")
 	end
 end
+
+------------------------------------------------------------------------
 
 function ShieldsUp:PLAYER_LOGIN()
 	SharedMedia = LibStub("LibSharedMedia-3.0", true)
@@ -288,9 +302,13 @@ function ShieldsUp:PLAYER_LOGIN()
 	self.PLAYER_LOGIN = nil
 end
 
+------------------------------------------------------------------------
+
 function ShieldsUp:PLAYER_LOGOUT()
 	self:UnregisterAllEvents()
 end
+
+------------------------------------------------------------------------
 
 function ShieldsUp:CHARACTER_POINTS_CHANGED()
 --	Debug(1, "CHARACTER_POINTS_CHANGED")
@@ -303,6 +321,8 @@ function ShieldsUp:CHARACTER_POINTS_CHANGED()
 		hasEarthShield = false
 	end
 end
+
+------------------------------------------------------------------------
 
 do
 	local earthCast = 0
@@ -329,6 +349,8 @@ do
 		end
 	end
 end
+
+------------------------------------------------------------------------
 
 function ShieldsUp:UNIT_SPELLCAST_SUCCEEDED(unit, spell, rank)
 	if unit ~= "player" then return end
@@ -442,6 +464,8 @@ do
 	end
 end
 
+------------------------------------------------------------------------
+
 do
 	local n
 	local function GetUnitFromGUID(guid)
@@ -513,6 +537,8 @@ do
 	ShieldsUp.RAID_ROSTER_UPDATE = OnGroupChange
 end
 
+------------------------------------------------------------------------
+
 function ShieldsUp:Update()
 --	Debug(3, "Update")
 	if GetTime() - earthTime > 900 then
@@ -557,6 +583,8 @@ function ShieldsUp:Update()
 	end
 end
 
+------------------------------------------------------------------------
+
 function ShieldsUp:Alert(spell)
 	local r, g, b, text, sound
 	if spell == EARTH_SHIELD then
@@ -588,6 +616,8 @@ function ShieldsUp:Alert(spell)
 	end
 --	Debug(1, "Alert, "..spell..", "..text..", "..sound)
 end
+
+------------------------------------------------------------------------
 
 function ShieldsUp:ApplySettings()
 	Debug(1, "ApplySettings")
@@ -642,3 +672,9 @@ function ShieldsUp:ApplySettings()
 
 	self:Update()
 end
+
+------------------------------------------------------------------------
+
+_G.ShieldsUp = ShieldsUp
+
+------------------------------------------------------------------------

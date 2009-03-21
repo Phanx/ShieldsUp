@@ -21,7 +21,7 @@ panel:Hide()
 panel:SetScript("OnShow", function(self)
 	local L = ShieldsUp.L
 	local db = ShieldsUpDB
-	local LSM = LibStub("LibSharedMedia-3.0", true)
+	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 	local screenwidth = UIParent:GetWidth()
 	local screenheight = UIParent:GetHeight()
@@ -108,11 +108,11 @@ panel:SetScript("OnShow", function(self)
 	typeface.value:SetText(db.font.typeface or "Friz Quadrata TT")
 	do
 		local _, height, flags = typeface.value:GetFont()
-		typeface.value:SetFont(LSM:Fetch("font", db.font.typeface or "Friz Quadrata TT"), height, flags)
+		typeface.value:SetFont(SharedMedia:Fetch("font", db.font.typeface or "Friz Quadrata TT"), height, flags)
 
 		function typeface:OnValueChanged(value)
 			local _, height, flags = self.value:GetFont()
-			self.value:SetFont(LSM:Fetch("font", value), height, flags)
+			self.value:SetFont(SharedMedia:Fetch("font", value), height, flags)
 			db.font.face = value
 			ShieldsUp:ApplySettings()
 		end
@@ -127,7 +127,7 @@ panel:SetScript("OnShow", function(self)
 				for i = 1, #buttons do
 					local button = buttons[i]
 					if button.value and button:IsShown() then
-						button.label:SetFont(LSM:Fetch("font", button.value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
+						button.label:SetFont(SharedMedia:Fetch("font", button.value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
 					end
 				end
 			end
@@ -146,7 +146,7 @@ panel:SetScript("OnShow", function(self)
 
 			local SetText = typeface.list.text.SetText
 			typeface.list.text.SetText = function(self, text)
-				self:SetFont(LSM:Fetch("font", text), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT + 1)
+				self:SetFont(SharedMedia:Fetch("font", text), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT + 1)
 				SetText(self, text)
 			end
 
@@ -207,8 +207,8 @@ panel:SetScript("OnShow", function(self)
 
 	local large = self:CreateSlider(L["Counter Size"], 6, 32, 1)
 	large.hint = L["Set the charge counter size."]
-	large:GetParent():SetPoint("TOPLEFT", outline:GetParent(), "BOTTOMLEFT", -8, -8 - shadow:GetHeight() - 8)
-	large:GetParent():SetPoint("TOPRIGHT", outline:GetParent(), "BOTTOMRIGHT", 8, -8 - shadow:GetHeight() - 8)
+	large:GetParent():SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8 - shadow:GetHeight() - 8)
+	large:GetParent():SetPoint("TOPRIGHT", outline.container, "BOTTOMRIGHT", 0, -8 - shadow:GetHeight() - 8)
 	large:SetValue(db.font.large or 0)
 	large.value:SetText(db.font.large or 0)
 	large:SetScript("OnValueChanged", function(self)
@@ -221,8 +221,8 @@ panel:SetScript("OnShow", function(self)
 
 	local small = self:CreateSlider(L["Name Size"], 6, 32, 1)
 	small.hint = L["Set the target name size."]
-	small:GetParent():SetPoint("TOPLEFT", large:GetParent(), "BOTTOMLEFT", 0, -24)
-	small:GetParent():SetPoint("TOPRIGHT", large:GetParent(), "BOTTOMRIGHT", 0, -24)
+	small:GetParent():SetPoint("TOPLEFT", large, "BOTTOMLEFT", 0, -24)
+	small:GetParent():SetPoint("TOPRIGHT", large, "BOTTOMRIGHT", 0, -24)
 	small:SetValue(db.font.small or 0)
 	small.value:SetText(db.font.small or 0)
 	small:SetScript("OnValueChanged", function(self)
@@ -320,7 +320,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local alert = self:CreateColorPicker(L["Zero"])
-	alert.hint = string.format(L["Set the color for expired or otherwise inactive shields."])
+	alert.hint = L["Set the color for expired or otherwise inactive shields."]
 	alert.GetValue = function() return unpack(db.color.alert) end
 	alert.SetValue = function(self, r, g, b)
 		db.color.alert[1] = r
@@ -331,6 +331,19 @@ panel:SetScript("OnShow", function(self)
 	alert:SetPoint("TOPLEFT", overwritten, "BOTTOMLEFT", 0, -8)
 	alert:SetPoint("TOPRIGHT", overwritten, "BOTTOMRIGHT", 0, -8)
 	alert:SetColor(unpack(db.color.alert))
+
+	-------------------------------------------------------------------
+
+	local cblind = self:CreateCheckbox(L["Colorblind mode"])
+	cblind.hint = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color"]
+	cblind:SetPoint("TOPLEFT", colors, "BOTTOMLEFT", 0, -8)
+	cblind:SetChecked(db.colorblind)
+	cblind:SetScript("OnClick", function(self)
+		local checked = self:GetChecked()
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.colorblind = checked
+		ShieldsUp:Update()
+	end)
 
 	-------------------------------------------------------------------
 
@@ -349,6 +362,10 @@ panel:SetScript("OnShow", function(self)
 		outline.value:SetText(db.font.outline or L["None"])
 		UIDropDownMenu_SetSelectedValue(outline, db.font.outline or L["None"])
 		shadow:SetChecked(db.font.shadow)
+		large:SetValue(db.font.large or 24)
+		large.value:SetText(db.font.large or 24)
+		small:SetValue(db.font.small or 16)
+		small.value:SetText(db.font.small or 16)
 
 		earth:SetColor(unpack(db.color.earth))
 		lightning:SetColor(unpack(db.color.lightning))
@@ -356,6 +373,8 @@ panel:SetScript("OnShow", function(self)
 		normal:SetColor(unpack(db.color.normal))
 		overwritten:SetColor(unpack(db.color.overwritten))
 		alert:SetColor(unpack(db.color.alert))
+		
+		cblind:SetChecked(db.colorblind)
 	end
 
 	self:SetScript("OnShow", nil)
@@ -373,6 +392,8 @@ panel2:SetScript("OnShow", function(self)
 	local L = ShieldsUp.L
 	local db = ShieldsUpDB
 	local sinkOptions
+	
+	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
 	
 	PhanxConfigWidgets:Embed(self)
 
@@ -433,7 +454,7 @@ panel2:SetScript("OnShow", function(self)
 	esoundfile.value:SetText(db.alert.earth.soundFile)
 	do
 		local function OnClick(self)
-			PlaySoundFile(LSM:Fetch("sound", self.value))
+			PlaySoundFile(SharedMedia:Fetch("sound", self.value))
 			db.alert.earth.soundFile = self.value
 			esoundfile.value:SetText(self.text)
 			UIDropDownMenu_SetSelectedValue(esoundfile, self.value)
@@ -504,7 +525,7 @@ panel2:SetScript("OnShow", function(self)
 	wsoundfile.value:SetText(db.alert.water.soundFile)
 	do
 		local function OnClick(self)
-			PlaySoundFile(LSM:Fetch("sound", self.value))
+			PlaySoundFile(SharedMedia:Fetch("sound", self.value))
 			db.alert.water.soundFile = self.value
 			wsoundfile.value:SetText(self.text)
 			UIDropDownMenu_SetSelectedValue(wsoundfile, self.value)
@@ -554,13 +575,25 @@ panel2:SetScript("OnShow", function(self)
 		do
 			local function OnClick(self)
 				sinkOptions.set(self.value, true)
-
 				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+
+				local valid, current = false, db.alert.output.sink20ScrollArea
+				for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
+					if v == current then
+						valid = true
+						break
+					end
+				end
+				if not valid then
+					db.alert.output.sink20ScrollArea = nil
+					scrollarea.value:SetText(" ")
+				end
 				if sinkOptions.args.ScrollArea.disabled then
 					scrollarea:Hide()
 				else
 					scrollarea:Show()
 				end
+
 				if sinkOptions.args.Sticky.disabled then
 					sticky:Hide()
 					opanel:SetHeight(8 + output:GetHeight() + 8)
@@ -600,10 +633,8 @@ panel2:SetScript("OnShow", function(self)
 		scrollarea.value:SetText(db.alert.output.sink20ScrollArea)
 		do
 			local function OnClick(self)
-				sinkOptions.set(self.value, true)
-
+				sinkOptions.set("ScrollArea", self.value)
 				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
-
 				scrollarea.value:SetText(self.text)
 				UIDropDownMenu_SetSelectedValue(scrollarea, self.value)
 			end
@@ -633,12 +664,17 @@ panel2:SetScript("OnShow", function(self)
 		sticky:SetScript("OnClick", function(self)
 			local checked = self:GetChecked()
 			PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
-			db.alert.output.sink20Sticky = checked and true or false
+			sinkOptions.set("Sticky", checked)
+			sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
 		end)
 
 		--------------------------------------------------------------
-
-		opanel:SetHeight(8 + output:GetHeight() + 8 + (sticky:IsShown() and (sticky:GetHeight() + 8) or 0))
+		
+		if sticky:IsShown() then
+			opanel:SetHeight(8 + output:GetHeight() + 8 + sticky:GetHeight() + 8)
+		else
+			opanel:SetHeight(8 + output:GetHeight() + 8)
+		end
 	end
 
 	-------------------------------------------------------------------
