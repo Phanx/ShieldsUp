@@ -158,8 +158,15 @@ end
 
 local CreateDropdown
 do
-	local function OnEnter(self)
+	local function Frame_OnEnter(self)
 		if self.hint then
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText(self.hint, nil, nil, nil, nil, true)
+		end
+	end
+
+	local function Button_OnEnter(self)
+		if self:GetParent().hint then
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetText(self.hint, nil, nil, nil, nil, true)
 		end
@@ -186,7 +193,7 @@ do
 		frame:SetHeight(42)
 		frame:SetWidth(162)
 		frame:EnableMouse(true)
-		frame:SetScript("OnEnter", OnEnter)
+		frame:SetScript("OnEnter", Frame_OnEnter)
 		frame:SetScript("OnLeave", OnLeave)
 		frame:SetScript("OnHide", OnHide)
 
@@ -232,6 +239,8 @@ do
 		button:SetPoint("TOPRIGHT", rtex, -16, -18)
 		button:SetWidth(24)
 		button:SetHeight(24)
+		button:SetScript("OnEnter", Button_OnEnter)
+		button:SetScript("OnLeave", OnLeave)
 		button:SetScript("OnClick", OnClick)
 
 		button:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIcon-ScrollDown-Up")
