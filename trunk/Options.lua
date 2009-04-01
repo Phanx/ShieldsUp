@@ -335,7 +335,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local cblind = self:CreateCheckbox(L["Colorblind mode"])
-	cblind.hint = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color"]
+	cblind.hint = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color"]:format(L["Earth Shield"])
 	cblind:SetPoint("TOPLEFT", colors, "BOTTOMLEFT", 0, -8)
 	cblind:SetChecked(db.colorblind)
 	cblind:SetScript("OnClick", function(self)
