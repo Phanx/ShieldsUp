@@ -100,14 +100,14 @@ local function Debug(lvl, str, ...)
 end
 
 local function GetAuraCharges(unit, aura)
-	local name, _, _, charges, _, _, _, mine = UnitAura(unit, aura)
---	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(mine))
+	local name, _, _, charges, _, _, _, caster = UnitAura(unit, aura)
+--	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
 	if not name then
 		return 0, nil
 	elseif charges > 0 then
-		return charges, mine and true
+		return charges, caster == "player"
 	else
-		return 1, mine and true
+		return 1, caster == "player"
 	end
 end
 
@@ -220,10 +220,10 @@ function ShieldsUp:PLAYER_LOGIN()
 	if GetNumRaidMembers() > 0 then
 		Debug(2, "isInGroup = true")
 		isInGroup = true
-		local name, charges, duration, expires, mine, _
+		local name, charges, duration, expires, caster, _
 		for i = 1, GetNumRaidMembers() do
-			name, _, _, charges, _, duration, expires, mine = UnitAura("raid"..i, EARTH_SHIELD)
-			if name and mine then
+			name, _, _, charges, _, duration, expires, caster = UnitAura("raid"..i, EARTH_SHIELD)
+			if name and caster == "player" then
 				earthCount = charges
 				earthGUID = UnitGUID("raid"..i)
 				earthName = UnitName("raid"..i)
@@ -231,8 +231,8 @@ function ShieldsUp:PLAYER_LOGIN()
 				earthTime = expires - duration
 				break
 			end
-			name, _, _, charges, _, duration, expires, mine = UnitAura("raid"..i.."pet", EARTH_SHIELD)
-			if name and mine then
+			name, _, _, charges, _, duration, expires, caster = UnitAura("raid"..i.."pet", EARTH_SHIELD)
+			if name and caster == "player" then
 				earthCount = charges
 				earthGUID = UnitGUID("raid"..i.."pet")
 				earthName = UnitName("raid"..i.."pet")
@@ -244,10 +244,10 @@ function ShieldsUp:PLAYER_LOGIN()
 	elseif GetNumPartyMembers() > 0 then
 		Debug(2, "isInGroup = true")
 		isInGroup = true
-		local name, charges, duration, expires, mine, _
+		local name, charges, duration, expires, caster, _
 		for i = 1, GetNumPartyMembers() do
-			name, _, _, charges, _, duration, expires, mine = UnitAura("party"..i, EARTH_SHIELD)
-			if name and mine then
+			name, _, _, charges, _, duration, expires, caster = UnitAura("party"..i, EARTH_SHIELD)
+			if name and caster == "player" then
 				earthCount = charges
 				earthGUID = UnitGUID("party"..i)
 				earthName = UnitName("party"..i)
@@ -255,8 +255,8 @@ function ShieldsUp:PLAYER_LOGIN()
 				earthTime = expires - duration
 				break
 			end
-			name, _, _, charges, _, duration, expires, mine = UnitAura("party"..i.."pet", EARTH_SHIELD)
-			if name and mine then
+			name, _, _, charges, _, duration, expires, caster = UnitAura("party"..i.."pet", EARTH_SHIELD)
+			if name and caster == "player" then
 				earthCount = charges
 				earthGUID = UnitGUID("party"..i.."pet")
 				earthName = UnitName("party"..i.."pet")
