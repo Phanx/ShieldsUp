@@ -3,7 +3,7 @@
 	Basic shaman shield monitor.
 	by Phanx < addons@phanx.net >
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-	Copyright © 2008 Alyssa S. Kinley, a.k.a Phanx
+	Copyright ©2008–2009 Alyssa "Phanx" Kinley
 	See included README for license terms and additional information.
 ----------------------------------------------------------------------]]
 
@@ -113,7 +113,7 @@ end
 
 ------------------------------------------------------------------------
 
-local ShieldsUp = CreateFrame("Frame", nil, UIParent)
+local ShieldsUp = CreateFrame("Frame", "ShieldsUp", UIParent)
 
 ShieldsUp.L = L
 ShieldsUp.debug = 0
@@ -289,6 +289,7 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:ApplySettings()
 
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
+	self:RegisterEvent("PLAYER_TALENT_UPDATE")
 	self:RegisterEvent("PARTY_LEADER_CHANGED")
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
 	self:RegisterEvent("RAID_ROSTER_UPDATE")
@@ -321,6 +322,8 @@ function ShieldsUp:CHARACTER_POINTS_CHANGED()
 		hasEarthShield = false
 	end
 end
+
+ShieldsUp.PLAYER_TALENT_UPDATE = ShieldsUp.CHARACTER_POINTS_CHANGED
 
 ------------------------------------------------------------------------
 
@@ -672,9 +675,5 @@ function ShieldsUp:ApplySettings()
 
 	self:Update()
 end
-
-------------------------------------------------------------------------
-
-_G.ShieldsUp = ShieldsUp
 
 ------------------------------------------------------------------------
