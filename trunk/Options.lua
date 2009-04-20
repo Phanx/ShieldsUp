@@ -15,18 +15,44 @@ if not PhanxConfigWidgets then return end
 
 ------------------------------------------------------------------------
 
+local CreatePanel
+do
+	local panelBackdrop = GameTooltip:GetBackdrop()
+	function CreatePanel(parent, width, height)
+		local frame = CreateFrame("Frame", nil, parent)
+		frame:SetFrameStrata(parent:GetFrameStrata())
+		frame:SetFrameLevel(parent:GetFrameLevel() + 1)
+
+		frame:SetBackdrop(panelBackdrop)
+		frame:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
+		frame:SetBackdropBorderColor(0.8, 0.8, 0.8, 0.5)
+
+		frame:SetWidth(width or 1)
+		frame:SetHeight(height or 1)
+
+		return frame
+	end
+end
+
+------------------------------------------------------------------------
+
 local panel = CreateFrame("Frame", "ShieldsUpOptionsFrame", InterfaceOptionsFramePanelContainer)
 panel.name = GetAddOnMetadata("ShieldsUp", "Title")
 panel:Hide()
 panel:SetScript("OnShow", function(self)
 	local L = ShieldsUp.L
 	local db = ShieldsUpDB
-	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
+	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
 
 	local screenwidth = UIParent:GetWidth()
 	local screenheight = UIParent:GetHeight()
 
-	PhanxConfigWidgets:Embed(self)
+	self.CreatePanel = CreatePanel
+	self.CreateCheckbox = LibStub:GetLibrary("PhanxConfig-Checkbox").CreateCheckbox
+	self.CreateColorPicker = LibStub:GetLibrary("PhanxConfig-ColorPicker").CreateColorPicker
+	self.CreateDropdown = LibStub:GetLibrary("PhanxConfig-Dropdown").CreateDropdown
+	self.CreateScrollingDropdown = LibStub:GetLibrary("PhanxConfig-ScrollingDropdown").CreateScrollingDropdown
+	self.CreateSlider = LibStub:GetLibrary("PhanxConfig-Slider").CreateSlider
 
 	-------------------------------------------------------------------
 
@@ -373,7 +399,7 @@ panel:SetScript("OnShow", function(self)
 		normal:SetColor(unpack(db.color.normal))
 		overwritten:SetColor(unpack(db.color.overwritten))
 		alert:SetColor(unpack(db.color.alert))
-		
+
 		cblind:SetChecked(db.colorblind)
 	end
 
@@ -392,10 +418,12 @@ panel2:SetScript("OnShow", function(self)
 	local L = ShieldsUp.L
 	local db = ShieldsUpDB
 	local sinkOptions
-	
+
 	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
-	
-	PhanxConfigWidgets:Embed(self)
+
+	self.CreatePanel = CreatePanel
+	self.CreateCheckbox = LibStub:GetLibrary("PhanxConfig-Checkbox").CreateCheckbox
+	self.CreateDropdown = LibStub:GetLibrary("PhanxConfig-Dropdown").CreateDropdown
 
 	-------------------------------------------------------------------
 
@@ -669,7 +697,7 @@ panel2:SetScript("OnShow", function(self)
 		end)
 
 		--------------------------------------------------------------
-		
+
 		if sticky:IsShown() then
 			opanel:SetHeight(8 + output:GetHeight() + 8 + sticky:GetHeight() + 8)
 		else

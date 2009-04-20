@@ -1,5 +1,5 @@
-## Interface: 30000
-## Version: 3.0.3.wowi:revision-beta
+## Interface: 30100
+## Version: 3.1.0.wowi:revision-beta
 
 ## Title: ShieldsUp
 ## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
@@ -9,8 +9,8 @@
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 
 ## Author: Phanx
-## X-Credits: Inspired by Infineon's beSch
 ## X-Email: addons@phanx.net
+## X-Credits: Inspired by Infineon's beSch
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Class: Shaman
@@ -20,10 +20,10 @@
 ## OptionalDeps: LibSharedMedia-3.0, LibSink-2.0
 ## X-Embeds: LibSharedMedia-3.0, LibSink-2.0
 
-Libs\LibStub\LibStub.lua
-Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
-Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
-Libs\LibSink-2.0\LibSink-2.0.lua
+Libs\LibStub.lua
+Libs\CallbackHandler-1.0.lua
+Libs\LibSharedMedia-3.0.lua
+Libs\LibSink-2.0.lua
 
 # Locales\Locale-deDE.lua
 # Locales\Locale-esES.lua
@@ -36,5 +36,10 @@ Libs\LibSink-2.0\LibSink-2.0.lua
 
 Core.lua
 
-Widgets.lua
+Widgets\PhanxConfig-Checkbox.lua
+Widgets\PhanxConfig-ColorPicker.lua
+Widgets\PhanxConfig-Dropdown.lua
+Widgets\PhanxConfig-Panel.lua
+Widgets\PhanxConfig-ScrollingDropdown.lua
+Widgets\PhanxConfig-Slider.lua
 Options.lua
