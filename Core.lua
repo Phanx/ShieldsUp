@@ -3,8 +3,25 @@
 	Basic shaman shield monitor.
 	by Phanx < addons@phanx.net >
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-	Copyright ©2008–2009 Alyssa "Phanx" Kinley
-	See included README for license terms and additional information.
+
+	Copyright © 2008–2009 Alyssa "Phanx" Kinley
+
+	The contents of this addon, excluding third-party resources, are copyrighted
+	to its author(s) with all rights reserved under United States copyright law
+	and international treaty. You are hereby granted the following permissions,
+	and agree to be bound by the following terms:
+
+	You MAY download, install, and run this addon for personal use. You may make
+	modifications to a local copy of this addon for personal use.
+
+	You MAY NOT redistribute this addon, with or without modification, including
+	as part of a compilation, without the express prior consent of its author.
+
+	You MAY use source code from this addon, in whole or in part, in your own
+	addon or for any other purpose, provided that no references to the name of
+	this addon or its author appear in the title, source code, or file names of
+	your addon or project. The names of this addon and its author(s) may not be
+	used to promote your addon or project.
 ----------------------------------------------------------------------]]
 
 -- TO DO:
