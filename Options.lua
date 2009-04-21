@@ -3,50 +3,11 @@
 	Simple shaman shield monitor.
 	by Phanx < addons@phanx.net >
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-
 	Copyright © 2008–2009 Alyssa "Phanx" Kinley
-
-	The contents of this addon, excluding third-party resources, are copyrighted
-	to its author(s) with all rights reserved under United States copyright law
-	and international treaty. You are hereby granted the following permissions,
-	and agree to be bound by the following terms:
-
-	You MAY download, install, and run this addon for personal use. You may make
-	modifications to a local copy of this addon for personal use.
-
-	You MAY NOT redistribute this addon, with or without modification, including
-	as part of a compilation, without the express prior consent of its author.
-
-	You MAY use source code from this addon, in whole or in part, in your own
-	addon or for any other purpose, provided that no references to the name of
-	this addon or its author appear in the title, source code, or file names of
-	your addon or project. The names of this addon and its author(s) may not be
-	used to promote your addon or project.
+	See README for license terms and additional information.
 ----------------------------------------------------------------------]]
 
 if not ShieldsUp then return end
-if not PhanxConfigWidgets then return end
-
-------------------------------------------------------------------------
-
-local CreatePanel
-do
-	local panelBackdrop = GameTooltip:GetBackdrop()
-	function CreatePanel(parent, width, height)
-		local frame = CreateFrame("Frame", nil, parent)
-		frame:SetFrameStrata(parent:GetFrameStrata())
-		frame:SetFrameLevel(parent:GetFrameLevel() + 1)
-
-		frame:SetBackdrop(panelBackdrop)
-		frame:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
-		frame:SetBackdropBorderColor(0.8, 0.8, 0.8, 0.5)
-
-		frame:SetWidth(width or 1)
-		frame:SetHeight(height or 1)
-
-		return frame
-	end
-end
 
 ------------------------------------------------------------------------
 
@@ -61,7 +22,7 @@ panel:SetScript("OnShow", function(self)
 	local screenwidth = UIParent:GetWidth()
 	local screenheight = UIParent:GetHeight()
 
-	self.CreatePanel = CreatePanel
+	self.CreatePanel = LibStub:GetLibrary("PhanxConfig-Panel").CreatePanel
 	self.CreateCheckbox = LibStub:GetLibrary("PhanxConfig-Checkbox").CreateCheckbox
 	self.CreateColorPicker = LibStub:GetLibrary("PhanxConfig-ColorPicker").CreateColorPicker
 	self.CreateDropdown = LibStub:GetLibrary("PhanxConfig-Dropdown").CreateDropdown
@@ -435,7 +396,7 @@ panel2:SetScript("OnShow", function(self)
 
 	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
 
-	self.CreatePanel = CreatePanel
+	self.CreatePanel = LibStub:GetLibrary("PhanxConfig-Panel").CreatePanel
 	self.CreateCheckbox = LibStub:GetLibrary("PhanxConfig-Checkbox").CreateCheckbox
 	self.CreateDropdown = LibStub:GetLibrary("PhanxConfig-Dropdown").CreateDropdown
 
@@ -731,13 +692,12 @@ InterfaceOptions_AddCategory(panel2)
 
 ------------------------------------------------------------------------
 
-if LibStub:GetLibrary("tekKonfig-AboutPanel", true) then
-	-- this will be embedded in release version, but for now I don't want to deal with it
-	LibStub:GetLibrary("tekKonfig-AboutPanel").new(panel.name, "ShieldsUp")
-end
+LibStub:GetLibrary("tekKonfig-AboutPanel").new(panel.name, "ShieldsUp")
 
 ------------------------------------------------------------------------
 
 SLASH_SHIELDSUP1 = "/sup"
 SLASH_SHIELDSUP2 = "/shieldsup"
 SlashCmdList.SHIELDSUP = function() InterfaceOptionsFrame_OpenToCategory(panel) end
+
+------------------------------------------------------------------------
