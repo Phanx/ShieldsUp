@@ -1,6 +1,8 @@
---[[
+--[[--------------------------------------------------------------------
 	PhanxConfig-ScrollingDropdown
---]]
+	Simple scrolling dropdown widget generator. Requires LibStub.
+	Based on tekKonfig-Dropdown by Tekkub and OmniCC_Options by Tuller.
+----------------------------------------------------------------------]]
 
 local lib, oldminor = LibStub:NewLibrary("PhanxConfig-ScrollingDropdown", 1)
 if not lib then return end

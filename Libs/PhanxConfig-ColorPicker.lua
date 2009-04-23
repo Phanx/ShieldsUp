@@ -1,6 +1,8 @@
---[[
+--[[--------------------------------------------------------------------
 	PhanxConfig-ColorPicker
---]]
+	Simple color picker widget generator. Requires LibStub.
+	Based on OmniCC_Options by Tuller.
+----------------------------------------------------------------------]]
 
 local lib, oldminor = LibStub:NewLibrary("PhanxConfig-ColorPicker", 1)
 if not lib then return end

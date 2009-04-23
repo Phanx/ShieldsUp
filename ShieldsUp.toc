@@ -30,16 +30,17 @@ Libs\LibSink-2.0.lua
 # Locales\Locale-esMX.lua
 # Locales\Locale-frFR.lua
 # Locales\Locale-koKR.lua
-# Locales\Locale-ruRU.lua
+Locales\Locale-ruRU.lua
 # Locales\Locale-zhCN.lua
 # Locales\Locale-zhTW.lua
 
 Core.lua
 
-Widgets\PhanxConfig-Checkbox.lua
-Widgets\PhanxConfig-ColorPicker.lua
-Widgets\PhanxConfig-Dropdown.lua
-Widgets\PhanxConfig-Panel.lua
-Widgets\PhanxConfig-ScrollingDropdown.lua
-Widgets\PhanxConfig-Slider.lua
+Libs\PhanxConfig-Checkbox.lua
+Libs\PhanxConfig-ColorPicker.lua
+Libs\PhanxConfig-Dropdown.lua
+Libs\PhanxConfig-Panel.lua
+Libs\PhanxConfig-ScrollingDropdown.lua
+Libs\PhanxConfig-Slider.lua
+
 Options.lua
