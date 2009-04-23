@@ -672,7 +672,7 @@ panel2:SetScript("OnShow", function(self)
 
 		sticky = self:CreateCheckbox(sinkOptions.args.Sticky.name)
 		sticky.hint = sinkOptions.args.Sticky.desc
-		sticky:SetPoint("TOPLEFT", scrollarea, "BOTTOMLEFT", 0, -8)
+		sticky:SetPoint("TOPLEFT", scrollarea.container, "BOTTOMLEFT", 0, -8)
 		sticky:SetChecked(db.alert.output.sink20Sticky)
 		sticky:SetScript("OnClick", function(self)
 			local checked = self:GetChecked()
@@ -684,7 +684,7 @@ panel2:SetScript("OnShow", function(self)
 		--------------------------------------------------------------
 
 		if sticky:IsShown() then
-			opanel:SetHeight(8 + output:GetHeight() + 8 + sticky:GetHeight() + 8)
+			opanel:SetHeight(8 + scrollarea:GetHeight() + 8 + sticky:GetHeight() + 8)
 		else
 			opanel:SetHeight(8 + output:GetHeight() + 8)
 		end

@@ -51,7 +51,7 @@ L["Outline"] = "Обрисовка"
 -- L["Shadow"] = ""
 -- L["Add a drop shadow effect to the display text."] = ""
 
-L["Counter Size"] = Размер числа""
+L["Counter Size"] = "Размер числа"
 L["Set the text size for the charge counters."] = "Установить размер шрифта для счетчиков."
 
 L["Name Size"] = "Размер имени"
