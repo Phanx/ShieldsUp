@@ -2,7 +2,11 @@
 	PhanxConfig-ScrollingDropdown
 	Simple scrolling dropdown widget generator. Requires LibStub.
 	Based on tekKonfig-Dropdown by Tekkub and OmniCC_Options by Tuller.
+	Requires PhanxConfig-Dropdown.
 ----------------------------------------------------------------------]]
+
+local PhanxConfigDropdown = LibStub:GetLibrary("PhanxConfig-Dropdown", true)
+assert(PhanxConfigDropdown, "PhanxConfig-ScrollingDropdown requires PhanxConfig-Dropdown!")
 
 local lib, oldminor = LibStub:NewLibrary("PhanxConfig-ScrollingDropdown", 1)
 if not lib then return end
@@ -164,7 +168,7 @@ end
 function lib.CreateScrollingDropdown(parent, name, items)
 	assert(items and type(items) == "table", "Bad argument #3 to CreateScrollingDropdown (table expected, got " .. type(items) .. ")")
 
-	local dropdown = CreateDropdown(parent, name)
+	local dropdown = PhanxConfigDropdown.CreateDropdown(parent, name)
 	dropdown.button:SetScript("OnClick", DropdownButton_OnClick)
 	dropdown.items = items
 

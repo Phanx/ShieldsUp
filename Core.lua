@@ -86,15 +86,13 @@ local defaults = {
 
 ------------------------------------------------------------------------
 
-local DEBUG_LEVEL = 0
-
 local function Print(str, ...)
 	if select(1, ...) then str = str:format(...) end
 	print("|cff00ddbaShieldsUp:|r "..str)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > DEBUG_LEVEL then return end
+	if lvl > 0 then return end
 	if select(1, ...) then str = str:format(...) end
 	print("|cffff6666ShieldsUp:|r "..str)
 end
@@ -272,13 +270,13 @@ function ShieldsUp:PLAYER_LOGIN()
 
 	if earthName ~= playerName then
 		local name, charges, _
-		
+
 		name, _, _, charges = UnitAura("player", WATER_SHIELD)
 		if name then
 			waterCount = charges
 			waterSpell = WATER_SHIELD
 		end
-		
+
 		name, _, _, charges = UnitAura("player", LIGHTNING_SHIELD)
 		if name then
 			waterCount = charges
@@ -313,7 +311,7 @@ end
 
 function ShieldsUp:CHARACTER_POINTS_CHANGED()
 --	Debug(1, "CHARACTER_POINTS_CHANGED")
-	
+
 	if GetSpellInfo(EARTH_SHIELD) then
 	--	Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
@@ -534,7 +532,7 @@ do
 			end
 		end
 	end
-	
+
 	ShieldsUp.PARTY_LEADER_CHANGED = OnGroupChange
 	ShieldsUp.PARTY_MEMBERS_CHANGED = OnGroupChange
 	ShieldsUp.RAID_ROSTER_UPDATE = OnGroupChange
@@ -624,16 +622,17 @@ end
 
 function ShieldsUp:ApplySettings()
 	Debug(1, "ApplySettings")
-	
+
 	self:SetPoint("CENTER", UIParent, "CENTER", db.posx, db.posy)
 	self:SetAlpha(db.alpha)
 	self:SetHeight(1)
 	self:SetWidth(1)
-	
+
 	local face = SharedMedia and SharedMedia:Fetch("font", db.font.face) or "Fonts\\FRIZQT__.ttf"
+
 	local outline = db.font.outline
 	local shadow = db.font.shadow and 1 or 0
-	
+
 	if not self.waterText then
 		self.waterText = self:CreateFontString(nil, "OVERLAY")
 	end
