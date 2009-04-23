@@ -568,7 +568,27 @@ panel2:SetScript("OnShow", function(self)
 
 	local olabel, opanel, output, scrollarea, sticky
 	if ShieldsUp.Pour then
-		sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+		sinkOptions = ShieldsUp:GetSinkAce3OptionsDataTable()
+		
+		local info = { }
+
+		local function UpdateOutputPanel()
+			info[1] = "ScrollArea"
+			if sinkOptions.disabled(info) then
+				scrollarea.container:Hide()
+			else
+				scrollarea.container:Show()
+			end
+
+			info[1] = "Sticky"
+			if sinkOptions.disabled(info) then
+				sticky:Hide()
+				opanel:SetHeight(8 + output:GetHeight() + 8 + 8) -- Why the extra 8? I don't know!
+			else
+				sticky:Show()
+				opanel:SetHeight(8 + output:GetHeight() + 8 + sticky:GetHeight() + 8 + 8)
+			end
+		end
 
 		olabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		olabel:SetPoint("TOPLEFT", wpanel, "BOTTOMLEFT", 4, -8)
@@ -587,11 +607,12 @@ panel2:SetScript("OnShow", function(self)
 		output.value:SetText(db.alert.output.sink20OutputSink or L["Raid Warning"])
 		do
 			local function OnClick(self)
-				sinkOptions.set(self.value, true)
-				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+				info[1] = self.value
+				sinkOptions.set(info, true)
+				sinkOptions = ShieldsUp:GetSinkAce3OptionsDataTable()
 
 				local valid, current = false, db.alert.output.sink20ScrollArea
-				for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
+				for i, v in ipairs(sinkOptions.args.ScrollArea.values) do
 					if v == current then
 						valid = true
 						break
@@ -600,19 +621,6 @@ panel2:SetScript("OnShow", function(self)
 				if not valid then
 					db.alert.output.sink20ScrollArea = nil
 					scrollarea.value:SetText(" ")
-				end
-				if sinkOptions.args.ScrollArea.disabled then
-					scrollarea:Hide()
-				else
-					scrollarea:Show()
-				end
-
-				if sinkOptions.args.Sticky.disabled then
-					sticky:Hide()
-					opanel:SetHeight(8 + output:GetHeight() + 8)
-				else
-					sticky:Show()
-					opanel:SetHeight(8 + output:GetHeight() + 8 + sticky:GetHeight() + 8)
 				end
 
 				output.value:SetText(self.text)
@@ -624,7 +632,7 @@ panel2:SetScript("OnShow", function(self)
 				local info = UIDropDownMenu_CreateInfo()
 
 				for k, v in pairs(sinkOptions.args) do
-					if k ~= "Default" and v.isRadio and not (v.hidden and v.hidden()) then
+					if k ~= "Default" and k ~= "Sticky" and v.type == "toggle" then
 						info.text = v.name
 						info.value = k
 						info.func = OnClick
@@ -646,8 +654,10 @@ panel2:SetScript("OnShow", function(self)
 		scrollarea.value:SetText(db.alert.output.sink20ScrollArea)
 		do
 			local function OnClick(self)
-				sinkOptions.set("ScrollArea", self.value)
-				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+				info[1] = "ScrollArea"
+				sinkOptions.set(info, self.value)
+				sinkOptions = ShieldsUp:GetSinkAce3OptionsDataTable()
+
 				scrollarea.value:SetText(self.text)
 				UIDropDownMenu_SetSelectedValue(scrollarea, self.value)
 			end
@@ -656,7 +666,7 @@ panel2:SetScript("OnShow", function(self)
 				local selected = db.alert.output.sink20ScrollArea or scrollarea.value:GetText()
 				local info = UIDropDownMenu_CreateInfo()
 
-				for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
+				for i, v in ipairs(sinkOptions.args.ScrollArea.values) do
 					info.text = v
 					info.value = v
 					info.func = OnClick
@@ -677,17 +687,15 @@ panel2:SetScript("OnShow", function(self)
 		sticky:SetScript("OnClick", function(self)
 			local checked = self:GetChecked()
 			PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
-			sinkOptions.set("Sticky", checked)
-			sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+			
+			info[1] = "Sticky"
+			sinkOptions.set(info, checked)
+			sinkOptions = ShieldsUp:GetSinkAce3OptionsDataTable()
 		end)
 
 		--------------------------------------------------------------
 
-		if sticky:IsShown() then
-			opanel:SetHeight(8 + scrollarea:GetHeight() + 8 + sticky:GetHeight() + 8)
-		else
-			opanel:SetHeight(8 + output:GetHeight() + 8)
-		end
+		UpdateOutputPanel()
 	end
 
 	-------------------------------------------------------------------
