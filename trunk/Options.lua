@@ -47,7 +47,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local posx = self:CreateSlider(L["Horizontal Position"], math.floor(screenwidth / 10) / 2 * -10, math.floor(screenwidth / 10) / 2 * 10, 5)
-	posx.hint = L["Set the horizontal distance from the center of the screen."]
+	posx.hint = L["Set the horizontal distance from the center of the screen to place the display."]
 	posx:GetParent():SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -16)
 	posx:GetParent():SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 16)
 	posx:SetValue(db.posx or 0)
@@ -61,7 +61,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local posy = self:CreateSlider(L["Vertical Position"], floor(screenheight / 10) / 2 * -10, floor(screenheight / 10) / 2 * 10, 5)
-	posy.hint = L["Set the vertical distance from the center of the screen."]
+	posy.hint = L["Set the vertical distance from the center of the screen to place the display."]
 	posy:GetParent():SetPoint("TOPLEFT", posx, "BOTTOMLEFT", 0, -24)
 	posy:GetParent():SetPoint("TOPRIGHT", posx, "BOTTOMRIGHT", 0, -24)
 	posy:SetValue(db.posy or -150)
@@ -75,7 +75,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local padh = self:CreateSlider(L["Horizontal Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
-	padh.hint = L["Set the horizontal space between display elements."]
+	padh.hint = L["Set the horizontal space between the charge counts."]
 	padh:GetParent():SetPoint("TOPLEFT", posy, "BOTTOMLEFT", 0, -24)
 	padh:GetParent():SetPoint("TOPRIGHT", posy, "BOTTOMRIGHT", 0, -24)
 	padh:SetValue(db.padh or 0)
@@ -89,7 +89,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local padv = self:CreateSlider(L["Vertical Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
-	padv.hint = L["Set the vertical space between display elements."]
+	padv.hint = L["Set the vertical space between the target name and charge counters."]
 	padv:GetParent():SetPoint("TOPLEFT", padh, "BOTTOMLEFT", 0, -24)
 	padv:GetParent():SetPoint("TOPRIGHT", padh, "BOTTOMRIGHT", 0, -24)
 	padv:SetValue(db.padv or 0)
@@ -102,29 +102,29 @@ panel:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local typeface = self:CreateScrollingDropdown(L["Typeface"], ShieldsUp.fonts)
-	typeface.container.hint = L["Select the typeface."]
-	typeface.container:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -16)
-	typeface.container:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 2, -16)
-	typeface.value:SetText(db.font.typeface or "Friz Quadrata TT")
+	local face = self:CreateScrollingDropdown(L["Font Face"], ShieldsUp.fonts)
+	face.container.hint = L["Set the font face to use for the display text."]
+	face.container:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -16)
+	face.container:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 2, -16)
+	face.value:SetText(db.font.face or "Friz Quadrata TT")
 	do
-		local _, height, flags = typeface.value:GetFont()
-		typeface.value:SetFont(SharedMedia:Fetch("font", db.font.typeface or "Friz Quadrata TT"), height, flags)
+		local _, height, flags = face.value:GetFont()
+		face.value:SetFont(SharedMedia:Fetch("font", db.font.face or "Friz Quadrata TT"), height, flags)
 
-		function typeface:OnValueChanged(value)
+		function face:OnValueChanged(value)
 			local _, height, flags = self.value:GetFont()
 			self.value:SetFont(SharedMedia:Fetch("font", value), height, flags)
 			db.font.face = value
 			ShieldsUp:ApplySettings()
 		end
 
-		local OnClick = typeface.button:GetScript("OnClick")
-		typeface.button:SetScript("OnClick", function(self)
+		local OnClick = face.button:GetScript("OnClick")
+		face.button:SetScript("OnClick", function(self)
 			OnClick(self)
-			typeface.list:Hide()
+			face.list:Hide()
 
 			local function SetButtonFonts(self)
-				local buttons = typeface.list.buttons
+				local buttons = face.list.buttons
 				for i = 1, #buttons do
 					local button = buttons[i]
 					if button.value and button:IsShown() then
@@ -133,20 +133,20 @@ panel:SetScript("OnShow", function(self)
 				end
 			end
 
-			local OnShow = typeface.list:GetScript("OnShow")
-			typeface.list:SetScript("OnShow", function(self)
+			local OnShow = face.list:GetScript("OnShow")
+			face.list:SetScript("OnShow", function(self)
 				OnShow(self)
 				SetButtonFonts(self)
 			end)
 
-			local OnVerticalScroll = typeface.list.scrollFrame:GetScript("OnVerticalScroll")
-			typeface.list.scrollFrame:SetScript("OnVerticalScroll", function(self, delta)
+			local OnVerticalScroll = face.list.scrollFrame:GetScript("OnVerticalScroll")
+			face.list.scrollFrame:SetScript("OnVerticalScroll", function(self, delta)
 				OnVerticalScroll(self, delta)
 				SetButtonFonts(self)
 			end)
 
-			local SetText = typeface.list.text.SetText
-			typeface.list.text.SetText = function(self, text)
+			local SetText = face.list.text.SetText
+			face.list.text.SetText = function(self, text)
 				self:SetFont(SharedMedia:Fetch("font", text), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT + 1)
 				SetText(self, text)
 			end
@@ -160,9 +160,9 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local outline = self:CreateDropdown(L["Outline"])
-	outline.container.hint = L["Select an outline width."]
-	outline.container:SetPoint("TOPLEFT", typeface.container, "BOTTOMLEFT", 0, -8)
-	outline.container:SetPoint("TOPRIGHT", typeface.container, "BOTTOMRIGHT", 0, -8)
+	outline.container.hint = L["Select an outline width for the display text."]
+	outline.container:SetPoint("TOPLEFT", face.container, "BOTTOMLEFT", 0, -8)
+	outline.container:SetPoint("TOPRIGHT", face.container, "BOTTOMRIGHT", 0, -8)
 	do
 		local outlines = { ["NONE"] = L["None"], ["OUTLINE"] = L["Thin"], ["THICKOUTLINE"] = L["Thick"] }
 
@@ -179,13 +179,23 @@ panel:SetScript("OnShow", function(self)
 			local selected = outlines[UIDropDownMenu_GetSelectedValue(outline)] or outline.value:GetText()
 			local info = UIDropDownMenu_CreateInfo()
 
-			for value, name in pairs(outlines) do
-				info.text = name
-				info.value = value
-				info.func = OnClick
-				info.checked = name == selected
-				UIDropDownMenu_AddButton(info)
-			end
+			info.text = L["None"]
+			info.value = "NONE"
+			info.func = OnClick
+			info.checked = L["None"] == selected
+			UIDropDownMenu_AddButton(info)
+
+			info.text = L["Thin"]
+			info.value = "OUTLINE"
+			info.func = OnClick
+			info.checked = L["Thin"] == selected
+			UIDropDownMenu_AddButton(info)
+
+			info.text = L["Thick"]
+			info.value = "THICKOUTLINE"
+			info.func = OnClick
+			info.checked = L["Thick"] == selected
+			UIDropDownMenu_AddButton(info)
 		end)
 
 		UIDropDownMenu_SetSelectedValue(outline, db.font.outline or L["None"])
@@ -194,7 +204,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local shadow = self:CreateCheckbox(L["Shadow"])
-	shadow.hint = L["Toggle the drop shadow effect."]
+	shadow.hint = L["Add a drop shadow effect to the display text."]
 	shadow:SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8)
 	shadow:SetChecked(db.font.shadow)
 	shadow:SetScript("OnClick", function(self)
@@ -207,7 +217,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local large = self:CreateSlider(L["Counter Size"], 6, 32, 1)
-	large.hint = L["Set the charge counter size."]
+	large.hint = L["Set the text size for the charge counters."]
 	large:GetParent():SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8 - shadow:GetHeight() - 8)
 	large:GetParent():SetPoint("TOPRIGHT", outline.container, "BOTTOMRIGHT", 0, -8 - shadow:GetHeight() - 8)
 	large:SetValue(db.font.large or 0)
@@ -221,7 +231,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local small = self:CreateSlider(L["Name Size"], 6, 32, 1)
-	small.hint = L["Set the target name size."]
+	small.hint = L["Set the text size for the target name."]
 	small:GetParent():SetPoint("TOPLEFT", large, "BOTTOMLEFT", 0, -24)
 	small:GetParent():SetPoint("TOPRIGHT", large, "BOTTOMRIGHT", 0, -24)
 	small:SetValue(db.font.small or 0)
@@ -246,7 +256,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local earth = self:CreateColorPicker(L["Earth Shield"])
-	earth.hint = string.format(L["Set the color for the %s charge counter"], L["Earth Shield"])
+	earth.hint = string.format(L["Set the color for the %s charge counter."], L["Earth Shield"])
 	earth.GetValue = function() return unpack(db.color.earth) end
 	earth.SetValue = function(self, r, g, b)
 		db.color.earth[1] = r
@@ -261,7 +271,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local lightning = self:CreateColorPicker(L["Lightning Shield"])
-	lightning.hint = string.format(L["Set the color for the %s charge counter"], L["Lightning Shield"])
+	lightning.hint = string.format(L["Set the color for the %s charge counter."], L["Lightning Shield"])
 	lightning.GetValue = function() return unpack(db.color.lightning) end
 	lightning.SetValue = function(self, r, g, b)
 		db.color.lightning[1] = r
@@ -276,7 +286,7 @@ panel:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local water = self:CreateColorPicker(L["Water Shield"])
-	earth.hint = string.format(L["Set the color for the %s charge counter"], L["Water Shield"])
+	earth.hint = string.format(L["Set the color for the %s charge counter."], L["Water Shield"])
 	water.GetValue = function() return unpack(db.color.water) end
 	water.SetValue = function(self, r, g, b)
 		db.color.water[1] = r
@@ -320,8 +330,8 @@ panel:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local alert = self:CreateColorPicker(L["Zero"])
-	alert.hint = L["Set the color for expired or otherwise inactive shields."]
+	local alert = self:CreateColorPicker(L["Inactive"])
+	alert.hint = L["Set the color for expired, dispelled, or otherwise inactive shields."]
 	alert.GetValue = function() return unpack(db.color.alert) end
 	alert.SetValue = function(self, r, g, b)
 		db.color.alert[1] = r
@@ -335,8 +345,8 @@ panel:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local cblind = self:CreateCheckbox(L["Colorblind mode"])
-	cblind.hint = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color"]:format(L["Earth Shield"])
+	local cblind = self:CreateCheckbox(L["Colorblind Mode"])
+	cblind.hint = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."]:format(L["Earth Shield"])
 	cblind:SetPoint("TOPLEFT", colors, "BOTTOMLEFT", 0, -8)
 	cblind:SetChecked(db.colorblind)
 	cblind:SetScript("OnClick", function(self)
@@ -358,8 +368,8 @@ panel:SetScript("OnShow", function(self)
 		padv:SetValue(db.padv or 0)
 		padv.value:SetText(db.padv or 0)
 
-		font.value:SetText(db.font.typeface or "Friz Quadrata TT")
-		UIDropDownMenu_SetSelectedValue(font, db.font.typeface or "Friz Quadrata TT")
+		font.value:SetText(db.font.face or "Friz Quadrata TT")
+		UIDropDownMenu_SetSelectedValue(font, db.font.face or "Friz Quadrata TT")
 		outline.value:SetText(db.font.outline or L["None"])
 		UIDropDownMenu_SetSelectedValue(outline, db.font.outline or L["None"])
 		shadow:SetChecked(db.font.shadow)
@@ -428,7 +438,7 @@ panel2:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local etext = self:CreateCheckbox(L["Text alert"])
+	local etext = self:CreateCheckbox(L["Text Alert"])
 	etext.hint = L["Show a text message when %s expires."]:format(L["Earth Shield"])
 	etext:SetPoint("TOPLEFT", epanel, 8, -8)
 	etext:SetChecked(db.alert.earth.text)
@@ -440,7 +450,7 @@ panel2:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local esound = self:CreateCheckbox(L["Sound alert"])
+	local esound = self:CreateCheckbox(L["Sound Alert"])
 	esound.hint = L["Play a sound when %s expires."]:format(L["Earth Shield"])
 	esound:SetPoint("TOPLEFT", etext, "BOTTOMLEFT", 0, -8)
 	esound:SetChecked(db.alert.earth.sound)
@@ -450,7 +460,7 @@ panel2:SetScript("OnShow", function(self)
 		db.alert.earth.sound = checked and true or false
 	end)
 
-	local esoundfile = self:CreateDropdown(L["Sound file"])
+	local esoundfile = self:CreateDropdown(L["Sound File"])
 	esoundfile.container.hint = L["Select the sound to play when %s expires."]:format(L["Earth Shield"])
 	esoundfile.container:SetPoint("BOTTOMLEFT", epanel, "BOTTOM", 8, 8)
 	esoundfile.container:SetPoint("BOTTOMRIGHT", epanel, -8, 8)
@@ -497,7 +507,7 @@ panel2:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local wtext = self:CreateCheckbox(L["Text alert"])
+	local wtext = self:CreateCheckbox(L["Text Alert"])
 	wtext.hint = L["Show a text message when %s expires."]:format(L["Water Shield"])
 	wtext:SetPoint("TOPLEFT", wpanel, 8, -8)
 	wtext:SetChecked(db.alert.water.text)
@@ -509,7 +519,7 @@ panel2:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local wsound = self:CreateCheckbox(L["Sound alert"])
+	local wsound = self:CreateCheckbox(L["Sound Alert"])
 	wsound.hint = L["Play a sound when when %s expires."]:format(L["Water Shield"])
 	wsound:SetPoint("TOPLEFT", wtext, "BOTTOMLEFT", 0, -8)
 	wsound:SetChecked(db.alert.water.sound)
@@ -521,7 +531,7 @@ panel2:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local wsoundfile = self:CreateDropdown(L["Sound file"])
+	local wsoundfile = self:CreateDropdown(L["Sound File"])
 	wsoundfile.container.hint = L["Select the sound file to play when %s expires."]:format(L["Water Shield"])
 	wsoundfile.container:SetPoint("BOTTOMLEFT", wpanel, "BOTTOM", 8, 8)
 	wsoundfile.container:SetPoint("BOTTOMRIGHT", wpanel, -8, 8)

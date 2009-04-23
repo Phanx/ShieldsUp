@@ -1,4 +1,5 @@
 ------------------------------------------------------------------------
+Description:
 
 ShieldsUp is a World of Warcraft user interface addon to provide a
 simple shaman shield monitor.
@@ -18,8 +19,8 @@ Features:
 ------------------------------------------------------------------------
 Download:
 
-http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
+* http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+* http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
 
 ------------------------------------------------------------------------
 Usage:
@@ -47,10 +48,10 @@ download page to report specific problems and request specific features.
 Use the comments section on WoWInterface for general feedback only.
 Comments on Curse are disabled.
 
-If private communication is necessary, I can be contacted...
-- by email: addons AT phanx net
-- by in-game mail: Phanx on US Blackrock Horde
-- by private message: Phanx on wowinterface.com or wowace.com
+If private communication is preferred, I can be contacted...
+* by email: addons AT phanx net
+* by in-game mail: Phanx on US Blackrock Horde
+* by private message: Phanx on wowinterface.com or wowace.com
 
 ------------------------------------------------------------------------
 Credits:

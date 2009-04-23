@@ -1,6 +1,7 @@
---[[
+--[[--------------------------------------------------------------------
 	PhanxConfig-Panel
---]]
+	Simple background panel widget generator. Requires LibStub.
+----------------------------------------------------------------------]]
 
 local lib, oldminor = LibStub:NewLibrary("PhanxConfig-Panel", 1)
 if not lib then return end

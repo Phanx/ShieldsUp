@@ -1,6 +1,8 @@
---[[
+--[[--------------------------------------------------------------------
 	PhanxConfig-Dropdown
---]]
+	Simple color picker widget generator. Requires LibStub.
+	Based on tekKonfig-Dropdown by Tekkub.
+----------------------------------------------------------------------]]
 
 local lib, oldminor = LibStub:NewLibrary("PhanxConfig-Dropdown", 1)
 if not lib then return end
