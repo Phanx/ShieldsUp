@@ -1,5 +1,5 @@
 ## Interface: 30100
-## Version: 3.1.0.wowi:revision-beta
+## Version: 3.1.1.wowi:revision-beta
 
 ## Title: ShieldsUp
 ## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
@@ -42,5 +42,6 @@ Libs\PhanxConfig-Dropdown.lua
 Libs\PhanxConfig-Panel.lua
 Libs\PhanxConfig-ScrollingDropdown.lua
 Libs\PhanxConfig-Slider.lua
+Libs\LibAboutPanel.lua
 
 Options.lua

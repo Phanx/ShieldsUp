@@ -7,9 +7,6 @@
 	See README for license terms and additional information.
 ----------------------------------------------------------------------]]
 
--- TO DO:
--- Add automatic visibility states.
-
 if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn("ShieldsUp") end
 
 local SharedMedia
@@ -82,6 +79,25 @@ local defaults = {
 			sink20OutputSink = "RaidWarning",
 		},
 	},
+	show = {
+		group = {
+			solo = true,
+			party = true,
+			raid = true,
+		},
+		zone = {
+			none = true,
+			party = true,
+			raid = true,
+			arena = true,
+			pvp = true,
+		},
+		except = {
+			dead = false,
+			nocombat = false,
+			resting = false,
+		},
+	},
 }
 
 ------------------------------------------------------------------------
@@ -92,14 +108,14 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 0 then return end
+	if lvl > 2 then return end
 	if select(1, ...) then str = str:format(...) end
 	print("|cffff6666ShieldsUp:|r "..str)
 end
 
 local function GetAuraCharges(unit, aura)
 	local name, _, _, charges, _, _, _, caster = UnitAura(unit, aura)
---	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
+	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
 	if not name then
 		return 0, nil
 	elseif charges > 0 then
@@ -285,6 +301,7 @@ function ShieldsUp:PLAYER_LOGIN()
 	end
 
 	self:ApplySettings()
+	self:UpdateVisibility()
 
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	self:RegisterEvent("PLAYER_TALENT_UPDATE")
@@ -294,6 +311,17 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:RegisterEvent("UNIT_AURA")
 	self:RegisterEvent("UNIT_SPELLCAST_SENT")
 --	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+
+	-- TODO: Only register these events if they are needed?
+	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+	self:RegisterEvent("PLAYER_DEAD")
+	self:RegisterEvent("PLAYER_ALIVE")
+	self:RegisterEvent("PLAYER_UNGHOST")
+	self:RegisterEvent("PLAYER_REGEN_DISABLED")
+	self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	self:RegisterEvent("PLAYER_UPDATE_RESTING")
+	self:RegisterEvent("UNIT_ENTERING_VEHICLE")
+	self:RegisterEvent("UNIT_EXITING_VEHICLE")
 
 	self:RegisterEvent("PLAYER_LOGOUT")
 
@@ -310,18 +338,28 @@ end
 ------------------------------------------------------------------------
 
 function ShieldsUp:CHARACTER_POINTS_CHANGED()
---	Debug(1, "CHARACTER_POINTS_CHANGED")
+	Debug(1, "CHARACTER_POINTS_CHANGED")
 
 	if GetSpellInfo(EARTH_SHIELD) then
-	--	Debug(2, "I have the Earth Shield spell.")
+		Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
-	--	Debug(2, "I don't have the Earth Shield spell.")
+		Debug(2, "I don't have the Earth Shield spell.")
 		hasEarthShield = false
 	end
 end
 
-ShieldsUp.PLAYER_TALENT_UPDATE = ShieldsUp.CHARACTER_POINTS_CHANGED
+function ShieldsUp:PLAYER_TALENT_UPDATE()
+	Debug(1, "PLAYER_TALENT_UPDATE")
+
+	if GetSpellInfo(EARTH_SHIELD) then
+		Debug(2, "I have the Earth Shield spell.")
+		hasEarthShield = true
+	else
+		Debug(2, "I don't have the Earth Shield spell.")
+		hasEarthShield = false
+	end
+end
 
 ------------------------------------------------------------------------
 
@@ -329,7 +367,7 @@ do
 	local earthCast = 0
 	function ShieldsUp:UNIT_SPELLCAST_SENT(unit, spell, rank, target)
 		if unit ~= "player" then return end
-	--	Debug(3, "UNIT_SPELLCAST_SENT, "..spell..", "..target)
+		Debug(3, "UNIT_SPELLCAST_SENT, "..spell..", "..target)
 
 		if earthPending and GetTime() - earthCast > 2 then
 			earthPending = nil
@@ -355,7 +393,7 @@ end
 
 function ShieldsUp:UNIT_SPELLCAST_SUCCEEDED(unit, spell, rank)
 	if unit ~= "player" then return end
---	Debug(3, "UNIT_SPELLCAST_SUCCEEDED, "..spell)
+	Debug(3, "UNIT_SPELLCAST_SUCCEEDED, "..spell)
 
 	if earthPending and spell == EARTH_SHIELD then
 		earthName = earthPending
@@ -375,7 +413,7 @@ do
 	end })
 	function ShieldsUp:UNIT_AURA(unit)
 		if ignore[unit] then return end
-	--	Debug(4, "UNIT_AURA, "..unit)
+		Debug(4, "UNIT_AURA, "..unit)
 
 		local update = false
 		if unit == earthUnit then
@@ -415,7 +453,7 @@ do
 				end
 				update = true
 			elseif charges > 0 then
-				Debug(3, "Earth Shield charges did not change.")
+				Debug(4, "Earth Shield charges did not change.")
 				if mine and earthOverwritten then
 					Debug(2, "I overwrote someone's Earth Shield on %s.", earthName)
 					earthOverwritten = false
@@ -503,14 +541,14 @@ do
 	local function OnGroupChange(self)
 		Debug(3, "OnGroupChange")
 		if GetTime() - earthTime > 900 then
-		--	Debug(2, "Earth Shield hasn't been cast recently, clearing name")
+			Debug(2, "Earth Shield hasn't been cast recently, clearing name")
 			earthName = ""
 			self:Update()
 		end
 		if earthName ~= "" then
 			earthUnit = GetUnitFromGUID(earthGUID)
 			if not earthUnit then
-			--	Debug(2, "Earth Shield target no longer in group, clearing name")
+				Debug(2, "Earth Shield target no longer in group, clearing name")
 				earthCount = 0
 				earthName = ""
 				self:Update()
@@ -522,6 +560,7 @@ do
 				Debug(1, "Joined a group")
 				isInGroup = true
 				self:ApplySettings()
+				self:UpdateVisibility()
 			end
 		else
 			Debug(3, "Not in a group")
@@ -529,6 +568,7 @@ do
 				Debug(1, "Left a group")
 				isInGroup = false
 				self:ApplySettings()
+				self:UpdateVisibility()
 			end
 		end
 	end
@@ -541,7 +581,7 @@ end
 ------------------------------------------------------------------------
 
 function ShieldsUp:Update()
---	Debug(3, "Update")
+	Debug(3, "Update")
 	if GetTime() - earthTime > 900 then
 		earthCount = 0
 		earthName = ""
@@ -615,7 +655,81 @@ function ShieldsUp:Alert(spell)
 	if sound then
 		PlaySoundFile(sound)
 	end
---	Debug(1, "Alert, "..spell..", "..text..", "..sound)
+	Debug(1, "Alert, "..spell..", "..text..", "..sound)
+end
+
+------------------------------------------------------------------------
+-- TODO: Split this out into the relevant event handlers?
+
+function ShieldsUp:UpdateVisibility()
+	Debug(2, "UpdateVisibility")
+
+	-- PARTY_MEMBERS_CHANGED
+	-- RAID_ROSTER_CHANGED
+	local groupType = "solo"
+	if GetNumRaidMembers() > 0 then
+		groupType = "raid"
+	elseif GetNumPartyMembers() > 0 then
+		groupType = "party"
+	end
+
+	if not db.show.group[groupType] then
+		return self:Hide()
+	end
+
+	-- ZONE_CHANGED_NEW_AREA
+	local _, zoneType = IsInInstance()
+
+	if not db.show.zone[zoneType] then
+		return self:Hide()
+	end
+
+	-- PLAYER_DEAD
+	-- PLAYER_ALIVE
+	-- PLAYER_UNGHOST
+	if db.show.except.dead and UnitIsDeadOrGhost("player") then
+		return self:Hide()
+	end
+
+	-- PLAYER_REGEN_DISABLED
+	-- PLAYER_REGEN_ENABLED
+	if db.show.except.nocombat and not UnitAffectingCombat("player") then
+		return self:Hide()
+	end
+
+	-- PLAYER_UPDATE_RESTING
+	if db.show.except.resting and IsResting() then
+		return self:Hide()
+	end
+
+	-- UNIT_ENTERING_VEHICLE
+	-- UNIT_EXITING_VEHICLE
+	if db.show.except.vehicle and UnitInVehicle("player") then
+		return self:Hide()
+	end
+end
+
+ShieldsUp.ZONE_CHANGED_NEW_AREA = ShieldsUp.UpdateVisibility
+
+ShieldsUp.PLAYER_DEAD = ShieldsUp.UpdateVisibility
+ShieldsUp.PLAYER_ALIVE = ShieldsUp.UpdateVisibility
+ShieldsUp.PLAYER_UNGHOST = ShieldsUp.UpdateVisibility
+
+ShieldsUp.PLAYER_REGEN_DISABLED = ShieldsUp.UpdateVisibility
+ShieldsUp.PLAYER_REGEN_ENABLED = ShieldsUp.UpdateVisibility
+
+ShieldsUp.PLAYER_UPDATE_RESTING = ShieldsUp.UpdateVisibility
+
+function ShieldsUp:UNIT_ENTERING_VEHICLE(unit)
+	if unit == "player" then
+		self:UpdateVisibility()
+	end
+end
+
+function ShieldsUp:UNIT_EXITING_VEHICLE(unit)
+	if unit == "player" then
+		self:UpdateVisibility()
+	end
 end
 
 ------------------------------------------------------------------------
