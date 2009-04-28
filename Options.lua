@@ -33,11 +33,13 @@ panel:SetScript("OnShow", function(self)
 
 	local title = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 16, -16)
+	title:SetPoint("TOPRIGHT", -16, -16)
+	title:SetJustifyH("LEFT")
 	title:SetText(self.name)
 
 	local notes = self:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	notes:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
-	notes:SetPoint("RIGHT", self, -32, 0)
+	notes:SetPoint("TOPRIGHT", title, 0, -8)
 	notes:SetHeight(32)
 	notes:SetJustifyH("LEFT")
 	notes:SetJustifyV("TOP")
@@ -48,8 +50,8 @@ panel:SetScript("OnShow", function(self)
 
 	local posx = self:CreateSlider(L["Horizontal Position"], math.floor(screenwidth / 10) / 2 * -10, math.floor(screenwidth / 10) / 2 * 10, 5)
 	posx.hint = L["Set the horizontal distance from the center of the screen to place the display."]
-	posx:GetParent():SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -16)
-	posx:GetParent():SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 16)
+	posx.container:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -8)
+	posx.container:SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 8)
 	posx:SetValue(db.posx or 0)
 	posx.value:SetText(db.posx or 0)
 	posx:SetScript("OnValueChanged", function(self)
@@ -62,8 +64,8 @@ panel:SetScript("OnShow", function(self)
 
 	local posy = self:CreateSlider(L["Vertical Position"], floor(screenheight / 10) / 2 * -10, floor(screenheight / 10) / 2 * 10, 5)
 	posy.hint = L["Set the vertical distance from the center of the screen to place the display."]
-	posy:GetParent():SetPoint("TOPLEFT", posx, "BOTTOMLEFT", 0, -24)
-	posy:GetParent():SetPoint("TOPRIGHT", posx, "BOTTOMRIGHT", 0, -24)
+	posy.container:SetPoint("TOPLEFT", posx.container, "BOTTOMLEFT", 0, -8)
+	posy.container:SetPoint("TOPRIGHT", posx.container, "BOTTOMRIGHT", 0, -8)
 	posy:SetValue(db.posy or -150)
 	posy.value:SetText(db.posy or 0)
 	posy:SetScript("OnValueChanged", function(self)
@@ -76,8 +78,8 @@ panel:SetScript("OnShow", function(self)
 
 	local padh = self:CreateSlider(L["Horizontal Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
 	padh.hint = L["Set the horizontal space between the charge counts."]
-	padh:GetParent():SetPoint("TOPLEFT", posy, "BOTTOMLEFT", 0, -24)
-	padh:GetParent():SetPoint("TOPRIGHT", posy, "BOTTOMRIGHT", 0, -24)
+	padh.container:SetPoint("TOPLEFT", posy.container, "BOTTOMLEFT", 0, -8)
+	padh.container:SetPoint("TOPRIGHT", posy.container, "BOTTOMRIGHT", 0, -8)
 	padh:SetValue(db.padh or 0)
 	padh.value:SetText(db.padh or 0)
 	padh:SetScript("OnValueChanged", function(self)
@@ -90,8 +92,8 @@ panel:SetScript("OnShow", function(self)
 
 	local padv = self:CreateSlider(L["Vertical Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
 	padv.hint = L["Set the vertical space between the target name and charge counters."]
-	padv:GetParent():SetPoint("TOPLEFT", padh, "BOTTOMLEFT", 0, -24)
-	padv:GetParent():SetPoint("TOPRIGHT", padh, "BOTTOMRIGHT", 0, -24)
+	padv.container:SetPoint("TOPLEFT", padh.container, "BOTTOMLEFT", 0, -8)
+	padv.container:SetPoint("TOPRIGHT", padh.container, "BOTTOMRIGHT", 0, -8)
 	padv:SetValue(db.padv or 0)
 	padv.value:SetText(db.padv or 0)
 	padv:SetScript("OnValueChanged", function(self)
@@ -104,8 +106,8 @@ panel:SetScript("OnShow", function(self)
 
 	local face = self:CreateScrollingDropdown(L["Font Face"], ShieldsUp.fonts)
 	face.container.hint = L["Set the font face to use for the display text."]
-	face.container:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -16)
-	face.container:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 2, -16)
+	face.container:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -8)
+	face.container:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -8)
 	face.value:SetText(db.font.face or "Friz Quadrata TT")
 	do
 		local _, height, flags = face.value:GetFont()
@@ -218,8 +220,8 @@ panel:SetScript("OnShow", function(self)
 
 	local large = self:CreateSlider(L["Counter Size"], 6, 32, 1)
 	large.hint = L["Set the text size for the charge counters."]
-	large:GetParent():SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8 - shadow:GetHeight() - 8)
-	large:GetParent():SetPoint("TOPRIGHT", outline.container, "BOTTOMRIGHT", 0, -8 - shadow:GetHeight() - 8)
+	large.container:SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8 - shadow:GetHeight() - 8)
+	large.container:SetPoint("TOPRIGHT", outline.container, "BOTTOMRIGHT", 0, -8 - shadow:GetHeight() - 8)
 	large:SetValue(db.font.large or 0)
 	large.value:SetText(db.font.large or 0)
 	large:SetScript("OnValueChanged", function(self)
@@ -232,8 +234,8 @@ panel:SetScript("OnShow", function(self)
 
 	local small = self:CreateSlider(L["Name Size"], 6, 32, 1)
 	small.hint = L["Set the text size for the target name."]
-	small:GetParent():SetPoint("TOPLEFT", large, "BOTTOMLEFT", 0, -24)
-	small:GetParent():SetPoint("TOPRIGHT", large, "BOTTOMRIGHT", 0, -24)
+	small.container:SetPoint("TOPLEFT", large.container, "BOTTOMLEFT", 0, -8)
+	small.container:SetPoint("TOPRIGHT", large.container, "BOTTOMRIGHT", 0, -8)
 	small:SetValue(db.font.small or 0)
 	small.value:SetText(db.font.small or 0)
 	small:SetScript("OnValueChanged", function(self)
@@ -247,7 +249,7 @@ panel:SetScript("OnShow", function(self)
 	local colors = self:CreatePanel()
 	colors:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", -4, -32)
 	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 4, -16 - posx:GetHeight() - 24 - posy:GetHeight() - 24 - padh:GetHeight() - 24 - padv:GetHeight() - 24 - padv.label:GetHeight() - 32)
-	colors:SetHeight(8 + 19 + 8 + 19 + 8 + 19 + 8)
+	colors:SetHeight(shadow:GetHeight() * 3 + 32)
 
 	colors.label = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	colors.label:SetPoint("BOTTOMLEFT", colors, "TOPLEFT", 8, 0)
@@ -265,7 +267,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 	earth:SetPoint("TOPLEFT", colors, 8, -8)
-	earth:SetPoint("TOPRIGHT", colors, "TOP", -8, -8)
+--	earth:SetPoint("TOPRIGHT", colors, "TOP", -8, -8)
 	earth:SetColor(unpack(db.color.earth))
 
 	-------------------------------------------------------------------
@@ -280,7 +282,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 	lightning:SetPoint("TOPLEFT", earth, "BOTTOMLEFT", 0, -8)
-	lightning:SetPoint("TOPRIGHT", earth, "BOTTOMRIGHT", 0, -8)
+--	lightning:SetPoint("TOPRIGHT", earth, "BOTTOMRIGHT", 0, -8)
 	lightning:SetColor(unpack(db.color.lightning))
 
 	-------------------------------------------------------------------
@@ -295,7 +297,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 	water:SetPoint("TOPLEFT", lightning, "BOTTOMLEFT", 0, -8)
-	water:SetPoint("TOPRIGHT", lightning, "BOTTOMRIGHT", 0, -8)
+--	water:SetPoint("TOPRIGHT", lightning, "BOTTOMRIGHT", 0, -8)
 	water:SetColor(unpack(db.color.water))
 
 	-------------------------------------------------------------------
@@ -310,7 +312,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 	normal:SetPoint("TOPLEFT", colors, "TOP", 8, -8)
-	normal:SetPoint("TOPRIGHT", colors, -8, -8)
+--	normal:SetPoint("TOPRIGHT", colors, -8, -8)
 	normal:SetColor(unpack(db.color.normal))
 
 	-------------------------------------------------------------------
@@ -325,7 +327,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 	overwritten:SetPoint("TOPLEFT", normal, "BOTTOMLEFT", 0, -8)
-	overwritten:SetPoint("TOPRIGHT", normal, "BOTTOMRIGHT", 0, -8)
+--	overwritten:SetPoint("TOPRIGHT", normal, "BOTTOMRIGHT", 0, -8)
 	overwritten:SetColor(unpack(db.color.overwritten))
 
 	-------------------------------------------------------------------
@@ -340,7 +342,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 	alert:SetPoint("TOPLEFT", overwritten, "BOTTOMLEFT", 0, -8)
-	alert:SetPoint("TOPRIGHT", overwritten, "BOTTOMRIGHT", 0, -8)
+--	alert:SetPoint("TOPRIGHT", overwritten, "BOTTOMRIGHT", 0, -8)
 	alert:SetColor(unpack(db.color.alert))
 
 	-------------------------------------------------------------------
@@ -412,13 +414,16 @@ panel2:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local title = self:CreateFontString("ShieldsUpAlertTitle", "ARTWORK", "GameFontNormalLarge")
+	local title = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 16, -16)
+	title:SetPoint("TOPRIGHT", -16, -16)
+	title:SetJustifyH("LEFT")
 	title:SetText(self.name)
 
 	local notes = self:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-	notes:SetPoint("TOPLEFT", 16, -16 - 20 - 8)
-	notes:SetPoint("TOPRIGHT", -16, -16 - 20 - 8)
+	notes:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+	notes:SetPoint("TOPRIGHT", title, 0, -8)
+	notes:SetHeight(32)
 	notes:SetJustifyH("LEFT")
 	notes:SetJustifyV("TOP")
 	notes:SetNonSpaceWrap(true)
@@ -442,7 +447,7 @@ panel2:SetScript("OnShow", function(self)
 	etext.hint = L["Show a text message when %s expires."]:format(L["Earth Shield"])
 	etext:SetPoint("TOPLEFT", epanel, 8, -8)
 	etext:SetChecked(db.alert.earth.text)
-	etext:SetScript("OnClick", function()
+	etext:SetScript("OnClick", function(self)
 		local checked = self:GetChecked()
 		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
 		db.alert.earth.text = checked and true or false
@@ -454,7 +459,7 @@ panel2:SetScript("OnShow", function(self)
 	esound.hint = L["Play a sound when %s expires."]:format(L["Earth Shield"])
 	esound:SetPoint("TOPLEFT", etext, "BOTTOMLEFT", 0, -8)
 	esound:SetChecked(db.alert.earth.sound)
-	esound:SetScript("OnClick", function()
+	esound:SetScript("OnClick", function(self)
 		local checked = self:GetChecked()
 		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
 		db.alert.earth.sound = checked and true or false
@@ -511,7 +516,7 @@ panel2:SetScript("OnShow", function(self)
 	wtext.hint = L["Show a text message when %s expires."]:format(L["Water Shield"])
 	wtext:SetPoint("TOPLEFT", wpanel, 8, -8)
 	wtext:SetChecked(db.alert.water.text)
-	wtext:SetScript("OnClick", function()
+	wtext:SetScript("OnClick", function(self)
 		local checked = self:GetChecked()
 		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
 		db.alert.water.text = checked and true or false
@@ -523,7 +528,7 @@ panel2:SetScript("OnShow", function(self)
 	wsound.hint = L["Play a sound when when %s expires."]:format(L["Water Shield"])
 	wsound:SetPoint("TOPLEFT", wtext, "BOTTOMLEFT", 0, -8)
 	wsound:SetChecked(db.alert.water.sound)
-	wsound:SetScript("OnClick", function()
+	wsound:SetScript("OnClick", function(self)
 		local checked = self:GetChecked()
 		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
 		db.alert.water.sound = checked and true or false
@@ -710,7 +715,218 @@ InterfaceOptions_AddCategory(panel2)
 
 ------------------------------------------------------------------------
 
-LibStub:GetLibrary("tekKonfig-AboutPanel").new(panel.name, "ShieldsUp")
+local panel3 = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
+panel3.name = ShieldsUp.L["Visibility"]
+panel3.parent = panel.name
+panel3:Hide()
+panel3:SetScript("OnShow", function(self)
+	local L = ShieldsUp.L
+	local db = ShieldsUpDB.show
+
+	self.CreatePanel = LibStub:GetLibrary("PhanxConfig-Panel").CreatePanel
+	self.CreateCheckbox = LibStub:GetLibrary("PhanxConfig-Checkbox").CreateCheckbox
+
+	-------------------------------------------------------------------
+
+	local title = self:CreateFontString("ShieldsUpAlertTitle", "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 16, -16)
+	title:SetPoint("TOPRIGHT", -16, -16)
+	title:SetJustifyH("LEFT")
+	title:SetText(self.name)
+
+	local notes = self:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	notes:SetPoint("TOPLEFT", title, "BOTTOMLEFT")
+	notes:SetPoint("TOPRIGHT", title, "BOTTOMRIGHT")
+	notes:SetHeight(32)
+	notes:SetJustifyH("LEFT")
+	notes:SetJustifyV("TOP")
+	notes:SetNonSpaceWrap(true)
+	notes:SetText(L["Use these settings to control when the ShieldsUp display should be shown or hidden."])
+
+	-------------------------------------------------------------------
+
+	local glabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	glabel:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -8)
+	glabel:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -8)
+	glabel:SetJustifyH("LEFT")
+	glabel:SetText(L["Group Type"])
+
+	local gpanel = self:CreatePanel()
+	gpanel:SetPoint("TOPLEFT", glabel, "BOTTOMLEFT", -4, 0)
+	gpanel:SetPoint("TOPRIGHT", glabel, "BOTTOMRIGHT", 4, 0)
+
+	local gsolo = self:CreateCheckbox(L["Solo"])
+	gsolo.hint = L["Show the display while you are not in a group"]
+	gsolo:SetPoint("TOPLEFT", gpanel, 8, -8)
+	gsolo:SetChecked(db.group.solo)
+	gsolo:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.group.solo = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local gparty = self:CreateCheckbox(L["Party"])
+	gparty.hint = L["Show the display while you are in a party group"]
+	gparty:SetPoint("TOPLEFT", gsolo, "BOTTOMLEFT", 0, -8)
+	gparty:SetChecked(db.group.party)
+	gparty:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.group.party = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local graid = self:CreateCheckbox(L["Raid"])
+	graid.hint = L["Show the display while you are in a raid group"]
+	graid:SetPoint("TOPLEFT", gpanel, "TOP", 8, -16 - gsolo:GetHeight())
+	graid:SetChecked(db.group.raid)
+	graid:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.group.raid = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+	
+	gpanel:SetHeight(gsolo:GetHeight() * 2 + 24)
+
+	-------------------------------------------------------------------
+
+	local zlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	zlabel:SetPoint("TOPLEFT", gpanel, "BOTTOMLEFT", 4, -8)
+	zlabel:SetPoint("TOPRIGHT", gpanel, "BOTTOMRIGHT", -4, -8)
+	zlabel:SetJustifyH("LEFT")
+	zlabel:SetText(L["Zone Type"])
+
+	local zpanel = self:CreatePanel()
+	zpanel:SetPoint("TOPLEFT", zlabel, "BOTTOMLEFT", -4, 0)
+	zpanel:SetPoint("TOPRIGHT", zlabel, "BOTTOMRIGHT", 4, 0)
+
+	local zworld = self:CreateCheckbox(L["World"])
+	zworld.hint = L["Show the display while you are in the outdoor world"]
+	zworld:SetPoint("TOPLEFT", zpanel, 8, -8)
+	zworld:SetChecked(db.zone.none)
+	zworld:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.zone.solo = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local zparty = self:CreateCheckbox(L["Party Dungeon"])
+	zparty.hint = L["Show the display while you are in a party dungeon"]
+	zparty:SetPoint("TOPLEFT", zworld, "BOTTOMLEFT", 0, -8)
+	zparty:SetChecked(db.zone.party)
+	zparty:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.zone.party = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local zraid = self:CreateCheckbox(L["Raid Dungeon"])
+	zraid.hint = L["Show the display while you are in a raid dungeon"]
+	zraid:SetPoint("TOPLEFT", zpanel, "TOP", 8, -16 - zworld:GetHeight())
+	zraid:SetChecked(db.zone.raid)
+	zraid:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.group.raid = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local zarena = self:CreateCheckbox(L["Arena"])
+	zarena.hint = L["Show the display while you are in a PvP arena"]
+	zarena:SetPoint("TOPLEFT", zparty, "BOTTOMLEFT", 0, -8)
+	zarena:SetChecked(db.zone.arena)
+	zarena:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.zone.arena = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local zpvp = self:CreateCheckbox(L["Battleground"])
+	zpvp.hint = L["Show the display while you are in a PvP battleground"]
+	zpvp:SetPoint("TOPLEFT", zraid, "BOTTOMLEFT", 0, -8)
+	zpvp:SetChecked(db.zone.pvp)
+	zpvp:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.zone.pvp = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+	
+	zpanel:SetHeight(zworld:GetHeight() * 3 + 32)
+
+	-------------------------------------------------------------------
+
+	local xlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	xlabel:SetPoint("TOPLEFT", zpanel, "BOTTOMLEFT", 4, -8)
+	xlabel:SetPoint("TOPRIGHT", zpanel, "BOTTOMRIGHT", -4, -8)
+	xlabel:SetJustifyH("LEFT")
+	xlabel:SetText(L["Exceptions"])
+
+	local xpanel = self:CreatePanel()
+	xpanel:SetPoint("TOPLEFT", xlabel, "BOTTOMLEFT", -4, 0)
+	xpanel:SetPoint("TOPRIGHT", xlabel, "BOTTOMRIGHT", 4, 0)
+
+	local xdead = self:CreateCheckbox(L["Dead"])
+	xdead.hint = L["Hide the display while you are dead"]
+	xdead:SetPoint("TOPLEFT", xpanel, 8, -8)
+	xdead:SetChecked(db.except.dead)
+	xdead:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.except.dead = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local xnocombat = self:CreateCheckbox(L["Out Of Combat"])
+	xnocombat.hint = L["Hide the display while you are out of combat"]
+	xnocombat:SetPoint("TOPLEFT", xpanel, "TOP", 8, -8)
+	xnocombat:SetChecked(db.except.nocombat)
+	xnocombat:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.except.nocombat = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local xresting = self:CreateCheckbox(L["Resting"])
+	xresting.hint = L["Hide the display while you are in an inn or major city"]
+	xresting:SetPoint("TOPLEFT", xdead, "BOTTOMLEFT", 0, -8)
+	xresting:SetChecked(db.except.resting)
+	xresting:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.except.resting = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+
+	local xvehicle = self:CreateCheckbox(L["Vehicle"])
+	xvehicle.hint = L["Hide the display while you are controlling a vehicle"]
+	xvehicle:SetPoint("TOPLEFT", xnocombat, "BOTTOMLEFT", 0, -8)
+	xvehicle:SetChecked(db.except.vehicle)
+	xvehicle:SetScript("OnClick", function(self)
+		local checked = self:GetChecked() and true or false
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.except.vehicle = checked
+		ShieldsUp:UpdateVisibility()
+	end)
+	
+	xpanel:SetHeight(xdead:GetHeight() * 2 + 24)
+
+	-------------------------------------------------------------------
+
+	self:SetScript("OnShow", nil)
+end)
+
+InterfaceOptions_AddCategory(panel3)
+
+------------------------------------------------------------------------
+
+LibStub:GetLibrary("LibAboutPanel").new(panel.name, "ShieldsUp")
 
 ------------------------------------------------------------------------
 
