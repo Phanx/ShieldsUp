@@ -108,7 +108,7 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 2 then return end
+	if lvl > 0 then return end
 	if select(1, ...) then str = str:format(...) end
 	print("|cffff6666ShieldsUp:|r "..str)
 end
@@ -707,6 +707,8 @@ function ShieldsUp:UpdateVisibility()
 	if db.show.except.vehicle and UnitInVehicle("player") then
 		return self:Hide()
 	end
+
+	self:Show()
 end
 
 ShieldsUp.ZONE_CHANGED_NEW_AREA = ShieldsUp.UpdateVisibility
