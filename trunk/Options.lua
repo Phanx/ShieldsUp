@@ -50,7 +50,7 @@ panel:SetScript("OnShow", function(self)
 
 	local posx = self:CreateSlider(L["Horizontal Position"], math.floor(screenwidth / 10) / 2 * -10, math.floor(screenwidth / 10) / 2 * 10, 5)
 	posx.hint = L["Set the horizontal distance from the center of the screen to place the display."]
-	posx.container:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -8)
+	posx.container:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -4, -8)
 	posx.container:SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 8)
 	posx:SetValue(db.posx or 0)
 	posx.value:SetText(db.posx or 0)
@@ -205,23 +205,10 @@ panel:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local shadow = self:CreateCheckbox(L["Shadow"])
-	shadow.hint = L["Add a drop shadow effect to the display text."]
-	shadow:SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8)
-	shadow:SetChecked(db.font.shadow)
-	shadow:SetScript("OnClick", function(self)
-		local checked = self:GetChecked()
-		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
-		db.font.shadow = checked and true or false
-		ShieldsUp:ApplySettings()
-	end)
-
-	-------------------------------------------------------------------
-
 	local large = self:CreateSlider(L["Counter Size"], 6, 32, 1)
 	large.hint = L["Set the text size for the charge counters."]
-	large.container:SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8 - shadow:GetHeight() - 8)
-	large.container:SetPoint("TOPRIGHT", outline.container, "BOTTOMRIGHT", 0, -8 - shadow:GetHeight() - 8)
+	large.container:SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8)
+	large.container:SetPoint("TOPRIGHT", outline.container, "BOTTOMRIGHT", 0, -8)
 	large:SetValue(db.font.large or 0)
 	large.value:SetText(db.font.large or 0)
 	large:SetScript("OnValueChanged", function(self)
@@ -246,19 +233,46 @@ panel:SetScript("OnShow", function(self)
 
 	-------------------------------------------------------------------
 
-	local colors = self:CreatePanel()
-	colors:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", -4, -32)
-	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 4, -16 - posx:GetHeight() - 24 - posy:GetHeight() - 24 - padh:GetHeight() - 24 - padv:GetHeight() - 24 - padv.label:GetHeight() - 32)
-	colors:SetHeight(shadow:GetHeight() * 3 + 32)
+	local shadow = self:CreateCheckbox(L["Shadow"])
+	shadow.hint = L["Add a drop shadow effect to the display text."]
+	shadow:SetPoint("TOPLEFT", small.container, "BOTTOMLEFT", 0, -8)
+	shadow:SetChecked(db.font.shadow)
+	shadow:SetScript("OnClick", function(self)
+		local checked = self:GetChecked()
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.font.shadow = checked and true or false
+		ShieldsUp:ApplySettings()
+	end)
 
+	-------------------------------------------------------------------
+
+	local cblind = self:CreateCheckbox(L["Colorblind Mode"])
+	cblind.hint = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."]:format(L["Earth Shield"])
+	cblind:SetPoint("TOPLEFT", padv.container, "BOTTOMLEFT", 0, -8)
+	cblind:SetChecked(db.colorblind)
+	cblind:SetScript("OnClick", function(self)
+		local checked = self:GetChecked()
+		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+		db.colorblind = checked
+		ShieldsUp:Update()
+	end)
+
+	-------------------------------------------------------------------
+
+	local vdist = -8 - face.container:GetHeight() - 8 - outline.container:GetHeight() - 8 - large.container:GetHeight() - 8 - small.container:GetHeight() - 8 - shadow:GetHeight() - 4
+
+	local colors = self:CreatePanel()
 	colors.label = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	colors.label:SetPoint("BOTTOMLEFT", colors, "TOPLEFT", 8, 0)
+	colors.label:SetPoint("BOTTOMLEFT", colors, "TOPLEFT", 4, 0)
 	colors.label:SetText(L["Colors"])
+	colors:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, vdist - colors.label:GetHeight())
+	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, vdist - colors.label:GetHeight())
 
 	-------------------------------------------------------------------
 
 	local earth = self:CreateColorPicker(L["Earth Shield"])
 	earth.hint = string.format(L["Set the color for the %s charge counter."], L["Earth Shield"])
+	earth:SetPoint("TOPLEFT", colors, 8, -8)
 	earth.GetValue = function() return unpack(db.color.earth) end
 	earth.SetValue = function(self, r, g, b)
 		db.color.earth[1] = r
@@ -266,14 +280,13 @@ panel:SetScript("OnShow", function(self)
 		db.color.earth[3] = b
 		ShieldsUp:Update()
 	end
-	earth:SetPoint("TOPLEFT", colors, 8, -8)
---	earth:SetPoint("TOPRIGHT", colors, "TOP", -8, -8)
 	earth:SetColor(unpack(db.color.earth))
 
 	-------------------------------------------------------------------
 
 	local lightning = self:CreateColorPicker(L["Lightning Shield"])
 	lightning.hint = string.format(L["Set the color for the %s charge counter."], L["Lightning Shield"])
+	lightning:SetPoint("TOPLEFT", earth, "BOTTOMLEFT", 0, -8)
 	lightning.GetValue = function() return unpack(db.color.lightning) end
 	lightning.SetValue = function(self, r, g, b)
 		db.color.lightning[1] = r
@@ -281,14 +294,13 @@ panel:SetScript("OnShow", function(self)
 		db.color.lightning[3] = b
 		ShieldsUp:Update()
 	end
-	lightning:SetPoint("TOPLEFT", earth, "BOTTOMLEFT", 0, -8)
---	lightning:SetPoint("TOPRIGHT", earth, "BOTTOMRIGHT", 0, -8)
 	lightning:SetColor(unpack(db.color.lightning))
 
 	-------------------------------------------------------------------
 
 	local water = self:CreateColorPicker(L["Water Shield"])
-	earth.hint = string.format(L["Set the color for the %s charge counter."], L["Water Shield"])
+	water.hint = string.format(L["Set the color for the %s charge counter."], L["Water Shield"])
+	water:SetPoint("TOPLEFT", lightning, "BOTTOMLEFT", 0, -8)
 	water.GetValue = function() return unpack(db.color.water) end
 	water.SetValue = function(self, r, g, b)
 		db.color.water[1] = r
@@ -296,14 +308,13 @@ panel:SetScript("OnShow", function(self)
 		db.color.water[3] = b
 		ShieldsUp:Update()
 	end
-	water:SetPoint("TOPLEFT", lightning, "BOTTOMLEFT", 0, -8)
---	water:SetPoint("TOPRIGHT", lightning, "BOTTOMRIGHT", 0, -8)
 	water:SetColor(unpack(db.color.water))
 
 	-------------------------------------------------------------------
 
 	local normal = self:CreateColorPicker(L["Active"])
 	normal.hint = string.format(L["Set the color for the target name while your %s is active."], L["Earth Shield"])
+	normal:SetPoint("TOPLEFT", colors, "TOP", 8, -8)
 	normal.GetValue = function() return unpack(db.color.normal) end
 	normal.SetValue = function(self, r, g, b)
 		db.color.normal[1] = r
@@ -311,8 +322,6 @@ panel:SetScript("OnShow", function(self)
 		db.color.normal[3] = b
 		ShieldsUp:Update()
 	end
-	normal:SetPoint("TOPLEFT", colors, "TOP", 8, -8)
---	normal:SetPoint("TOPRIGHT", colors, -8, -8)
 	normal:SetColor(unpack(db.color.normal))
 
 	-------------------------------------------------------------------
@@ -327,7 +336,6 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 	overwritten:SetPoint("TOPLEFT", normal, "BOTTOMLEFT", 0, -8)
---	overwritten:SetPoint("TOPRIGHT", normal, "BOTTOMRIGHT", 0, -8)
 	overwritten:SetColor(unpack(db.color.overwritten))
 
 	-------------------------------------------------------------------
@@ -342,21 +350,11 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 	alert:SetPoint("TOPLEFT", overwritten, "BOTTOMLEFT", 0, -8)
---	alert:SetPoint("TOPRIGHT", overwritten, "BOTTOMRIGHT", 0, -8)
 	alert:SetColor(unpack(db.color.alert))
 
 	-------------------------------------------------------------------
-
-	local cblind = self:CreateCheckbox(L["Colorblind Mode"])
-	cblind.hint = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."]:format(L["Earth Shield"])
-	cblind:SetPoint("TOPLEFT", colors, "BOTTOMLEFT", 0, -8)
-	cblind:SetChecked(db.colorblind)
-	cblind:SetScript("OnClick", function(self)
-		local checked = self:GetChecked()
-		PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
-		db.colorblind = checked
-		ShieldsUp:Update()
-	end)
+	
+	colors:SetHeight(earth:GetHeight() * 3 + 32)
 
 	-------------------------------------------------------------------
 
