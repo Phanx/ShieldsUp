@@ -229,8 +229,6 @@ function ShieldsUp:PLAYER_LOGIN()
 
 	playerGUID = UnitGUID("player")
 
-	self:CHARACTER_POINTS_CHANGED()
-
 	if GetNumRaidMembers() > 0 then
 		Debug(2, "isInGroup = true")
 		isInGroup = true
@@ -300,7 +298,7 @@ function ShieldsUp:PLAYER_LOGIN()
 		end
 	end
 
-	self:ApplySettings()
+	self:CHARACTER_POINTS_CHANGED()
 	self:UpdateVisibility()
 
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
@@ -347,6 +345,8 @@ function ShieldsUp:CHARACTER_POINTS_CHANGED()
 		Debug(2, "I don't have the Earth Shield spell.")
 		hasEarthShield = false
 	end
+
+	self:ApplySettings()
 end
 
 function ShieldsUp:PLAYER_TALENT_UPDATE()
@@ -359,6 +359,8 @@ function ShieldsUp:PLAYER_TALENT_UPDATE()
 		Debug(2, "I don't have the Earth Shield spell.")
 		hasEarthShield = false
 	end
+
+	self:ApplySettings()
 end
 
 ------------------------------------------------------------------------
