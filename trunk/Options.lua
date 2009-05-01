@@ -3,7 +3,7 @@
 	Simple shaman shield monitor.
 	by Phanx < addons@phanx.net >
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-	Copyright © 2008–2009 Alyssa "Phanx" Kinley
+	Copyright Â© 2008â€“2009 Alyssa "Phanx" Kinley
 	See README for license terms and additional information.
 ----------------------------------------------------------------------]]
 

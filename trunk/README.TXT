@@ -1,17 +1,17 @@
 ------------------------------------------------------------------------
 Description:
 
-ShieldsUp is a World of Warcraft user interface addon to provide a
-simple shaman shield monitor.
+ShieldsUp is a World of Warcraft user interface addon for shamans to
+monitor your Earth, Lightning, and Water shields.
 
 ------------------------------------------------------------------------
 Features:
 
-* Supports Earth Shield, Lightning Shield, and Water Shield
 * Clear text display of remaining charges and Earth Shield target name
 * Indication when your Earth Shield has been overwritten
 * Text and sound alerts when a shield expires or is removed
 * Condensed display while solo, or for shamans without Earth Shield
+* Configurable visibility per group size, zone type, and more
 * Configurable typeface, size, colors, transparency, and position
 * Supports Improved Earth Shield and Static Shock talents
 * Supports Glyph of Water Shield
@@ -61,7 +61,7 @@ ShieldsUp was originally based on beSch, by Infineon.
 ------------------------------------------------------------------------
 License:
 
-Copyright ©2008–2009 Alyssa "Phanx" Kinley
+Copyright Â©2008â€“2009 Alyssa "Phanx" Kinley
 
 The contents of this addon, excluding third-party resources, are copyrighted
 to its author with all rights reserved under United States copyright law and
