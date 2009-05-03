@@ -115,7 +115,7 @@ end
 
 local function GetAuraCharges(unit, aura)
 	local name, _, _, charges, _, _, _, caster = UnitAura(unit, aura)
-	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
+--	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
 	if not name then
 		return 0, nil
 	elseif charges > 0 then
@@ -130,7 +130,6 @@ end
 local ShieldsUp = CreateFrame("Frame", "ShieldsUp", UIParent)
 
 ShieldsUp.L = L
-ShieldsUp.debug = 0
 ShieldsUp.defaults = defaults
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, ...) end)
 ShieldsUp:RegisterEvent("ADDON_LOADED")
@@ -230,7 +229,7 @@ function ShieldsUp:PLAYER_LOGIN()
 	playerGUID = UnitGUID("player")
 
 	if GetNumRaidMembers() > 0 then
-		Debug(2, "isInGroup = true")
+	--	Debug(2, "isInGroup = true")
 		isInGroup = true
 		local name, charges, duration, expires, caster, _
 		for i = 1, GetNumRaidMembers() do
@@ -254,7 +253,7 @@ function ShieldsUp:PLAYER_LOGIN()
 			end
 		end
 	elseif GetNumPartyMembers() > 0 then
-		Debug(2, "isInGroup = true")
+	--	Debug(2, "isInGroup = true")
 		isInGroup = true
 		local name, charges, duration, expires, caster, _
 		for i = 1, GetNumPartyMembers() do
@@ -278,7 +277,7 @@ function ShieldsUp:PLAYER_LOGIN()
 			end
 		end
 	else
-		Debug(2, "isInGroup = false")
+	--	Debug(2, "isInGroup = false")
 		isInGroup = false
 	end
 
@@ -336,13 +335,13 @@ end
 ------------------------------------------------------------------------
 
 function ShieldsUp:CHARACTER_POINTS_CHANGED()
-	Debug(1, "CHARACTER_POINTS_CHANGED")
+--	Debug(1, "CHARACTER_POINTS_CHANGED")
 
 	if GetSpellInfo(EARTH_SHIELD) then
-		Debug(2, "I have the Earth Shield spell.")
+	--	Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
-		Debug(2, "I don't have the Earth Shield spell.")
+	--	Debug(2, "I don't have the Earth Shield spell.")
 		hasEarthShield = false
 	end
 
@@ -350,13 +349,13 @@ function ShieldsUp:CHARACTER_POINTS_CHANGED()
 end
 
 function ShieldsUp:PLAYER_TALENT_UPDATE()
-	Debug(1, "PLAYER_TALENT_UPDATE")
+--	Debug(1, "PLAYER_TALENT_UPDATE")
 
 	if GetSpellInfo(EARTH_SHIELD) then
-		Debug(2, "I have the Earth Shield spell.")
+	--	Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
-		Debug(2, "I don't have the Earth Shield spell.")
+	--	Debug(2, "I don't have the Earth Shield spell.")
 		hasEarthShield = false
 	end
 
@@ -369,7 +368,7 @@ do
 	local earthCast = 0
 	function ShieldsUp:UNIT_SPELLCAST_SENT(unit, spell, rank, target)
 		if unit ~= "player" then return end
-		Debug(3, "UNIT_SPELLCAST_SENT, "..spell..", "..target)
+	--	Debug(3, "UNIT_SPELLCAST_SENT, "..spell..", "..target)
 
 		if earthPending and GetTime() - earthCast > 2 then
 			earthPending = nil
@@ -395,7 +394,7 @@ end
 
 function ShieldsUp:UNIT_SPELLCAST_SUCCEEDED(unit, spell, rank)
 	if unit ~= "player" then return end
-	Debug(3, "UNIT_SPELLCAST_SUCCEEDED, "..spell)
+--	Debug(3, "UNIT_SPELLCAST_SUCCEEDED, "..spell)
 
 	if earthPending and spell == EARTH_SHIELD then
 		earthName = earthPending
@@ -415,65 +414,65 @@ do
 	end })
 	function ShieldsUp:UNIT_AURA(unit)
 		if ignore[unit] then return end
-		Debug(4, "UNIT_AURA, "..unit)
+	--	Debug(4, "UNIT_AURA, "..unit)
 
 		local update = false
 		if unit == earthUnit then
 			local charges, mine = GetAuraCharges(unit, EARTH_SHIELD)
-			Debug(4, "UNIT_AURA, charges = %d, earthCount = %d, mine = %s, earthOverwritten = %s, UnitIsVisible = %s", charges, earthCount, tostring(mine), tostring(earthOverwritten), tostring(UnitIsVisible(unit)))
+		--	Debug(4, "UNIT_AURA, charges = %d, earthCount = %d, mine = %s, earthOverwritten = %s, UnitIsVisible = %s", charges, earthCount, tostring(mine), tostring(earthOverwritten), tostring(UnitIsVisible(unit)))
 			if charges == 1 and not mine and not UnitIsVisible(unit) then
 				-- Do nothing!
 			elseif charges < earthCount then
 				if charges == 0 then
-					Debug(2, "Earth Shield faded from %s.", earthName)
+				--	Debug(2, "Earth Shield faded from %s.", earthName)
 					self:Alert(EARTH_SHIELD)
 				else
-					Debug(2, "Earth Shield healed %s.", earthName)
+				--	Debug(2, "Earth Shield healed %s.", earthName)
 				end
 				earthCount = charges
 				update = true
 			elseif charges > earthCount then
-				Debug(3, "Earth Shield charges increased.")
+			--	Debug(3, "Earth Shield charges increased.")
 				if mine and not earthOverwritten then
 					-- This buff is mine, and it was mine before
-					Debug(2, "I refreshed Earth Shield on %s.", earthName)
+				--	Debug(2, "I refreshed Earth Shield on %s.", earthName)
 					earthCount = charges
 				elseif mine and earthOverwritten then
 					-- The buff is mine, and it was not mine before
-					Debug(2, "I overwrote someone's Earth Shield on %s.", earthName)
+				--	Debug(2, "I overwrote someone's Earth Shield on %s.", earthName)
 					earthCount = charges
 					earthOverwritten = false
 				elseif not mine and not earthOverwritten then
 					-- This buff is not mine, and it was mine before
-					Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
+				--	Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
 					earthCount = charges
 					earthOverwritten = true
 				elseif not mine and earthOverwritten then
 					-- This buff is not mine, and it was not mine before
-					Debug(2, "Someone refreshed their Earth Shield on %s.", earthName)
+				--	Debug(2, "Someone refreshed their Earth Shield on %s.", earthName)
 					earthCount = charges
 				end
 				update = true
 			elseif charges > 0 then
-				Debug(4, "Earth Shield charges did not change.")
+			--	Debug(4, "Earth Shield charges did not change.")
 				if mine and earthOverwritten then
-					Debug(2, "I overwrote someone's Earth Shield on %s.", earthName)
+				--	Debug(2, "I overwrote someone's Earth Shield on %s.", earthName)
 					earthOverwritten = false
 					update = true
 				elseif not mine and not earthOverwritten then
-					Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
+				--	Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
 					earthOverwritten = true
 					update = true
 				end
 			else
-				Debug(4, "Earth Shield charges did not change from zero.")
+			--	Debug(4, "Earth Shield charges did not change from zero.")
 			end
 		end
 
 		if earthPending and UnitName(unit) == earthPending then
 			charges = GetAuraCharges(unit, EARTH_SHIELD)
 			if charges > 0 then
-				Debug(2, "I cast Earth Shield on a new target.")
+			--	Debug(2, "I cast Earth Shield on a new target.")
 
 				earthCount = charges
 				earthGUID = UnitGUID(unit)
@@ -490,7 +489,7 @@ do
 		if unit == "player" then
 			charges = GetAuraCharges(unit, waterSpell)
 			if charges ~= waterCount then
-				Debug(2, waterSpell.." charges changed.")
+			--	Debug(2, waterSpell.." charges changed.")
 				if charges == 0 then
 					self:Alert(waterSpell)
 				end
@@ -541,33 +540,33 @@ do
 	end
 
 	local function OnGroupChange(self)
-		Debug(3, "OnGroupChange")
+	--	Debug(3, "OnGroupChange")
 		if GetTime() - earthTime > 900 then
-			Debug(2, "Earth Shield hasn't been cast recently, clearing name")
+		--	Debug(2, "Earth Shield hasn't been cast recently, clearing name")
 			earthName = ""
 			self:Update()
 		end
 		if earthName ~= "" then
 			earthUnit = GetUnitFromGUID(earthGUID)
 			if not earthUnit then
-				Debug(2, "Earth Shield target no longer in group, clearing name")
+			--	Debug(2, "Earth Shield target no longer in group, clearing name")
 				earthCount = 0
 				earthName = ""
 				self:Update()
 			end
 		end
 		if GetNumRaidMembers() > 0 or GetNumPartyMembers() > 0 then
-			Debug(3, "In a group")
+		--	Debug(3, "In a group")
 			if not isInGroup then
-				Debug(1, "Joined a group")
+			--	Debug(1, "Joined a group")
 				isInGroup = true
 				self:ApplySettings()
 				self:UpdateVisibility()
 			end
 		else
-			Debug(3, "Not in a group")
+		--	Debug(3, "Not in a group")
 			if isInGroup then
-				Debug(1, "Left a group")
+			--	Debug(1, "Left a group")
 				isInGroup = false
 				self:ApplySettings()
 				self:UpdateVisibility()
@@ -583,7 +582,7 @@ end
 ------------------------------------------------------------------------
 
 function ShieldsUp:Update()
-	Debug(3, "Update")
+--	Debug(3, "Update")
 	if GetTime() - earthTime > 900 then
 		earthCount = 0
 		earthName = ""
@@ -657,14 +656,14 @@ function ShieldsUp:Alert(spell)
 	if sound then
 		PlaySoundFile(sound)
 	end
-	Debug(1, "Alert, "..spell..", "..text..", "..sound)
+--	Debug(1, "Alert, "..spell..", "..text..", "..sound)
 end
 
 ------------------------------------------------------------------------
 -- TODO: Split this out into the relevant event handlers?
 
 function ShieldsUp:UpdateVisibility()
-	Debug(2, "UpdateVisibility")
+--	Debug(2, "UpdateVisibility")
 
 	-- PARTY_MEMBERS_CHANGED
 	-- RAID_ROSTER_CHANGED
@@ -739,7 +738,7 @@ end
 ------------------------------------------------------------------------
 
 function ShieldsUp:ApplySettings()
-	Debug(1, "ApplySettings")
+--	Debug(1, "ApplySettings")
 
 	self:SetPoint("CENTER", UIParent, "CENTER", db.posx, db.posy)
 	self:SetAlpha(db.alpha)
