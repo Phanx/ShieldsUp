@@ -5,7 +5,7 @@
 		XisRaa < xisraa AT gmail DOT com >
 ----------------------------------------------------------------------]]
 
-if GetLocale() ~= "ruRU" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
+-- if GetLocale() ~= "ruRU" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
 ShieldsUpStrings = { }
 local L = ShieldsUpStrings
@@ -20,7 +20,7 @@ L["YOU"] = "ВАС"
 ------------------------------------------------------------------------
 -- These strings are displayed in the configuration GUI.
 
--- L["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = ""
+-- L["ShieldsUp is a monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = ""
 
 L["Horizontal Position"] = "Горизонтальная позиция"
 L["Set the horizontal distance from the center of the screen to place the display."] = "Установить горизонтальную позицию относительно центра экрана."
@@ -93,8 +93,7 @@ L["Sound File"] = "Звуковой файл"
 ------------------------------------------------------------------------
 
 L["Visibility"] = "Видимость"
-L["Enable"] = "Включено"
-L["Allow the display to hide or show itself based on the conditions below."] = "Настройка отображения в зависимости от следующих условий:"
+L["Use these settings to control when the ShieldsUp display should be shown or hidden."] = "Настройка отображения в зависимости от следующих условий."
 
 L["Group Size"] = "Размер группы"
 L["Solo"] = "Соло"
@@ -107,7 +106,7 @@ L["Show while in a raid group."] = "Показывать, когда в рейд
 L["Zone Type"] = "Тип зоны"
 L["World"] = "Мир"
 L["Show while in the world"] = "Показывать, когда в мире."
-L["Dungeon"] = "Подземелье"
+L["Party Dungeon"] = "Подземелье"
 L["Show while in a 5-man dungeon"] = "Показывать, когда в подземелье на 5 человек."
 L["Raid Dungeon"] = "Инстанс-рейд"
 L["Show while in an raid dungeon"] = "Показывать, когда в инстансе-рейде."
@@ -115,5 +114,15 @@ L["Arena"] = "Арена"
 L["Show while in a PvP arena"] = "Показывать, когда на арене(PvP)."
 L["Battleground"] = "Поле боя"
 L["Show while in a PvP battleground"] = "Показывать, когда на поле боя(PvP)."
+
+-- L["Exceptions"] = ""
+-- L["Dead"] = ""
+-- L["Hide the display while you are dead"] = ""
+-- L["Out Of Combat"] = ""
+-- L["Hide the display while you are out of combat"] = ""
+-- L["Resting"] = ""
+-- L["Hide the display while you are in an inn or major city"] = ""
+-- L["Vehicle"] = ""
+-- L["Hide the display while you are controlling a vehicle"] = ""
 
 ------------------------------------------------------------------------
