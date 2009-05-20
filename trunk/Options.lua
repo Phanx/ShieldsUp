@@ -44,7 +44,7 @@ panel:SetScript("OnShow", function(self)
 	notes:SetJustifyH("LEFT")
 	notes:SetJustifyV("TOP")
 	notes:SetNonSpaceWrap(true)
-	notes:SetText(L["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."])
+	notes:SetText(L["ShieldsUp is a monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."])
 
 	-------------------------------------------------------------------
 
@@ -747,7 +747,7 @@ panel3:SetScript("OnShow", function(self)
 	glabel:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -8)
 	glabel:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -8)
 	glabel:SetJustifyH("LEFT")
-	glabel:SetText(L["Group Type"])
+	glabel:SetText(L["Group Size"])
 
 	local gpanel = self:CreatePanel()
 	gpanel:SetPoint("TOPLEFT", glabel, "BOTTOMLEFT", -4, 0)

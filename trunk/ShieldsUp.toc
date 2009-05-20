@@ -4,11 +4,12 @@
 ## Title: ShieldsUp
 ## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
 ## X-Category: Shaman
-## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
-## X-Localizations: enUS, ruRU
 ## X-Copyright: Copyright ©2008–2009 Alyssa "Phanx" Kinley
 ## X-License: Do not redistribute. See README for complete license terms.
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+
+## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
+## X-Localizations: enUS, ruRU
 
 ## Author: Phanx
 ## X-Email: addons@phanx.net
