@@ -5,7 +5,7 @@
 		XisRaa < xisraa AT gmail DOT com >
 ----------------------------------------------------------------------]]
 
--- if GetLocale() ~= "ruRU" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
+if GetLocale() ~= "ruRU" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
 ShieldsUpStrings = { }
 local L = ShieldsUpStrings
