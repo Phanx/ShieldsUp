@@ -69,6 +69,7 @@ local defaults = {
 			text = true,
 			sound = true,
 			soundFile = "Tribal Bell",
+			overwritten = false,
 		},
 		water = {
 			text = true,
@@ -117,11 +118,11 @@ local function GetAuraCharges(unit, aura)
 	local name, _, _, charges, _, _, _, caster = UnitAura(unit, aura)
 --	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
 	if not name then
-		return 0, nil
+		return 0
 	elseif charges > 0 then
-		return charges, caster == "player"
+		return charges, caster == "player", caster
 	else
-		return 1, caster == "player"
+		return 1, caster == "player", caster
 	end
 end
 
@@ -317,8 +318,8 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("PLAYER_UPDATE_RESTING")
-	self:RegisterEvent("UNIT_ENTERING_VEHICLE")
-	self:RegisterEvent("UNIT_EXITING_VEHICLE")
+	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+	self:RegisterEvent("UNIT_EXITED_VEHICLE")
 
 	self:RegisterEvent("PLAYER_LOGOUT")
 
@@ -418,7 +419,7 @@ do
 
 		local update = false
 		if unit == earthUnit then
-			local charges, mine = GetAuraCharges(unit, EARTH_SHIELD)
+			local charges, mine, caster = GetAuraCharges(unit, EARTH_SHIELD)
 		--	Debug(4, "UNIT_AURA, charges = %d, earthCount = %d, mine = %s, earthOverwritten = %s, UnitIsVisible = %s", charges, earthCount, tostring(mine), tostring(earthOverwritten), tostring(UnitIsVisible(unit)))
 			if charges == 1 and not mine and not UnitIsVisible(unit) then
 				-- Do nothing!
@@ -447,6 +448,9 @@ do
 				--	Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
 					earthCount = charges
 					earthOverwritten = true
+					if db.alert.earth.overwritten then
+						ChatFrame1:AddMessage(string.format("%s overwrote my Earth Shield!", UnitName(caster)))
+					end
 				elseif not mine and earthOverwritten then
 					-- This buff is not mine, and it was not mine before
 				--	Debug(2, "Someone refreshed their Earth Shield on %s.", earthName)
@@ -463,6 +467,9 @@ do
 				--	Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
 					earthOverwritten = true
 					update = true
+					if db.alert.earth.overwritten then
+						ChatFrame1:AddMessage(string.format("%s overwrote my Earth Shield!", UnitName(caster)))
+					end
 				end
 			else
 			--	Debug(4, "Earth Shield charges did not change from zero.")
@@ -703,8 +710,8 @@ function ShieldsUp:UpdateVisibility()
 		return self:Hide()
 	end
 
-	-- UNIT_ENTERING_VEHICLE
-	-- UNIT_EXITING_VEHICLE
+	-- UNIT_ENTERED_VEHICLE
+	-- UNIT_EXITED_VEHICLE
 	if db.show.except.vehicle and UnitInVehicle("player") then
 		return self:Hide()
 	end
@@ -723,13 +730,13 @@ ShieldsUp.PLAYER_REGEN_ENABLED = ShieldsUp.UpdateVisibility
 
 ShieldsUp.PLAYER_UPDATE_RESTING = ShieldsUp.UpdateVisibility
 
-function ShieldsUp:UNIT_ENTERING_VEHICLE(unit)
+function ShieldsUp:UNIT_ENTERED_VEHICLE(unit)
 	if unit == "player" then
 		self:UpdateVisibility()
 	end
 end
 
-function ShieldsUp:UNIT_EXITING_VEHICLE(unit)
+function ShieldsUp:UNIT_EXITED_VEHICLE(unit)
 	if unit == "player" then
 		self:UpdateVisibility()
 	end
