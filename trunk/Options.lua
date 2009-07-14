@@ -402,7 +402,6 @@ panel2:Hide()
 panel2:SetScript("OnShow", function(self)
 	local L = ShieldsUp.L
 	local db = ShieldsUpDB
-	local sinkOptions
 
 	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
 
@@ -571,7 +570,7 @@ panel2:SetScript("OnShow", function(self)
 
 	local olabel, opanel, output, scrollarea, sticky
 	if ShieldsUp.Pour then
-		sinkOptions = ShieldsUp:GetSinkAce3OptionsDataTable()
+		local sinkOptions = ShieldsUp:GetSinkAce3OptionsDataTable()
 		
 		local info = { }
 
@@ -635,7 +634,7 @@ panel2:SetScript("OnShow", function(self)
 				local info = UIDropDownMenu_CreateInfo()
 
 				for k, v in pairs(sinkOptions.args) do
-					if k ~= "Default" and k ~= "Sticky" and v.type == "toggle" then
+					if k ~= "Default" and k ~= "Sticky" and k ~= "Channel" and v.type == "toggle" then
 						info.text = v.name
 						info.value = k
 						info.func = OnClick

@@ -225,6 +225,13 @@ function ShieldsUp:PLAYER_LOGIN()
 	if Sink then
 		Sink:Embed(self)
 		self:SetSinkStorage(db.alert.output)
+
+		-- temporary upgrade code to remove unwanted sinks
+		if db.alert.output.sink20OutputSink == "Channel" then
+			db.alert.output.sink20OutputSink = "RaidWarning"
+			db.alert.output.sink20ScrollArea = nil
+			db.alert.output.sink20Sticky = nil
+		end
 	end
 
 	playerGUID = UnitGUID("player")
