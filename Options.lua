@@ -522,7 +522,7 @@ panel2:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local wsound = self:CreateCheckbox(L["Sound Alert"])
-	wsound.hint = L["Play a sound when when %s expires."]:format(L["Water Shield"])
+	wsound.hint = L["Play a sound when %s expires."]:format(L["Water Shield"])
 	wsound:SetPoint("TOPLEFT", wtext, "BOTTOMLEFT", 0, -8)
 	wsound:SetChecked(db.alert.water.sound)
 	wsound:SetScript("OnClick", function(self)
@@ -534,7 +534,7 @@ panel2:SetScript("OnShow", function(self)
 	-------------------------------------------------------------------
 
 	local wsoundfile = self:CreateDropdown(L["Sound File"])
-	wsoundfile.container.hint = L["Select the sound file to play when %s expires."]:format(L["Water Shield"])
+	wsoundfile.container.hint = L["Select the sound to play when %s expires."]:format(L["Water Shield"])
 	wsoundfile.container:SetPoint("BOTTOMLEFT", wpanel, "BOTTOM", 8, 8)
 	wsoundfile.container:SetPoint("BOTTOMRIGHT", wpanel, -8, 8)
 	wsoundfile.value:SetText(db.alert.water.soundFile)
