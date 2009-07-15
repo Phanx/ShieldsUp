@@ -9,7 +9,7 @@
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 
 ## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
-## X-Localizations: enUS, ruRU
+## X-Localizations: enUS, deDE, ruRU, zhCN, zhTW
 
 ## Author: Phanx
 ## X-Email: addons@phanx.net
@@ -33,8 +33,8 @@ Locales\Locale-deDE.lua
 # Locales\Locale-frFR.lua
 # Locales\Locale-koKR.lua
 Locales\Locale-ruRU.lua
-# Locales\Locale-zhCN.lua
-# Locales\Locale-zhTW.lua
+Locales\Locale-zhCN.lua
+Locales\Locale-zhTW.lua
 
 Core.lua
 
