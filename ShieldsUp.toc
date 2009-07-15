@@ -27,7 +27,7 @@ Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
 Libs\LibSink-2.0\LibSink-2.0.lua
 
-# Locales\Locale-deDE.lua
+Locales\Locale-deDE.lua
 # Locales\Locale-esES.lua
 # Locales\Locale-esMX.lua
 # Locales\Locale-frFR.lua
