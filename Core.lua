@@ -667,7 +667,7 @@ end
 ------------------------------------------------------------------------
 
 function ShieldsUp:Alert(spell)
-	if UnitIsDeadOrGhost("player") or UnitInVehicle("player") then return end
+	if not self:IsShown() then return end
 
 	local r, g, b, text, sound
 	if spell == EARTH_SHIELD then
