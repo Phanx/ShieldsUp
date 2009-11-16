@@ -1,5 +1,5 @@
-## Interface: 30200
-## Version: 3.2.0.wowi:revision
+## Interface: 30300
+## Version: 3.3.0.wowi:revision
 
 ## Title: ShieldsUp
 ## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
@@ -9,7 +9,7 @@
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 
 ## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
-## X-Localizations: enUS, deDE, ruRU, zhCN, zhTW
+## X-Localizations: enUS, deDE, esES, esMX, frFR, ruRU, zhCN, zhTW
 
 ## Author: Phanx
 ## X-Email: addons@phanx.net
@@ -35,9 +35,9 @@ Libs\PhanxConfig-Slider\PhanxConfig-Slider.lua
 Libs\LibAboutPanel\LibAboutPanel.lua
 
 Locales\Locale-deDE.lua
-# Locales\Locale-esES.lua
+Locales\Locale-esES.lua
 # Locales\Locale-esMX.lua
-# Locales\Locale-frFR.lua
+Locales\Locale-frFR.lua
 # Locales\Locale-koKR.lua
 Locales\Locale-ruRU.lua
 Locales\Locale-zhCN.lua
