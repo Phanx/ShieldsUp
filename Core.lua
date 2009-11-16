@@ -104,7 +104,7 @@ local defaults = {
 ------------------------------------------------------------------------
 
 local function Print(str, ...)
-	if select(1, ...) then
+	if ... then
 		if str:find("%%") then
 			str = str:format(...)
 		else
@@ -115,8 +115,8 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 0 then return end
-	if select(1, ...) then
+	if lvl > 3 then return end
+	if ... then
 		if str:find("%%") then
 			str = str:format(...)
 		else
@@ -193,12 +193,12 @@ function ShieldsUp:PLAYER_LOGIN()
 		Debug(2, "LibSharedMedia-3.0 found.")
 
 		SharedMedia:Register("sound", "Alliance Bell", "Sound\\Doodad\\BellTollAlliance.wav")
-		SharedMedia:Register("sound", "Horde Bell", "Sound\\Doodad\\BellTollHorde.wav")
-		SharedMedia:Register("sound", "Tribal Bell", "Sound\\Doodad\\BellTollTribal.wav")
 		SharedMedia:Register("sound", "Cannon Blast", "Sound\\Doodad\\Cannon01_BlastA.wav")
 		SharedMedia:Register("sound", "Dynamite", "Sound\\Spells\\DynamiteExplode.wav")
 		SharedMedia:Register("sound", "Gong", "Sound\\Doodad\\G_GongTroll01.wav")
+		SharedMedia:Register("sound", "Horde Bell", "Sound\\Doodad\\BellTollHorde.wav")
 		SharedMedia:Register("sound", "Serpent", "Sound\\Creature\\TotemAll\\SerpentTotemAttackA.wav")
+		SharedMedia:Register("sound", "Tribal Bell", "Sound\\Doodad\\BellTollTribal.wav")
 
 		self.fonts = {}
 		for i, v in pairs(SharedMedia:List("font")) do
@@ -481,7 +481,7 @@ do
 					earthCount = charges
 					earthOverwritten = true
 					if db.alert.earth.overwritten then
-						ChatFrame1:AddMessage(string.format("%s overwrote my Earth Shield!", UnitName(caster)))
+						ChatFrame1:AddMessage(string.format("%s overwrote my Earth Shield on %s!", UnitName(caster), earthName))
 					end
 				elseif not mine and earthOverwritten then
 					-- This buff is not mine, and it was not mine before
