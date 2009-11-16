@@ -13,7 +13,7 @@ local L = ShieldsUpStrings
 ------------------------------------------------------------------------
 -- These strings are displayed when shields expire.
 
-L["%s faded!"] = "%s aufgebraucht"
+L["%s faded!"] = "%s aufgebraucht!"
 L["%s faded from %s!"] = "%s von %s aufgebraucht!"
 L["YOU"] = "DIR"
 
@@ -44,9 +44,9 @@ L["Set the font face to use for the display text."] = "Wähle den Font für den 
 
 L["Outline"] = "Umrandung"
 L["Select an outline width for the display text."] = "Wähle eine Umrandung für den angezeigten Text"
-L["None"] = "keine"
-L["Thin"] = "dünn"
-L["Thick"] = "dick"
+L["None"] = "Keine"
+L["Thin"] = "Dünn"
+L["Thick"] = "Dick"
 
 L["Shadow"] = "Schatten"
 L["Add a drop shadow effect to the display text."] = "Füge einen Schatteneffekt hinzu."
@@ -97,7 +97,7 @@ L["Enable"] = "Aktivieren"
 L["Use these settings to control when ShieldsUp display should be shown or hidden."] = "Ändere diese Einstellungen um ShieldsUp unter bestimmten Voraussetzungen zu zeigen oder zu verstecken."
 
 L["Group Size"] = "Gruppengröße"
-L["Solo"] = "Solo"
+-- L["Solo"] = ""
 L["Show the display while you are not in a group"] = "Zeige ShieldsUp außerhalb einer Gruppe."
 -- L["Party"] = ""
 L["Show the display while you are in a party group"] = "Zeige ShieldsUp in einer 5er Gruppe."
