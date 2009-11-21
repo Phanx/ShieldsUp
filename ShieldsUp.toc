@@ -20,7 +20,7 @@
 
 ## SavedVariables: ShieldsUpDB
 
-## OptionalDeps: LibSharedMedia-3.0, LibSink-2.0
+## OptionalDeps: LibAboutPanel, LibSharedMedia-3.0, LibSink-2.0
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
