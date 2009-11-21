@@ -357,7 +357,6 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:RegisterEvent("RAID_ROSTER_UPDATE")
 	self:RegisterEvent("UNIT_AURA")
 	self:RegisterEvent("UNIT_SPELLCAST_SENT")
---	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 
 	-- TODO: Only register these events if they are needed?
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -431,23 +430,12 @@ function ShieldsUp:UNIT_SPELLCAST_SENT(unit, spell, rank, target)
 		end
 	elseif spell == EARTH_SHIELD then
 		earthTime = GetTime()
+		target = target:match("^([^-]+)")
 		if target ~= earthName or (target == playerName and waterCount > 0) then
 			earthPending = target
 		end
 	end
 end
-
-------------------------------------------------------------------------
---[[ #UNUSED!
-
-function ShieldsUp:UNIT_SPELLCAST_SUCCEEDED(unit, spell, rank)
-	if unit ~= "player" then return end
-	Debug(3, "UNIT_SPELLCAST_SUCCEEDED, "..spell)
-
-	if earthPending and spell == EARTH_SHIELD then
-		earthName = earthPending
-	end
-end]]
 
 ------------------------------------------------------------------------
 
