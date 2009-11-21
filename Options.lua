@@ -9,13 +9,15 @@
 
 if not ShieldsUp then return end
 
+local ShieldsUp = ShieldsUp
+local L = ShieldsUp.L
+
 ------------------------------------------------------------------------
 
 local panel = CreateFrame("Frame", "ShieldsUpOptionsFrame", InterfaceOptionsFramePanelContainer)
 panel.name = GetAddOnMetadata("ShieldsUp", "Title")
 panel:Hide()
 panel:SetScript("OnShow", function(self)
-	local L = ShieldsUp.L
 	local db = ShieldsUpDB
 	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
 
@@ -396,11 +398,10 @@ InterfaceOptions_AddCategory(panel)
 ------------------------------------------------------------------------
 
 local panel2 = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
-panel2.name = ShieldsUp.L["Alerts"]
+panel2.name = L["Alerts"]
 panel2.parent = panel.name
 panel2:Hide()
 panel2:SetScript("OnShow", function(self)
-	local L = ShieldsUp.L
 	local db = ShieldsUpDB
 
 	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
@@ -713,11 +714,10 @@ InterfaceOptions_AddCategory(panel2)
 ------------------------------------------------------------------------
 
 local panel3 = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
-panel3.name = ShieldsUp.L["Visibility"]
+panel3.name = L["Visibility"]
 panel3.parent = panel.name
 panel3:Hide()
 panel3:SetScript("OnShow", function(self)
-	local L = ShieldsUp.L
 	local db = ShieldsUpDB.show
 
 	self.CreatePanel = LibStub:GetLibrary("PhanxConfig-Panel").CreatePanel

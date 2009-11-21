@@ -44,7 +44,7 @@ L["Set the font face to use for the display text."] = "Seleccione el tipo de let
 
 L["Outline"] = "Frontera de letra"
 L["Select an outline width for the display text."] = "Seleccione un grosor de borde para el texto del monitor."
-L["None"] = "Ninguno,
+L["None"] = "Ninguno"
 L["Thin"] = "Fino"
 L["Thick"] = "Grueso"
 
