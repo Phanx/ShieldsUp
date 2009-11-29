@@ -705,7 +705,7 @@ function ShieldsUp:Alert(spell)
 	if sound then
 		PlaySoundFile(sound)
 	end
-	Debug(1, "Alert, "..spell..", "..text..", "..sound)
+	Debug(1, "Alert, "..spell..", "..text..", "..tostring(sound))
 end
 
 ------------------------------------------------------------------------
