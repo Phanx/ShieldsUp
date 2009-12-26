@@ -729,7 +729,9 @@ function ShieldsUp:UpdateVisibility()
 
 	-- ZONE_CHANGED_NEW_AREA
 	local _, zoneType = IsInInstance()
-
+	if zoneType == "none" and GetZonePVPInfo() == "combat" then
+		zoneType = "pvp"
+	end
 	if not db.show.zone[zoneType] then
 		return self:Hide()
 	end
