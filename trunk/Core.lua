@@ -7,24 +7,29 @@
 	See README for license terms and additional information.
 ----------------------------------------------------------------------]]
 
-if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn("ShieldsUp") end
+local ADDON_NAME, namespace = ...
+if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAME) end
 
-local SharedMedia
-local Sink
-
-local db, hasEarthShield, isInGroup
+------------------------------------------------------------------------
 
 local EARTH_SHIELD = GetSpellInfo(32594)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 local WATER_SHIELD = GetSpellInfo(33736)
 
-local L = setmetatable(ShieldsUpStrings or {}, { __index = function(t, k)
+if not namespace.L then namespace.L = { } end
+
+local L = setmetatable(namespace.L, { __index = function(t, k)
 	t[k] = k
 	return k
 end })
 L["Earth Shield"] = EARTH_SHIELD
 L["Lightning Shield"] = LIGHTNING_SHIELD
 L["Water Shield"] = WATER_SHIELD
+
+------------------------------------------------------------------------
+
+local SharedMedia, Sink
+local db, hasEarthShield, isInGroup
 
 local playerGUID = ""
 local playerName = UnitName("player")
@@ -105,26 +110,28 @@ local defaults = {
 
 local function Print(str, ...)
 	if ... then
-		if str:find("%%") then
+		if str:match("%%") then
 			str = str:format(...)
 		else
 			str = string.join(", ", ...)
 		end
 	end
-	print("|cff00ddbaShieldsUp:|r "..str)
+	print(("|cff00ddbaShieldsUp:|r "):format(str))
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 0 then return end
+	if lvl > 3 then return end
 	if ... then
-		if str:find("%%") then
+		if str:match("%%") then
 			str = str:format(...)
 		else
 			str = string.join(", ", str, ...)
 		end
 	end
-	print("|cffff6666ShieldsUp:|r "..str)
+	print(("|cffff7f7f[DEBUG] ShieldsUp:|r "):format(str))
 end
+
+------------------------------------------------------------------------
 
 local function GetAuraCharges(unit, aura)
 	local name, _, _, charges, _, _, _, caster = UnitAura(unit, aura)
@@ -140,20 +147,18 @@ end
 
 ------------------------------------------------------------------------
 
-local ShieldsUp = CreateFrame("Frame", "ShieldsUp", UIParent)
-
-ShieldsUp.L = L
-ShieldsUp.defaults = defaults
+local ShieldsUp = CreateFrame("Frame", nil, UIParent)
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, ...) end)
 ShieldsUp:RegisterEvent("ADDON_LOADED")
+
+namespace.ShieldsUp = ShieldsUp
+_G.ShieldsUp = ShieldsUp
+
+------------------------------------------------------------------------
 
 function ShieldsUp:ADDON_LOADED(addon)
 	if addon ~= "ShieldsUp" then return end
 	Debug(1, "ADDON_LOADED", addon)
-
-	if ShieldsUpStrings then
-		ShieldsUpStrings = nil
-	end
 
 	if not ShieldsUpDB then
 		ShieldsUpDB = { }
@@ -440,7 +445,6 @@ end
 ------------------------------------------------------------------------
 
 do
-	local charges
 	local ignore = setmetatable({}, { __index = function(t, k)
 		if k == "player" or k == "pet" or ((k:match("^party") or k:match("^raid")) and not k:match("target$")) then
 			t[k] = false
@@ -450,6 +454,7 @@ do
 			return true
 		end
 	end })
+
 	function ShieldsUp:UNIT_AURA(unit)
 		if ignore[unit] then return end
 		Debug(4, "UNIT_AURA, "..unit)
@@ -457,7 +462,7 @@ do
 		local update
 
 		if unit == "player" then
-			charges = GetAuraCharges(unit, waterSpell)
+			local charges = GetAuraCharges(unit, waterSpell)
 			if charges ~= waterCount then
 				Debug(2, waterSpell.." charges changed.")
 				if charges == 0 and earthPending ~= playerName then
@@ -529,7 +534,7 @@ do
 		end
 
 		if earthPending and UnitName(unit) == earthPending then
-			charges = GetAuraCharges(unit, EARTH_SHIELD)
+			local charges = GetAuraCharges(unit, EARTH_SHIELD)
 			if charges > 0 then
 				Debug(2, "I cast Earth Shield on a new target.")
 
@@ -554,7 +559,6 @@ end
 ------------------------------------------------------------------------
 
 do
-	local n
 	local function GetUnitFromGUID(guid)
 		if playerGUID == guid then
 			return "player"
@@ -562,7 +566,7 @@ do
 		if HasPetUI() and UnitGUID("pet") == guid then
 			return "pet"
 		end
-		n = GetNumRaidMembers()
+		local n = GetNumRaidMembers()
 		if n > 0 then
 			for i = 1, n do
 				if UnitGUID("raid"..i) == guid then
