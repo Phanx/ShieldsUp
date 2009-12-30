@@ -7,20 +7,20 @@
 ## X-Copyright: Copyright ©2008–2009 Alyssa "Phanx" Kinley
 ## X-License: Do not redistribute. See README for full license terms.
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+## X-WoWI-ID: 9165
 
 ## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
 ## X-Localizations: enUS, deDE, esES, esMX, frFR, ruRU, zhCN, zhTW
 
 ## Author: Phanx
 ## X-Email: addons@phanx.net
-## X-Credits: Inspired by Infineon's beSch
+## X-Credits: Inspired by Infineon's beSch.
 
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Class: Shaman
 
-## SavedVariables: ShieldsUpDB
-
 ## OptionalDeps: LibAboutPanel, LibSharedMedia-3.0, LibSink-2.0
+## SavedVariables: ShieldsUpDB
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
@@ -44,5 +44,4 @@ Locales\Locale-zhCN.lua
 Locales\Locale-zhTW.lua
 
 Core.lua
-
 Options.lua

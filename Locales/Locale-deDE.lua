@@ -7,8 +7,9 @@
 
 if GetLocale() ~= "deDE" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
-ShieldsUpStrings = { }
-local L = ShieldsUpStrings
+local L = { }
+local ADDON_NAME, namespace = ...
+namespace.L = L
 
 ------------------------------------------------------------------------
 -- These strings are displayed when shields expire.

@@ -7,31 +7,32 @@
 	See README for license terms and additional information.
 ----------------------------------------------------------------------]]
 
-if not ShieldsUp then return end
+if select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
-local ShieldsUp = ShieldsUp
-local L = ShieldsUp.L
+local ADDON_NAME, namespace = ...
+local ShieldsUp = namespace.ShieldsUp
+local L = namespace.L
 
 ------------------------------------------------------------------------
 
-local panel = CreateFrame("Frame", "ShieldsUpOptionsFrame", InterfaceOptionsFramePanelContainer)
-panel.name = GetAddOnMetadata("ShieldsUp", "Title")
+local panel = CreateFrame("Frame", nil, InterfaceOptionsFramePanelContainer)
+panel.name = GetAddOnMetadata(ADDON_NAME, "Title")
 panel:Hide()
 panel:SetScript("OnShow", function(self)
 	local db = ShieldsUpDB
-	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
+	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 	local screenwidth = UIParent:GetWidth()
 	local screenheight = UIParent:GetHeight()
 
-	self.CreatePanel = LibStub:GetLibrary("PhanxConfig-Panel").CreatePanel
-	self.CreateCheckbox = LibStub:GetLibrary("PhanxConfig-Checkbox").CreateCheckbox
-	self.CreateColorPicker = LibStub:GetLibrary("PhanxConfig-ColorPicker").CreateColorPicker
-	self.CreateDropdown = LibStub:GetLibrary("PhanxConfig-Dropdown").CreateDropdown
-	self.CreateScrollingDropdown = LibStub:GetLibrary("PhanxConfig-ScrollingDropdown").CreateScrollingDropdown
-	self.CreateSlider = LibStub:GetLibrary("PhanxConfig-Slider").CreateSlider
+	self.CreatePanel = LibStub("PhanxConfig-Panel").CreatePanel
+	self.CreateCheckbox = LibStub("PhanxConfig-Checkbox").CreateCheckbox
+	self.CreateColorPicker = LibStub("PhanxConfig-ColorPicker").CreateColorPicker
+	self.CreateDropdown = LibStub("PhanxConfig-Dropdown").CreateDropdown
+	self.CreateScrollingDropdown = LibStub("PhanxConfig-ScrollingDropdown").CreateScrollingDropdown
+	self.CreateSlider = LibStub("PhanxConfig-Slider").CreateSlider
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local title = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 16, -16)
@@ -48,7 +49,7 @@ panel:SetScript("OnShow", function(self)
 	notes:SetNonSpaceWrap(true)
 	notes:SetText(L["ShieldsUp is a monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."])
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local posx = self:CreateSlider(L["Horizontal Position"], math.floor(screenwidth / 10) / 2 * -10, math.floor(screenwidth / 10) / 2 * 10, 5)
 	posx.desc = L["Set the horizontal distance from the center of the screen to place the display."]
@@ -63,7 +64,7 @@ panel:SetScript("OnShow", function(self)
 		return value
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local posy = self:CreateSlider(L["Vertical Position"], floor(screenheight / 10) / 2 * -10, floor(screenheight / 10) / 2 * 10, 5)
 	posy.desc = L["Set the vertical distance from the center of the screen to place the display."]
@@ -78,7 +79,7 @@ panel:SetScript("OnShow", function(self)
 		return value
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local padh = self:CreateSlider(L["Horizontal Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
 	padh.desc = L["Set the horizontal space between the charge counts."]
@@ -93,7 +94,7 @@ panel:SetScript("OnShow", function(self)
 		return value
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local padv = self:CreateSlider(L["Vertical Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
 	padv.desc = L["Set the vertical space between the target name and charge counters."]
@@ -108,7 +109,7 @@ panel:SetScript("OnShow", function(self)
 		return value
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local face = self:CreateScrollingDropdown(L["Font Face"], ShieldsUp.fonts)
 	face.container.desc = L["Set the font face to use for the display text."]
@@ -164,7 +165,7 @@ panel:SetScript("OnShow", function(self)
 		end)
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local outline = self:CreateDropdown(L["Outline"])
 	outline.container.desc = L["Select an outline width for the display text."]
@@ -207,7 +208,7 @@ panel:SetScript("OnShow", function(self)
 		UIDropDownMenu_SetSelectedValue(outline, db.font.outline or L["None"])
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local large = self:CreateSlider(L["Counter Size"], 6, 32, 1)
 	large.desc = L["Set the text size for the charge counters."]
@@ -222,7 +223,7 @@ panel:SetScript("OnShow", function(self)
 		return value
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local small = self:CreateSlider(L["Name Size"], 6, 32, 1)
 	small.desc = L["Set the text size for the target name."]
@@ -237,7 +238,7 @@ panel:SetScript("OnShow", function(self)
 		return value
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local shadow = self:CreateCheckbox(L["Shadow"])
 	shadow.desc = L["Add a drop shadow effect to the display text."]
@@ -248,7 +249,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:ApplySettings()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local cblind = self:CreateCheckbox(L["Colorblind Mode"])
 	cblind.desc = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."]:format(L["Earth Shield"])
@@ -259,7 +260,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local vdist = -8 - face.container:GetHeight() - 8 - outline.container:GetHeight() - 8 - large.container:GetHeight() - 8 - small.container:GetHeight() - 8 - shadow:GetHeight() - 4
 
@@ -270,7 +271,7 @@ panel:SetScript("OnShow", function(self)
 	colors:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, vdist - colors.label:GetHeight())
 	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, vdist - colors.label:GetHeight())
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local earth = self:CreateColorPicker(L["Earth Shield"])
 	earth.desc = string.format(L["Set the color for the %s charge counter."], L["Earth Shield"])
@@ -284,7 +285,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local lightning = self:CreateColorPicker(L["Lightning Shield"])
 	lightning.desc = string.format(L["Set the color for the %s charge counter."], L["Lightning Shield"])
@@ -298,7 +299,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local water = self:CreateColorPicker(L["Water Shield"])
 	water.desc = string.format(L["Set the color for the %s charge counter."], L["Water Shield"])
@@ -312,7 +313,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local normal = self:CreateColorPicker(L["Active"])
 	normal.desc = string.format(L["Set the color for the target name while your %s is active."], L["Earth Shield"])
@@ -326,7 +327,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local overwritten = self:CreateColorPicker(L["Overwritten"])
 	overwritten.desc = string.format(L["Set the color for the target name when your %s has been overwritten."], L["Earth Shield"])
@@ -340,7 +341,7 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local alert = self:CreateColorPicker(L["Inactive"])
 	alert.desc = L["Set the color for expired, dispelled, or otherwise inactive shields."]
@@ -354,11 +355,11 @@ panel:SetScript("OnShow", function(self)
 		ShieldsUp:Update()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	colors:SetHeight(earth:GetHeight() * 3 + 32)
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	self.refresh = function()
 		posx:SetValue(db.posx or 0)
@@ -401,13 +402,13 @@ panel2:Hide()
 panel2:SetScript("OnShow", function(self)
 	local db = ShieldsUpDB
 
-	local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0", true)
+	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-	self.CreatePanel = LibStub:GetLibrary("PhanxConfig-Panel").CreatePanel
-	self.CreateCheckbox = LibStub:GetLibrary("PhanxConfig-Checkbox").CreateCheckbox
-	self.CreateDropdown = LibStub:GetLibrary("PhanxConfig-Dropdown").CreateDropdown
+	self.CreatePanel = LibStub("PhanxConfig-Panel").CreatePanel
+	self.CreateCheckbox = LibStub("PhanxConfig-Checkbox").CreateCheckbox
+	self.CreateDropdown = LibStub("PhanxConfig-Dropdown").CreateDropdown
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local title = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 16, -16)
@@ -424,7 +425,7 @@ panel2:SetScript("OnShow", function(self)
 	notes:SetNonSpaceWrap(true)
 	notes:SetText(L["Use these settings to configure how ShieldsUp alerts you when a shield expires or is removed."])
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local elabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	elabel:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -16)
@@ -436,7 +437,7 @@ panel2:SetScript("OnShow", function(self)
 	epanel:SetPoint("TOPLEFT", elabel, "BOTTOMLEFT", -4, 0)
 	epanel:SetPoint("TOPRIGHT", elabel, "BOTTOMRIGHT", 4, 0)
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local etext = self:CreateCheckbox(L["Text Alert"])
 	etext.desc = L["Show a text message when %s expires."]:format(L["Earth Shield"])
@@ -446,7 +447,7 @@ panel2:SetScript("OnShow", function(self)
 		db.alert.earth.text = checked
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local esound = self:CreateCheckbox(L["Sound Alert"])
 	esound.desc = L["Play a sound when %s expires."]:format(L["Earth Shield"])
@@ -484,11 +485,11 @@ panel2:SetScript("OnShow", function(self)
 		esoundfile:SetValue(db.alert.earth.soundFile)
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	epanel:SetHeight(8 + etext:GetHeight() + 8 + esound:GetHeight() + 8)
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local wlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	wlabel:SetPoint("TOPLEFT", epanel, "BOTTOMLEFT", 4, -8)
@@ -500,7 +501,7 @@ panel2:SetScript("OnShow", function(self)
 	wpanel:SetPoint("TOPLEFT", wlabel, "BOTTOMLEFT", -4, 0)
 	wpanel:SetPoint("TOPRIGHT", wlabel, "BOTTOMRIGHT", 4, 0)
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local wtext = self:CreateCheckbox(L["Text Alert"])
 	wtext.desc = L["Show a text message when %s expires."]:format(L["Water Shield"])
@@ -510,7 +511,7 @@ panel2:SetScript("OnShow", function(self)
 		db.alert.water.text = checked
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local wsound = self:CreateCheckbox(L["Sound Alert"])
 	wsound.desc = L["Play a sound when %s expires."]:format(L["Water Shield"])
@@ -520,7 +521,7 @@ panel2:SetScript("OnShow", function(self)
 		db.alert.water.sound = checked
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local wsoundfile = self:CreateDropdown(L["Sound File"])
 	wsoundfile.container.desc = L["Select the sound to play when %s expires."]:format(L["Water Shield"])
@@ -550,11 +551,11 @@ panel2:SetScript("OnShow", function(self)
 		wsoundfile:SetValue(db.alert.water.soundFile)
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	wpanel:SetHeight(8 + wtext:GetHeight() + 8 + wsound:GetHeight() + 8)
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local olabel, opanel, output, scrollarea, sticky, UpdateOutputPanel
 	if ShieldsUp.Pour then
@@ -687,7 +688,7 @@ panel2:SetScript("OnShow", function(self)
 		UpdateOutputPanel()
 	end
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	self.refresh = function()
 		etext:SetChecked(db.alert.earth.text)
@@ -723,10 +724,10 @@ panel3:Hide()
 panel3:SetScript("OnShow", function(self)
 	local db = ShieldsUpDB.show
 
-	self.CreatePanel = LibStub:GetLibrary("PhanxConfig-Panel").CreatePanel
-	self.CreateCheckbox = LibStub:GetLibrary("PhanxConfig-Checkbox").CreateCheckbox
+	self.CreatePanel = LibStub("PhanxConfig-Panel").CreatePanel
+	self.CreateCheckbox = LibStub("PhanxConfig-Checkbox").CreateCheckbox
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local title = self:CreateFontString("ShieldsUpAlertTitle", "ARTWORK", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", 16, -16)
@@ -743,7 +744,7 @@ panel3:SetScript("OnShow", function(self)
 	notes:SetNonSpaceWrap(true)
 	notes:SetText(L["Use these settings to control when the ShieldsUp display should be shown or hidden."])
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local glabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	glabel:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -8)
@@ -784,7 +785,7 @@ panel3:SetScript("OnShow", function(self)
 
 	gpanel:SetHeight(gsolo:GetHeight() * 2 + 24)
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local zlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	zlabel:SetPoint("TOPLEFT", gpanel, "BOTTOMLEFT", 4, -8)
@@ -843,7 +844,7 @@ panel3:SetScript("OnShow", function(self)
 
 	zpanel:SetHeight(zworld:GetHeight() * 3 + 32)
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	local xlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	xlabel:SetPoint("TOPLEFT", zpanel, "BOTTOMLEFT", 4, -8)
@@ -893,7 +894,7 @@ panel3:SetScript("OnShow", function(self)
 
 	xpanel:SetHeight(xdead:GetHeight() * 2 + 24)
 
-	-------------------------------------------------------------------
+	--------------------------------------------------------------------
 
 	self.refresh = function()
 		gsolo:SetChecked(db.group.solo)
@@ -916,7 +917,11 @@ InterfaceOptions_AddCategory(panel3)
 
 ------------------------------------------------------------------------
 
-LibStub:GetLibrary("LibAboutPanel").new(panel.name, "ShieldsUp")
+LibStub("LibAboutPanel").new(panel.name, ADDON_NAME)
+
+------------------------------------------------------------------------
+
+ShieldsUp.optionsPanel = panel
 
 ------------------------------------------------------------------------
 
