@@ -116,11 +116,11 @@ local function Print(str, ...)
 			str = string.join(", ", ...)
 		end
 	end
-	print(("|cff00ddbaShieldsUp:|r "):format(str))
+	print(("|cff00ddbaShieldsUp:|r %s"):format(str))
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 3 then return end
+	if lvl > 0 then return end
 	if ... then
 		if str:match("%%") then
 			str = str:format(...)
@@ -128,7 +128,7 @@ local function Debug(lvl, str, ...)
 			str = string.join(", ", str, ...)
 		end
 	end
-	print(("|cffff7f7f[DEBUG] ShieldsUp:|r "):format(str))
+	print(("|cffff7f7f[DEBUG] ShieldsUp:|r %s"):format(str))
 end
 
 ------------------------------------------------------------------------
@@ -272,7 +272,7 @@ function ShieldsUp:PLAYER_LOGIN()
 
 	if earthName ~= playerName then
 		local name, charges, duration, expires, caster, _
-		
+
 		name, _, _, charges = UnitAura("player", WATER_SHIELD)
 		if name then
 			waterCount = charges
@@ -347,7 +347,7 @@ function ShieldsUp:PLAYER_LOGIN()
 			isInGroup = false
 		end
 	end
-	
+
 	if earthCount == 0 then
 		Debug(2, "Earth Shield not found")
 	end
