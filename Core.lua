@@ -459,14 +459,14 @@ do
 		if ignore[unit] then return end
 		Debug(4, "UNIT_AURA, "..unit)
 
-		local update
+		local alert, update
 
 		if unit == "player" then
 			local charges = GetAuraCharges(unit, waterSpell)
 			if charges ~= waterCount then
 				Debug(2, waterSpell.." charges changed.")
 				if charges == 0 and earthPending ~= playerName then
-					self:Alert(waterSpell)
+					alert = waterSpell
 				end
 				waterCount = charges
 				update = true
@@ -482,7 +482,7 @@ do
 				if charges == 0 then
 					if not earthPending and not (unit == "player" and waterCount > 0) then
 						Debug(2, "Earth Shield faded from %s.", earthName)
-						self:Alert(EARTH_SHIELD)
+						alert = EARTH_SHIELD
 					end
 				else
 					Debug(2, "Earth Shield healed %s.", earthName)
@@ -552,6 +552,9 @@ do
 
 		if update then
 			self:Update()
+		end
+		if alert then
+			self:Alert(alert)
 		end
 	end
 end
@@ -688,7 +691,7 @@ function ShieldsUp:Alert(spell)
 			text = string.format(L["%s faded from %s!"], spell, earthName == playerName and L["YOU"] or earthName)
 		end
 		if db.alert.earth.sound then
-			sound = SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile) or "Sound\\Doodad\\BellTollHorde.wav"
+			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile)) or "Sound\\Doodad\\BellTollHorde.wav"
 		end
 	else
 		if db.alert.water.text then
@@ -696,7 +699,7 @@ function ShieldsUp:Alert(spell)
 			text = string.format(L["%s faded!"], spell)
 		end
 		if db.alert.water.sound then
-			sound = SharedMedia and SharedMedia:Fetch("sound", db.alert.water.soundFile) or "Sound\\Doodad\\BellTollHorde.wav"
+			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.water.soundFile)) or "Sound\\Doodad\\BellTollHorde.wav"
 		end
 	end
 	if r and g and b and text then
@@ -709,7 +712,7 @@ function ShieldsUp:Alert(spell)
 	if sound then
 		PlaySoundFile(sound)
 	end
-	Debug(1, "Alert, "..spell..", "..text..", "..tostring(sound))
+	Debug(1, "Alert, spell: %s, text: %s, sound: %s", tostring(spell), tostring(text), tostring(sound))
 end
 
 ------------------------------------------------------------------------
