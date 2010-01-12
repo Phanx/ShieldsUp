@@ -40,7 +40,7 @@ panel:SetScript("OnShow", function(self)
 	title:SetJustifyH("LEFT")
 	title:SetText(self.name)
 
-	local notes = self:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+	local notes = self:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	notes:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
 	notes:SetPoint("TOPRIGHT", title, 0, -8)
 	notes:SetHeight(32)
