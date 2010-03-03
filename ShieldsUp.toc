@@ -1,10 +1,10 @@
 ## Interface: 30300
-## Version: 3.3.0.wowi:revision
+## Version: 3.3.2.wowi:revision
 
 ## Title: ShieldsUp
 ## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
 ## X-Category: Shaman
-## X-Copyright: Copyright ©2008–2009 Alyssa "Phanx" Kinley
+## X-Copyright: Copyright ©2008–2010 Alyssa "Phanx" Kinley
 ## X-License: Do not redistribute. See README for full license terms.
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 ## X-WoWI-ID: 9165
