@@ -3,18 +3,19 @@
 	Basic shaman shield monitor.
 	by Phanx < addons@phanx.net >
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+	http://wow.curse.com/downloads/wow-addons/details/shieldsup.aspx
 	Copyright © 2008–2010 Alyssa "Phanx" Kinley
 	See README for license terms and additional information.
 ----------------------------------------------------------------------]]
 
 local ADDON_NAME, namespace = ...
-if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAME) end
+-- if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAME) end
 
 ------------------------------------------------------------------------
 
-local EARTH_SHIELD = GetSpellInfo(32594)
+local EARTH_SHIELD = GetSpellInfo(974) -- use 139 Renew or 59547 Gift of the Naaru for testing | 974 Earth Shield for live
 local LIGHTNING_SHIELD = GetSpellInfo(324)
-local WATER_SHIELD = GetSpellInfo(33736)
+local WATER_SHIELD = GetSpellInfo(52127)
 
 if not namespace.L then namespace.L = { } end
 
@@ -22,6 +23,7 @@ local L = setmetatable(namespace.L, { __index = function(t, k)
 	t[k] = k
 	return k
 end })
+
 L["Earth Shield"] = EARTH_SHIELD
 L["Lightning Shield"] = LIGHTNING_SHIELD
 L["Water Shield"] = WATER_SHIELD
@@ -120,7 +122,7 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 0 then return end
+	if lvl > 3 then return end
 	if ... then
 		if str:match("%%") then
 			str = str:format(...)
@@ -391,7 +393,7 @@ end
 function ShieldsUp:CHARACTER_POINTS_CHANGED()
 	Debug(1, "CHARACTER_POINTS_CHANGED")
 
-	if GetSpellInfo(EARTH_SHIELD) then
+	if IsSpellKnown(974) then
 		Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
@@ -405,7 +407,7 @@ end
 function ShieldsUp:PLAYER_TALENT_UPDATE()
 	Debug(1, "PLAYER_TALENT_UPDATE")
 
-	if GetSpellInfo(EARTH_SHIELD) then
+	if IsSpellKnown(974) then
 		Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
@@ -436,6 +438,7 @@ function ShieldsUp:UNIT_SPELLCAST_SENT(unit, spell, rank, target)
 	elseif spell == EARTH_SHIELD then
 		earthTime = GetTime()
 		target = target:match("^([^-]+)")
+		Debug(3, "Earth Shield cast on %s.", target)
 		if target ~= earthName or (target == playerName and waterCount > 0) then
 			earthPending = target
 		end
