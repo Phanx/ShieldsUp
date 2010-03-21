@@ -9,7 +9,7 @@
 ----------------------------------------------------------------------]]
 
 local ADDON_NAME, namespace = ...
--- if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAME) end
+if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAME) end
 
 ------------------------------------------------------------------------
 
@@ -122,7 +122,7 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 3 then return end
+	if lvl > 0 then return end
 	if ... then
 		if str:match("%%") then
 			str = str:format(...)
