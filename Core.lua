@@ -55,7 +55,6 @@ local defaults = {
 	padh = 5,
 	padv = 0,
 	alpha = 1,
-	colorblind = false,
 	color = {
 		earth = { 0.65, 1, 0.25 },
 		lightning = { 0.25, 0.65, 1 },
@@ -86,6 +85,7 @@ local defaults = {
 		output = {
 			sink20OutputSink = "RaidWarning",
 		},
+		alertWhenHidden = false,
 	},
 	show = {
 		group = {
@@ -505,7 +505,7 @@ do
 					earthOverwritten = false
 				elseif not mine and not earthOverwritten then
 					-- This buff is not mine, and it was mine before
-					Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
+					Debug(2, "%s overwrote my Earth Shield on %s.", UnitName(caster), earthName)
 					earthCount = charges
 					earthOverwritten = true
 					if db.alert.earth.overwritten then
@@ -652,8 +652,8 @@ function ShieldsUp:Update()
 	else
 		self.nameText:SetTextColor(unpack(db.color.normal))
 	end
-	if earthOverwritten and db.colorblind then
-		self.nameText:SetText("* "..earthName.." *")
+	if earthOverwritten and ENABLE_COLORBLIND_MODE == "1" then
+		self.nameText:SetFormattedText("* %s *", earthName)
 	else
 		self.nameText:SetText(earthName)
 	end
@@ -685,7 +685,7 @@ end
 ------------------------------------------------------------------------
 
 function ShieldsUp:Alert(spell)
-	if not self:IsShown() then return end
+	if not db.alert.alertWhenHidden and not self:IsShown() then return end
 
 	local r, g, b, text, sound
 	if spell == EARTH_SHIELD then

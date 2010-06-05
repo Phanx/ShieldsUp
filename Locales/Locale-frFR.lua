@@ -2,7 +2,7 @@
 	French translations for ShieldsUp
 	Last updated 2009-11-15 by krukniak
 	Contributors:
-		krukniak < curse.com >  
+		krukniak < curse.com >
 ----------------------------------------------------------------------]]
 
 if GetLocale() ~= "frFR" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
@@ -37,6 +37,9 @@ L["Set the vertical space between the target name and charge counters."] = "Défi
 
 L["Opacity"] = "Opacité"
 L["Set the opacity level for the display."] = "Défini le niveau d'opacité de l'affichage."
+
+-- L["Overwrite Alert"] = ""
+-- L["Print a message in the chat frame alerting you who overwrites your %s."] = ""
 
 ------------------------------------------------------------------------
 
