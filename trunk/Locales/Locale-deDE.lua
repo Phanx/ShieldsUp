@@ -2,7 +2,7 @@
 	German translations for ShieldsUp
 	Last updated 2009-07-14 by Søøm
 	Contributors:
-		Søøm < graninibanane AT gmx DOT de >  
+		Søøm < graninibanane AT gmx DOT de >
 ----------------------------------------------------------------------]]
 
 if GetLocale() ~= "deDE" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
@@ -37,6 +37,9 @@ L["Set the vertical space between the target name and charge counters."] = "Wäh
 
 L["Opacity"] = "Durchsichtigkeit"
 L["Set the opacity level for the display."] = "Konfiguriere die Durchsichtigkeit der Anzeige."
+
+-- L["Overwrite Alert"] = ""
+-- L["Print a message in the chat frame alerting you who overwrites your %s."] = ""
 
 ------------------------------------------------------------------------
 

@@ -252,13 +252,12 @@ panel:SetScript("OnShow", function(self)
 
 	--------------------------------------------------------------------
 
-	local cblind = self:CreateCheckbox(L["Colorblind Mode"])
-	cblind.desc = L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."]:format(L["Earth Shield"])
-	cblind:SetPoint("TOPLEFT", padv.container, "BOTTOMLEFT", 0, -8)
-	cblind:SetChecked(db.colorblind)
-	cblind.OnClick = function(self, checked)
-		db.colorblind = checked
-		ShieldsUp:Update()
+	local overwrite = self:CreateCheckbox(L["Overwrite Alert"])
+	overwrite.desc = L["Print a message in the chat frame alerting you who overwrites your %s."]:format(L["Earth Shield"])
+	overwrite:SetPoint("TOPLEFT", padv.container, "BOTTOMLEFT", 0, -8)
+	overwrite:SetChecked(db.alert.earth.overwritten)
+	overwrite.OnClick = function(self, checked)
+		db.alert.earth.overwritten = checked
 	end
 
 	--------------------------------------------------------------------

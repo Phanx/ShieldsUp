@@ -36,6 +36,9 @@ L["Set the vertical space between the target name and charge counters."] = "設�
 L["Opacity"] = "不透明度"
 L["Set the opacity level for the display."] = "設定顯示的不透明度等級."
 
+-- L["Overwrite Alert"] = ""
+-- L["Print a message in the chat frame alerting you who overwrites your %s."] = ""
+
 ------------------------------------------------------------------------
 
 L["Font Face"] = "字型"

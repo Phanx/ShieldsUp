@@ -38,6 +38,9 @@ L["Set the vertical space between the target name and charge counters."] = "Ajus
 L["Opacity"] = "Opacidad"
 L["Set the opacity level for the display."] = "Ajuste la opacidad para el monitor."
 
+-- L["Overwrite Alert"] = ""
+-- L["Print a message in the chat frame alerting you who overwrites your %s."] = ""
+
 ------------------------------------------------------------------------
 
 L["Font Face"] = "Tipo de letra"
