@@ -2,10 +2,9 @@
 	ShieldsUp
 	Simple shaman shield monitor.
 	by Phanx < addons@phanx.net >
+	Copyright © 2008–2010 Phanx. See README for license terms.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://wow.curse.com/downloads/wow-addons/details/shieldsup.aspx
-	Copyright © 2008–2010 Alyssa "Phanx" Kinley
-	See README for license terms and additional information.
 ----------------------------------------------------------------------]]
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
@@ -54,10 +53,10 @@ panel:SetScript("OnShow", function(self)
 
 	local posx = self:CreateSlider(L["Horizontal Position"], math.floor(screenwidth / 10) / 2 * -10, math.floor(screenwidth / 10) / 2 * 10, 5)
 	posx.desc = L["Set the horizontal distance from the center of the screen to place the display."]
-	posx.container:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -4, -8)
-	posx.container:SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 8)
-	posx:SetValue(db.posx or 0)
-	posx.valueText:SetText(db.posx or 0)
+	posx:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -4, -8)
+	posx:SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 8)
+	posx:SetValue(db.posx)
+
 	posx.OnValueChanged = function(self, value)
 		value = math.floor(value)
 		db.posx = value
@@ -69,10 +68,10 @@ panel:SetScript("OnShow", function(self)
 
 	local posy = self:CreateSlider(L["Vertical Position"], floor(screenheight / 10) / 2 * -10, floor(screenheight / 10) / 2 * 10, 5)
 	posy.desc = L["Set the vertical distance from the center of the screen to place the display."]
-	posy.container:SetPoint("TOPLEFT", posx.container, "BOTTOMLEFT", 0, -8)
-	posy.container:SetPoint("TOPRIGHT", posx.container, "BOTTOMRIGHT", 0, -8)
-	posy:SetValue(db.posy or -150)
-	posy.valueText:SetText(db.posy or 0)
+	posy:SetPoint("TOPLEFT", posx, "BOTTOMLEFT", 0, -8)
+	posy:SetPoint("TOPRIGHT", posx, "BOTTOMRIGHT", 0, -8)
+	posy:SetValue(db.posy)
+
 	posy.OnValueChanged = function(self, value)
 		value = math.floor(value)
 		db.posy = value
@@ -84,10 +83,10 @@ panel:SetScript("OnShow", function(self)
 
 	local padh = self:CreateSlider(L["Horizontal Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
 	padh.desc = L["Set the horizontal space between the charge counts."]
-	padh.container:SetPoint("TOPLEFT", posy.container, "BOTTOMLEFT", 0, -8)
-	padh.container:SetPoint("TOPRIGHT", posy.container, "BOTTOMRIGHT", 0, -8)
-	padh:SetValue(db.padh or 0)
-	padh.valueText:SetText(db.padh or 0)
+	padh:SetPoint("TOPLEFT", posy, "BOTTOMLEFT", 0, -8)
+	padh:SetPoint("TOPRIGHT", posy, "BOTTOMRIGHT", 0, -8)
+	padh:SetValue(db.padh)
+
 	padh.OnValueChanged = function(self, value)
 		value = math.floor(value)
 		db.padh = value
@@ -99,10 +98,10 @@ panel:SetScript("OnShow", function(self)
 
 	local padv = self:CreateSlider(L["Vertical Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
 	padv.desc = L["Set the vertical space between the target name and charge counters."]
-	padv.container:SetPoint("TOPLEFT", padh.container, "BOTTOMLEFT", 0, -8)
-	padv.container:SetPoint("TOPRIGHT", padh.container, "BOTTOMRIGHT", 0, -8)
-	padv:SetValue(db.padv or 0)
-	padv.valueText:SetText(db.padv or 0)
+	padv:SetPoint("TOPLEFT", padh, "BOTTOMLEFT", 0, -8)
+	padv:SetPoint("TOPRIGHT", padh, "BOTTOMRIGHT", 0, -8)
+	padv:SetValue(db.padv)
+
 	padv.OnValueChanged = function(self, value)
 		value = math.floor(value)
 		db.padv = value
@@ -113,10 +112,10 @@ panel:SetScript("OnShow", function(self)
 	--------------------------------------------------------------------
 
 	local face = self:CreateScrollingDropdown(L["Font Face"], ShieldsUp.fonts)
-	face.container.desc = L["Set the font face to use for the display text."]
-	face.container:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -8)
-	face.container:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -8)
-	face.valueText:SetText(db.font.face or "Friz Quadrata TT")
+	face.desc = L["Set the font face to use for the display text."]
+	face:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -8)
+	face:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -8)
+	face:SetValue(db.font.face)
 	do
 		local _, height, flags = face.valueText:GetFont()
 		face.valueText:SetFont(SharedMedia:Fetch("font", db.font.face or "Friz Quadrata TT"), height, flags)
@@ -131,10 +130,10 @@ panel:SetScript("OnShow", function(self)
 		local button_OnClick = face.button:GetScript("OnClick")
 		face.button:SetScript("OnClick", function(self)
 			button_OnClick(self)
-			face.list:Hide()
+			face.dropdown.list:Hide()
 
 			local function SetButtonFonts(self)
-				local buttons = face.list.buttons
+				local buttons = face.dropdown.list.buttons
 				for i = 1, #buttons do
 					local button = buttons[i]
 					if button.value and button:IsShown() then
@@ -143,20 +142,20 @@ panel:SetScript("OnShow", function(self)
 				end
 			end
 
-			local OnShow = face.list:GetScript("OnShow")
-			face.list:SetScript("OnShow", function(self)
+			local OnShow = face.dropdown.list:GetScript("OnShow")
+			face.dropdown.list:SetScript("OnShow", function(self)
 				OnShow(self)
 				SetButtonFonts(self)
 			end)
 
-			local OnVerticalScroll = face.list.scrollFrame:GetScript("OnVerticalScroll")
-			face.list.scrollFrame:SetScript("OnVerticalScroll", function(self, delta)
+			local OnVerticalScroll = face.dropdown.list.scrollFrame:GetScript("OnVerticalScroll")
+			face.dropdown.list.scrollFrame:SetScript("OnVerticalScroll", function(self, delta)
 				OnVerticalScroll(self, delta)
 				SetButtonFonts(self)
 			end)
 
-			local SetText = face.list.text.SetText
-			face.list.text.SetText = function(self, text)
+			local SetText = face.dropdown.list.text.SetText
+			face.dropdown.list.text.SetText = function(self, text)
 				self:SetFont(SharedMedia:Fetch("font", text), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT + 1)
 				SetText(self, text)
 			end
@@ -168,55 +167,57 @@ panel:SetScript("OnShow", function(self)
 
 	--------------------------------------------------------------------
 
-	local outline = self:CreateDropdown(L["Outline"])
-	outline.container.desc = L["Select an outline width for the display text."]
-	outline.container:SetPoint("TOPLEFT", face.container, "BOTTOMLEFT", 0, -8)
-	outline.container:SetPoint("TOPRIGHT", face.container, "BOTTOMRIGHT", 0, -8)
-	do
-		local outlines = { ["NONE"] = L["None"], ["OUTLINE"] = L["Thin"], ["THICKOUTLINE"] = L["Thick"] }
+	local outlines = {
+		["NONE"] = L["None"],
+		["OUTLINE"] = L["Thin"],
+		["THICKOUTLINE"] = L["Thick"],
+	}
 
+	local outline
+	do
 		local function OnClick(self)
 			db.font.outline = self.value
 			ShieldsUp:ApplySettings()
-			outline.valueText:SetText(self.text)
-			UIDropDownMenu_SetSelectedValue(outline, self.value)
+			outline:SetValue(self.value, self.text)
 		end
 
 		local info = { } -- UIDropDownMenu_CreateInfo()
-		UIDropDownMenu_Initialize(outline, function(self)
-			local selected = outlines[UIDropDownMenu_GetSelectedValue(outline)] or self.valueText:GetText()
+
+		outline = self:CreateDropdown(L["Outline"], function()
+			local selected = db.font.outline
 
 			info.text = L["None"]
 			info.value = "NONE"
 			info.func = OnClick
-			info.checked = L["None"] == selected
+			info.checked = "NONE" == selected
 			UIDropDownMenu_AddButton(info)
 
 			info.text = L["Thin"]
 			info.value = "OUTLINE"
 			info.func = OnClick
-			info.checked = L["Thin"] == selected
+			info.checked = "THIN" == selected
 			UIDropDownMenu_AddButton(info)
 
 			info.text = L["Thick"]
 			info.value = "THICKOUTLINE"
 			info.func = OnClick
-			info.checked = L["Thick"] == selected
+			info.checked = "THICK" == selected
 			UIDropDownMenu_AddButton(info)
 		end)
-
-		outline.valueText:SetText(outlines[db.font.outline] or L["None"])
-		UIDropDownMenu_SetSelectedValue(outline, db.font.outline or L["None"])
 	end
+	outline.desc = L["Select an outline width for the display text."]
+	outline:SetPoint("TOPLEFT", face, "BOTTOMLEFT", 0, -8)
+	outline:SetPoint("TOPRIGHT", face, "BOTTOMRIGHT", 0, -8)
+	outline:SetValue(db.font.outline, outlines[db.font.outline])
 
 	--------------------------------------------------------------------
 
 	local large = self:CreateSlider(L["Counter Size"], 6, 32, 1)
 	large.desc = L["Set the text size for the charge counters."]
-	large.container:SetPoint("TOPLEFT", outline.container, "BOTTOMLEFT", 0, -8)
-	large.container:SetPoint("TOPRIGHT", outline.container, "BOTTOMRIGHT", 0, -8)
-	large:SetValue(db.font.large or 0)
-	large.valueText:SetText(db.font.large or 0)
+	large:SetPoint("TOPLEFT", outline, "BOTTOMLEFT", 0, -8)
+	large:SetPoint("TOPRIGHT", outline, "BOTTOMRIGHT", 0, -8)
+	large:SetValue(db.font.large)
+
 	large.OnValueChanged = function(self, value)
 		value = math.floor(value)
 		db.font.large = value
@@ -228,10 +229,10 @@ panel:SetScript("OnShow", function(self)
 
 	local small = self:CreateSlider(L["Name Size"], 6, 32, 1)
 	small.desc = L["Set the text size for the target name."]
-	small.container:SetPoint("TOPLEFT", large.container, "BOTTOMLEFT", 0, -8)
-	small.container:SetPoint("TOPRIGHT", large.container, "BOTTOMRIGHT", 0, -8)
-	small:SetValue(db.font.small or 0)
-	small.valueText:SetText(db.font.small or 0)
+	small:SetPoint("TOPLEFT", large, "BOTTOMLEFT", 0, -8)
+	small:SetPoint("TOPRIGHT", large, "BOTTOMRIGHT", 0, -8)
+	small:SetValue(db.font.small)
+
 	small.OnValueChanged = function(self, value)
 		value = math.floor(value)
 		db.font.small = value
@@ -243,8 +244,9 @@ panel:SetScript("OnShow", function(self)
 
 	local shadow = self:CreateCheckbox(L["Shadow"])
 	shadow.desc = L["Add a drop shadow effect to the display text."]
-	shadow:SetPoint("TOPLEFT", small.container, "BOTTOMLEFT", 0, -8)
+	shadow:SetPoint("TOPLEFT", small, "BOTTOMLEFT", 0, -8)
 	shadow:SetChecked(db.font.shadow)
+
 	shadow.OnClick = function(self, checked)
 		db.font.shadow = checked
 		ShieldsUp:ApplySettings()
@@ -254,20 +256,23 @@ panel:SetScript("OnShow", function(self)
 
 	local overwrite = self:CreateCheckbox(L["Overwrite Alert"])
 	overwrite.desc = L["Print a message in the chat frame alerting you who overwrites your %s."]:format(L["Earth Shield"])
-	overwrite:SetPoint("TOPLEFT", padv.container, "BOTTOMLEFT", 0, -8)
+	overwrite:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", 0, -8)
 	overwrite:SetChecked(db.alert.earth.overwritten)
+
 	overwrite.OnClick = function(self, checked)
 		db.alert.earth.overwritten = checked
 	end
 
 	--------------------------------------------------------------------
 
-	local vdist = -8 - face.container:GetHeight() - 8 - outline.container:GetHeight() - 8 - large.container:GetHeight() - 8 - small.container:GetHeight() - 8 - shadow:GetHeight() - 4
+	local vdist = -8 - face:GetHeight() - 8 - outline:GetHeight() - 8 - large:GetHeight() - 8 - small:GetHeight() - 8 - shadow:GetHeight() - 4
 
 	local colors = self:CreatePanel()
+
 	colors.label = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	colors.label:SetPoint("BOTTOMLEFT", colors, "TOPLEFT", 4, 0)
 	colors.label:SetText(L["Colors"])
+
 	colors:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, vdist - colors.label:GetHeight())
 	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, vdist - colors.label:GetHeight())
 
@@ -362,23 +367,15 @@ panel:SetScript("OnShow", function(self)
 	--------------------------------------------------------------------
 
 	self.refresh = function()
-		posx:SetValue(db.posx or 0)
-		posx.valueText:SetText(db.posx or 0)
-		posy:SetValue(db.posy or -150)
-		posy.valueText:SetText(db.posy or 0)
-		padh:SetValue(db.padh or 0)
-		padh.valueText:SetText(db.padh or 0)
-		padv:SetValue(db.padv or 0)
-		padv.valueText:SetText(db.padv or 0)
-		font.valueText:SetText(db.font.face or "Friz Quadrata TT")
-		UIDropDownMenu_SetSelectedValue(font, db.font.face or "Friz Quadrata TT")
-		outline.valueText:SetText(db.font.outline or L["None"])
-		UIDropDownMenu_SetSelectedValue(outline, db.font.outline or L["None"])
+		posx:SetValue(db.posx)
+		posy:SetValue(db.posy)
+		padh:SetValue(db.padh)
+		padv:SetValue(db.padv)
+		font:SetValue(db.font.face)
+		outline:SetValue(db.font.outline)
 		shadow:SetChecked(db.font.shadow)
-		large:SetValue(db.font.large or 24)
-		large.valueText:SetText(db.font.large or 24)
-		small:SetValue(db.font.small or 16)
-		small.valueText:SetText(db.font.small or 16)
+		large:SetValue(db.font.large)
+		small:SetValue(db.font.small)
 		earth:SetColor(unpack(db.color.earth))
 		lightning:SetColor(unpack(db.color.lightning))
 		water:SetColor(unpack(db.color.water))
@@ -457,21 +454,18 @@ panel2:SetScript("OnShow", function(self)
 		db.alert.earth.sound = checked
 	end
 
-	local esoundfile = self:CreateDropdown(L["Sound File"])
-	esoundfile.container.desc = L["Select the sound to play when %s expires."]:format(L["Earth Shield"])
-	esoundfile.container:SetPoint("BOTTOMLEFT", epanel, "BOTTOM", 8, 8)
-	esoundfile.container:SetPoint("BOTTOMRIGHT", epanel, -8, 8)
+	local esoundfile
 	do
 		local function OnClick(self)
 			PlaySoundFile(SharedMedia:Fetch("sound", self.value))
 			db.alert.earth.soundFile = self.value
-			esoundfile.valueText:SetText(self.text)
-			UIDropDownMenu_SetSelectedValue(esoundfile, self.value)
+			esoundfile:SetValue(self.value, self.text)
 		end
 
 		local info = { } -- UIDropDownMenu_CreateInfo()
-		UIDropDownMenu_Initialize(esoundfile, function(self)
-			local selected = UIDropDownMenu_GetSelectedValue(self) or self.valueText:GetText()
+
+		esoundfile = self:CreateDropdown(L["Sound File"], function(self)
+			local selected = db.alert.earth.soundFile
 
 			for i, sound in ipairs(ShieldsUp.sounds) do
 				info.text = sound
@@ -481,9 +475,11 @@ panel2:SetScript("OnShow", function(self)
 				UIDropDownMenu_AddButton(info)
 			end
 		end)
-
-		esoundfile:SetValue(db.alert.earth.soundFile)
 	end
+	esoundfile.desc = L["Select the sound to play when %s expires."]:format(L["Earth Shield"])
+	esoundfile:SetPoint("BOTTOMLEFT", epanel, "BOTTOM", 8, 8)
+	esoundfile:SetPoint("BOTTOMRIGHT", epanel, -8, 8)
+	esoundfile:SetValue(db.alert.earth.soundFile)
 
 	--------------------------------------------------------------------
 
@@ -523,21 +519,18 @@ panel2:SetScript("OnShow", function(self)
 
 	--------------------------------------------------------------------
 
-	local wsoundfile = self:CreateDropdown(L["Sound File"])
-	wsoundfile.container.desc = L["Select the sound to play when %s expires."]:format(L["Water Shield"])
-	wsoundfile.container:SetPoint("BOTTOMLEFT", wpanel, "BOTTOM", 8, 8)
-	wsoundfile.container:SetPoint("BOTTOMRIGHT", wpanel, -8, 8)
+	local wsoundfile
 	do
 		local function OnClick(self)
 			PlaySoundFile(SharedMedia:Fetch("sound", self.value))
 			db.alert.water.soundFile = self.value
-			wsoundfile.valueText:SetText(self.text)
-			UIDropDownMenu_SetSelectedValue(wsoundfile, self.value)
+			wsoundfile:SetValue(self.value, self.text)
 		end
 
 		local info = { }
-		UIDropDownMenu_Initialize(wsoundfile, function()
-			local selected = UIDropDownMenu_GetSelectedValue(wsoundfile) or wsoundfile.valueText:GetText()
+
+		wsoundfile = self:CreateDropdown(L["Sound File"], function()
+			local selected = db.alert.water.soundFile
 
 			for i, sound in ipairs(ShieldsUp.sounds) do
 				info.text = sound
@@ -547,9 +540,11 @@ panel2:SetScript("OnShow", function(self)
 				UIDropDownMenu_AddButton(info)
 			end
 		end)
-
-		wsoundfile:SetValue(db.alert.water.soundFile)
 	end
+	wsoundfile.desc = L["Select the sound to play when %s expires."]:format(L["Water Shield"])
+	wsoundfile:SetPoint("BOTTOMLEFT", wpanel, "BOTTOM", 8, 8)
+	wsoundfile:SetPoint("BOTTOMRIGHT", wpanel, -8, 8)
+	wsoundfile:SetValue(db.alert.water.soundFile)
 
 	--------------------------------------------------------------------
 
@@ -570,9 +565,9 @@ panel2:SetScript("OnShow", function(self)
 
 		function UpdateOutputPanel()
 			if sinkOptions.args.ScrollArea.disabled then
-				scrollarea.container:Hide()
+				scrollarea:Hide()
 			else
-				scrollarea.container:Show()
+				scrollarea:Show()
 
 				local valid
 				local current = db.alert.output.sink20ScrollArea
@@ -606,10 +601,6 @@ panel2:SetScript("OnShow", function(self)
 		opanel:SetPoint("TOPLEFT", olabel, "BOTTOMLEFT", -4, 0)
 		opanel:SetPoint("TOPRIGHT", olabel, "BOTTOMRIGHT", 4, 0)
 
-		output = self:CreateDropdown(sinkOptions.name, init)
-		output.container.desc = sinkOptions.desc
-		output.container:SetPoint("TOPLEFT", opanel, 8, -8)
-		output.container:SetPoint("TOPRIGHT", opanel, "TOP", -4, -8)
 		do
 			local function OnClick(self)
 				sinkOptions.set(self.value, true)
@@ -621,8 +612,9 @@ panel2:SetScript("OnShow", function(self)
 			end
 
 			local info = { }
-			UIDropDownMenu_Initialize(output, function(self)
-				local selected = db.alert.output.sink20OutputSink or self.value:GetText()
+
+			output = self:CreateDropdown(sinkOptions.name, function()
+				local selected = db.alert.output.sink20OutputSink
 				for k, v in pairs(sinkOptions.args) do
 					if k ~= "Default" and k ~= "Sticky" and k ~= "Channel" and v.type == "toggle" and not (v.hidden and v:hidden()) then
 						info.text = v.name
@@ -633,16 +625,14 @@ panel2:SetScript("OnShow", function(self)
 					end
 				end
 			end)
-
-			output:SetValue(db.alert.output.sink20OutputSink, outputNames[db.alert.output.sink20OutputSink])
 		end
+		output.desc = sinkOptions.desc
+		output:SetPoint("TOPLEFT", opanel, 8, -8)
+		output:SetPoint("TOPRIGHT", opanel, "TOP", -4, -8)
+		output:SetValue(db.alert.output.sink20OutputSink, outputNames[db.alert.output.sink20OutputSink])
 
 		--------------------------------------------------------------
 
-		scrollarea = self:CreateDropdown(sinkOptions.args.ScrollArea.name)
-		scrollarea.container.desc = sinkOptions.args.ScrollArea.desc
-		scrollarea.container:SetPoint("TOPLEFT", opanel, "TOP", 4, -8)
-		scrollarea.container:SetPoint("TOPRIGHT", opanel, -8, -8)
 		do
 			local function OnClick(self)
 				sinkOptions.set("ScrollArea", self.value)
@@ -652,8 +642,9 @@ panel2:SetScript("OnShow", function(self)
 			end
 
 			local info = { }
-			UIDropDownMenu_Initialize(scrollarea, function(self)
-				local selected = db.alert.output.sink20ScrollArea or self.valueText:GetText()
+
+			scrollarea = self:CreateDropdown(sinkOptions.args.ScrollArea.name, function()
+				local selected = db.alert.output.sink20ScrollArea
 
 				for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
 					info.text = v
@@ -663,12 +654,15 @@ panel2:SetScript("OnShow", function(self)
 					UIDropDownMenu_AddButton(info)
 				end
 			end)
+		end
+		scrollarea.desc = sinkOptions.args.ScrollArea.desc
+		scrollarea:SetPoint("TOPLEFT", opanel, "TOP", 4, -8)
+		scrollarea:SetPoint("TOPRIGHT", opanel, -8, -8)
 
-			sinkOptions.set(db.alert.output.sink20OutputSink, true) -- hax!
-			for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
-				if v == db.alert.output.sink20ScrollArea then
-					scrollarea:SetValue(db.alert.output.sink20ScrollArea)
-				end
+		sinkOptions.set(db.alert.output.sink20OutputSink, true) -- hax!
+		for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
+			if v == db.alert.output.sink20ScrollArea then
+				scrollarea:SetValue(db.alert.output.sink20ScrollArea)
 			end
 		end
 
@@ -676,7 +670,7 @@ panel2:SetScript("OnShow", function(self)
 
 		sticky = self:CreateCheckbox(sinkOptions.args.Sticky.name)
 		sticky.desc = sinkOptions.args.Sticky.desc
-		sticky:SetPoint("TOPLEFT", scrollarea.container, "BOTTOMLEFT", 0, -8)
+		sticky:SetPoint("TOPLEFT", scrollarea, "BOTTOMLEFT", 0, -8)
 		sticky:SetChecked(db.alert.output.sink20Sticky)
 		sticky.OnClick = function(self, checked)
 			sinkOptions.set("Sticky", checked)
@@ -699,6 +693,7 @@ panel2:SetScript("OnShow", function(self)
 		wsoundfile:SetValue(db.alert.water.soundFile)
 		if ShieldsUp.Pour then
 			output:SetValue(db.alert.output.sink20OutputSink, outputNames[db.alert.output.sink20OutputSink])
+
 			sinkOptions.set(db.alert.output.sink20OutputSink, true) -- hax!
 			for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
 				if v == db.alert.output.sink20ScrollArea then

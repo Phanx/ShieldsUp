@@ -1,11 +1,10 @@
 --[[--------------------------------------------------------------------
 	ShieldsUp
-	Basic shaman shield monitor.
+	Simple shaman shield monitor.
 	by Phanx < addons@phanx.net >
+	Copyright © 2008–2010 Phanx. See README for license terms.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://wow.curse.com/downloads/wow-addons/details/shieldsup.aspx
-	Copyright © 2008–2010 Alyssa "Phanx" Kinley
-	See README for license terms and additional information.
 ----------------------------------------------------------------------]]
 
 local ADDON_NAME, namespace = ...
