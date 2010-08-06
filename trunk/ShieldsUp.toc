@@ -7,7 +7,7 @@
 ## X-Category: Shaman
 ## X-Email: addons@phanx.net
 ## X-Credits: Inspired by Infineon's beSch.
-## X-Copyright: Copyright © 2008–2010 Phanx
+## X-Copyright: Copyright © 2008–2010 Phanx.
 ## X-License: Do not redistribute. See README for full license terms.
 ## X-Website: http://wow.curseforge.com/addons/shieldsup/
 ## X-WoWI-ID: 9165
