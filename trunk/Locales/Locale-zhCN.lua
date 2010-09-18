@@ -7,7 +7,7 @@ if GetLocale() ~= "zhCN" or select(2, UnitClass("player")) ~= "SHAMAN" then retu
 
 local L = { }
 local ADDON_NAME, namespace = ...
-namespace.L = L
+if not namespace then namespace = { } _G.ShieldsUpNamespace = namespace end namespace.L = L
 
 ------------------------------------------------------------------------
 -- These strings are displayed when shields expire.
