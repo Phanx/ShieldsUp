@@ -10,6 +10,8 @@
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
 local ADDON_NAME, namespace = ...
+if not namespace then namespace = _G.ShieldsUpNamespace end -- WoW China
+
 local ShieldsUp = namespace.ShieldsUp
 local L = namespace.L
 
