@@ -12,7 +12,7 @@ if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAM
 
 ------------------------------------------------------------------------
 
-local EARTH_SHIELD = GetSpellInfo(974) -- use 139 Renew or 59547 Gift of the Naaru for testing | 974 Earth Shield for live
+local EARTH_SHIELD = GetSpellInfo(974)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 local WATER_SHIELD = GetSpellInfo(52127)
 
