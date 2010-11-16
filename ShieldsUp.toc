@@ -9,19 +9,21 @@
 ## X-Credits: Inspired by Infineon's beSch.
 ## X-Copyright: Copyright © 2008–2010 Phanx.
 ## X-License: Do not redistribute. See README for full license terms.
-## X-Website: http://wow.curseforge.com/addons/shieldsup/
-## X-WoWI-ID: 9165
 ## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
 ## X-Localizations: enUS, deDE, esES, esMX, frFR, ruRU, zhCN, zhTW
+## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+## X-Curse-Project-ID: shieldsup
+## X-WoWI-ID: 9165
 
 ## LoadManagers: AddonLoader
-## X-LoadOn-Class: Shaman
+## X-LoadOn-Class: SHAMAN
 
 ## OptionalDeps: LibAboutPanel, LibSharedMedia-3.0, LibSink-2.0
 ## SavedVariables: ShieldsUpDB
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibAboutPanel\LibAboutPanel.lua
 Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
 Libs\LibSink-2.0\LibSink-2.0.lua
 Libs\PhanxConfig-Checkbox\PhanxConfig-Checkbox.lua
@@ -30,7 +32,6 @@ Libs\PhanxConfig-Dropdown\PhanxConfig-Dropdown.lua
 Libs\PhanxConfig-Panel\PhanxConfig-Panel.lua
 Libs\PhanxConfig-ScrollingDropdown\PhanxConfig-ScrollingDropdown.lua
 Libs\PhanxConfig-Slider\PhanxConfig-Slider.lua
-Libs\LibAboutPanel\LibAboutPanel.lua
 
 Locales\Locale-deDE.lua
 Locales\Locale-esES.lua
