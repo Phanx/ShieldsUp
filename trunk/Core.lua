@@ -1,10 +1,16 @@
 --[[--------------------------------------------------------------------
-	ShieldsUp
-	Simple shaman shield monitor.
-	by Phanx < addons@phanx.net >
-	Copyright © 2008–2010 Phanx. See README for license terms.
-	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-	http://wow.curse.com/downloads/wow-addons/details/shieldsup.aspx
+ShieldsUp
+Text-based shaman shield monitor.
+
+http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
+
+Copyright © 2008–2010 Phanx < addons@phanx.net >
+
+I, the copyright holder of this work, hereby release it into the public
+domain. This applies worldwide. In case this is not legally possible:
+I grant anyone the right to use this work for any purpose, without any
+conditions, unless such conditions are required by law.
 ----------------------------------------------------------------------]]
 
 local ADDON_NAME, namespace = ...
@@ -732,14 +738,15 @@ function ShieldsUp:UpdateVisibility()
 	elseif GetNumPartyMembers() > 0 then
 		groupType = "party"
 	end
-
 	if not db.show.group[groupType] then
 		return self:Hide()
 	end
 
 	-- ZONE_CHANGED_NEW_AREA
 	local _, zoneType = IsInInstance()
-	if zoneType == "none" and GetZonePVPInfo() == "combat" then
+	if not zoneType then
+		zoneType = "none"
+	elseif zoneType == "none" and GetZonePVPInfo() == "combat" then
 		zoneType = "pvp"
 	end
 	if not db.show.zone[zoneType] then

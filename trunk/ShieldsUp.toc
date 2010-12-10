@@ -1,5 +1,5 @@
 ## Interface: 40000
-## Version: 4.0.1.wowi:revision
+## Version: 4.0.3.wowi:revision
 
 ## Title: ShieldsUp
 ## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
@@ -8,7 +8,7 @@
 ## X-Email: addons@phanx.net
 ## X-Credits: Inspired by Infineon's beSch.
 ## X-Copyright: Copyright © 2008–2010 Phanx.
-## X-License: Do not redistribute. See README for full license terms.
+## X-License: Public Domain
 ## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
 ## X-Localizations: enUS, deDE, esES, esMX, frFR, ruRU, zhCN, zhTW
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
