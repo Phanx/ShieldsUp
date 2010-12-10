@@ -1,10 +1,10 @@
 --[[--------------------------------------------------------------------
 	ShieldsUp
-	Simple shaman shield monitor.
+	Text-based shaman shield monitor.
 	by Phanx < addons@phanx.net >
-	Copyright © 2008–2010 Phanx. See README for license terms.
+	Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-	http://wow.curse.com/downloads/wow-addons/details/shieldsup.aspx
+	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
 ----------------------------------------------------------------------]]
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end

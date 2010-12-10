@@ -1,8 +1,13 @@
 ﻿--[[--------------------------------------------------------------------
-	German translations for ShieldsUp
-	Last updated 2009-07-14 by Søøm
-	Contributors:
-		Søøm < graninibanane AT gmx DOT de >
+	ShieldsUp
+	Text-based shaman shield monitor.
+	by Phanx < addons@phanx.net >
+	Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
+	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
+------------------------------------------------------------------------
+	Localization for deDE / German / Deutsch
+	Last updated 2009-07-14 by Søøm < graninibanane AT gmx DOT de >
 ----------------------------------------------------------------------]]
 
 if GetLocale() ~= "deDE" or select(2, UnitClass("player")) ~= "SHAMAN" then return end

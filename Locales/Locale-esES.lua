@@ -1,8 +1,13 @@
 ﻿--[[--------------------------------------------------------------------
-	Spanish translations for ShieldsUp
+	ShieldsUp
+	Text-based shaman shield monitor.
+	by Phanx < addons@phanx.net >
+	Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
+	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
+------------------------------------------------------------------------
+	Localization for esES / Spanish / Español
 	Last updated 2009-11-16 by Phanx
-	Contributors:
-		your name here < your contact info here >
 ----------------------------------------------------------------------]]
 
 if not (GetLocale() == "esES" or GetLocale() == "esMX") or select(2, UnitClass("player")) ~= "SHAMAN" then return end
