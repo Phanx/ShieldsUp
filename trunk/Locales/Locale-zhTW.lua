@@ -1,5 +1,12 @@
 ﻿--[[--------------------------------------------------------------------
-	zhTW translations for ShieldsUp
+	ShieldsUp
+	Text-based shaman shield monitor.
+	by Phanx < addons@phanx.net >
+	Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
+	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
+------------------------------------------------------------------------
+	Localization for zhTW / Traditional Chinese / 正體中文
 	Last updated 2009-07-15 by www.wowui.cn
 ----------------------------------------------------------------------]]
 

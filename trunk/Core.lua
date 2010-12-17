@@ -1,16 +1,10 @@
 --[[--------------------------------------------------------------------
-ShieldsUp
-Text-based shaman shield monitor.
-
-http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
-
-Copyright © 2008–2010 Phanx < addons@phanx.net >
-
-I, the copyright holder of this work, hereby release it into the public
-domain. This applies worldwide. In case this is not legally possible:
-I grant anyone the right to use this work for any purpose, without any
-conditions, unless such conditions are required by law.
+	ShieldsUp
+	Text-based shaman shield monitor.
+	by Phanx < addons@phanx.net >
+	Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
+	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
 ----------------------------------------------------------------------]]
 
 local ADDON_NAME, namespace = ...

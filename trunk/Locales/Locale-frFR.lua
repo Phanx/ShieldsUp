@@ -1,8 +1,13 @@
 --[[--------------------------------------------------------------------
-	French translations for ShieldsUp
-	Last updated 2009-11-15 by krukniak
-	Contributors:
-		krukniak < curse.com >
+	ShieldsUp
+	Text-based shaman shield monitor.
+	by Phanx < addons@phanx.net >
+	Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
+	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
+	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
+------------------------------------------------------------------------
+	Localization for frFR / French / Français
+	Last updated 2009-11-15 by krukniak < curse.com >
 ----------------------------------------------------------------------]]
 
 if GetLocale() ~= "frFR" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
