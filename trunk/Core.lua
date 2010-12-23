@@ -2,6 +2,7 @@
 	ShieldsUp
 	Text-based shaman shield monitor.
 	by Phanx < addons@phanx.net >
+	Currently maintained by Akkorian < akkorian@hotmail.com >
 	Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
@@ -709,7 +710,7 @@ function ShieldsUp:Alert(spell)
 		if self.Pour then
 			self:Pour(text, r, g, b)
 		else
-			RaidNotice_AddMessage(RaidWarningFrame, msg, { r = r, g = b, b = b })
+			RaidNotice_AddMessage(RaidWarningFrame, text, { r = r, g = b, b = b })
 		end
 	end
 	if sound then
