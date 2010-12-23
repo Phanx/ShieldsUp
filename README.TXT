@@ -1,6 +1,7 @@
 ﻿# ShieldsUp
 
 * by Phanx < addons@phanx.net >
+* Currently maintained by Akkorian < akkorian@hotmail.com >
 * Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
 * http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 * http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
@@ -35,7 +36,8 @@ ShieldsUp is compatible with English, Deutsch, Español, Français,
 
 The options panel and alert messages are currently translated into
 English, Deutsch, Español, Français, Русский, 简体中文, and 正體中文.
-If you can provide translations for any locale, send me a PM.
+If you can provide translations for any locale, please send me a PM
+on either download site.
 
 
 ## Feedback
@@ -45,7 +47,7 @@ request features. Use the comment system only for general questions
 or comments.
 
 If you need to contact me privately, you may do by private message
-on either download site, or by email at addons@phanx.net.
+on either download site, or by email at akkorian@hotmail.com.
 
 
 ## Credits

@@ -2,6 +2,7 @@
 	ShieldsUp
 	Text-based shaman shield monitor.
 	by Phanx < addons@phanx.net >
+	Currently maintained by Akkorian < akkorian@hotmail.com >
 	Copyright © 2008–2010 Phanx. Some rights reserved. See LICENSE.txt for details.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
@@ -373,7 +374,7 @@ panel:SetScript("OnShow", function(self)
 		posy:SetValue(db.posy)
 		padh:SetValue(db.padh)
 		padv:SetValue(db.padv)
-		font:SetValue(db.font.face)
+		face:SetValue(db.font.face)
 		outline:SetValue(db.font.outline)
 		shadow:SetChecked(db.font.shadow)
 		large:SetValue(db.font.large)
@@ -384,7 +385,6 @@ panel:SetScript("OnShow", function(self)
 		normal:SetColor(unpack(db.color.normal))
 		overwritten:SetColor(unpack(db.color.overwritten))
 		alert:SetColor(unpack(db.color.alert))
-		cblind:SetChecked(db.colorblind)
 	end
 
 	self:SetScript("OnShow", nil)
@@ -554,11 +554,11 @@ panel2:SetScript("OnShow", function(self)
 
 	--------------------------------------------------------------------
 
-	local olabel, opanel, output, scrollarea, sticky, UpdateOutputPanel
+	local sinkOptions, outputNames, olabel, opanel, output, scrollarea, sticky, UpdateOutputPanel
 	if ShieldsUp.Pour then
-		local sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+		sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
 
-		local outputNames = { }
+		outputNames = { }
 		for k, v in pairs(sinkOptions.args) do
 			if k ~= "Default" and k ~= "Sticky" and k ~= "Channel" and v.type == "toggle" then
 				outputNames[k] = v.name
@@ -803,7 +803,7 @@ panel3:SetScript("OnShow", function(self)
 		ShieldsUp:UpdateVisibility()
 	end
 
-	local zparty = self:CreateCheckbox(L["Party Dungeon"])
+	local zparty = self:CreateCheckbox(L["Dungeon"])
 	zparty.desc = L["Show the display while you are in a party dungeon"]
 	zparty:SetPoint("TOPLEFT", zworld, "BOTTOMLEFT", 0, -8)
 	zparty:SetChecked(db.zone.party)

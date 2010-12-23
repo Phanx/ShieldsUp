@@ -2,11 +2,12 @@
 ## Version: 4.0.3.wowi:revision
 
 ## Title: ShieldsUp
-## Notes: Monitors your Earth Shield, Lightning Shield, and Water Shield.
-## Author: Phanx
-## X-Category: Shaman
-## X-Email: addons@phanx.net
+## Notes: Text-based shaman shield monitor.
+## Notes-esES: Seguir sus Escudos elementales.
+## Notes-esMX: Seguir sus Escudos elementales.
+## Author: Akkorian, Phanx
 ## X-Credits: Inspired by Infineon's beSch.
+## X-Email: akkorian@hotmail.com, addons@phanx.net
 ## X-Copyright: Copyright © 2008–2010 Phanx.
 ## X-License: Some rights reserved. See LICENSE.txt for details.
 ## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, koKR, ruRU, zhCN, zhTW
