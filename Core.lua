@@ -845,8 +845,13 @@ function ShieldsUp:ApplySettings()
 	self.nameText:SetFont(face, db.font.small, outline)
 	self.nameText:SetShadowOffset(0, 0)
 	self.nameText:SetShadowOffset(shadow, -shadow)
-	self.nameText:SetPoint("BOTTOM", self, "TOP", 0, db.padv)
-	if hasEarthShield and isInGroup then
+	self.nameText:ClearAllPoints()
+	if db.namePosition == "TOP" then
+		self.nameText:SetPoint("BOTTOM", self, "TOP", 0, db.padv)
+	else
+		self.nameText:SetPoint("TOP", self, "BOTTOM", 0, -db.padv)
+	end
+	if hasEarthShield and isInGroup and db.namePosition ~= "NONE" then
 		self.nameText:Show()
 	else
 		self.nameText:Hide()
