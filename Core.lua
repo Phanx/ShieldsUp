@@ -56,6 +56,7 @@ local defaults = {
 	padh = 5,
 	padv = 0,
 	alpha = 1,
+	namePosition = "TOP",
 	color = {
 		earth = { 0.65, 1, 0.25 },
 		lightning = { 0.25, 0.65, 1 },
@@ -821,9 +822,17 @@ function ShieldsUp:ApplySettings()
 	self.waterText:SetShadowOffset(shadow, -shadow)
 	self.waterText:ClearAllPoints()
 	if hasEarthShield and isInGroup then
-		self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -db.padh / 2, 0)
+		if db.namePosition == "TOP" then
+			self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -db.padh / 2, 0)
+		else
+			self.waterText:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", -db.padh / 2, 0)
+		end
 	else
-		self.waterText:SetPoint("TOP", self, "TOP", 0, 0)
+		if db.namePosition == "TOP" then
+			self.waterText:SetPoint("TOP", self, "TOP", 0, 0)
+		else
+			self.waterText:SetPoint("BOTTOM", self, "BOTTOM", 0, 0)
+		end
 	end
 
 	if not self.earthText then
@@ -832,7 +841,12 @@ function ShieldsUp:ApplySettings()
 	self.earthText:SetFont(face, db.font.large, outline)
 	self.earthText:SetShadowOffset(0, 0)
 	self.earthText:SetShadowOffset(shadow, -shadow)
-	self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", db.padh / 2, 0)
+	self.earthText:ClearAllPoints()
+	if db.namePosition == "TOP" then
+		self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", db.padh / 2, 0)
+	else
+		self.earthText:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", db.padh / 2, 0)
+	end
 	if hasEarthShield and isInGroup then
 		self.earthText:Show()
 	else
