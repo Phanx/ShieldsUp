@@ -27,6 +27,8 @@ L["YOU"] = "VOUS"
 ------------------------------------------------------------------------
 -- These strings are displayed in the configuration GUI.
 
+L["Click for options."] = "Clic pour afficher la fenêtre d'options."
+
 L["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "ShieldsUp est un addon permettant de surperviser vos boucliers de chamans. Utilisez ces paramètres pour configurer l'apparence et le comportement de cet addon."
 
 L["Horizontal Position"] = "Position Horizontale"

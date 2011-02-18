@@ -1,5 +1,5 @@
 ## Interface: 40000
-## Version: 4.0.3.wowi:revision
+## Version: 4.0.6.wowi:revision
 
 ## Title: ShieldsUp
 ## Notes: Text-based shaman shield monitor.
@@ -19,7 +19,7 @@
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Class: SHAMAN
 
-## OptionalDeps: LibAboutPanel, LibSharedMedia-3.0, LibSink-2.0
+## OptionalDeps: LibAboutPanel, LibSharedMedia-3.0, LibSink-2.0, PhanxConfigWidgets
 ## SavedVariables: ShieldsUpDB
 
 Libs\LibStub\LibStub.lua
@@ -30,6 +30,8 @@ Libs\LibSink-2.0\LibSink-2.0.lua
 Libs\PhanxConfig-Checkbox\PhanxConfig-Checkbox.lua
 Libs\PhanxConfig-ColorPicker\PhanxConfig-ColorPicker.lua
 Libs\PhanxConfig-Dropdown\PhanxConfig-Dropdown.lua
+Libs\PhanxConfig-Header\PhanxConfig-Header.lua
+Libs\PhanxConfig-OptionsPanel\PhanxConfig-OptionsPanel.lua
 Libs\PhanxConfig-Panel\PhanxConfig-Panel.lua
 Libs\PhanxConfig-ScrollingDropdown\PhanxConfig-ScrollingDropdown.lua
 Libs\PhanxConfig-Slider\PhanxConfig-Slider.lua
