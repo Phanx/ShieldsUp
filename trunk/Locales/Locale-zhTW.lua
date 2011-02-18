@@ -27,6 +27,8 @@ L["YOU"] = "自身"
 ------------------------------------------------------------------------
 -- These strings are displayed in the configuration GUI.
 
+-- L["Click for options."] = ""
+
 L["ShieldsUp is a monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "ShieldsUp是一個薩滿護盾的監視器。使用這些設定來配置插件的外觀和行為."
 
 L["Horizontal Position"] = "水平位置"

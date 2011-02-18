@@ -27,6 +27,8 @@ L["YOU"] = "USTED"
 ------------------------------------------------------------------------
 -- These strings are displayed in the configuration GUI.
 
+L["Click for options."] = "Click para abrir las opciones."
+
 L["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "ShieldsUp es un addon para seguir sus Escudos elementales. Estas opciones te permiten modificar la configuración de ShieldsUp."
 
 L["Horizontal Position"] = "Posición horizontal"
