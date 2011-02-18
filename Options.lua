@@ -38,7 +38,7 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( ADDON_NAME, nil, functi
 
 	--------------------------------------------------------------------
 
-	local title, notes = LibStub("PhanxConfig-Header").CreateHeader( ADDON_NAME, L["ShieldsUp is a monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] )
+	local title, notes = LibStub("PhanxConfig-Header").CreateHeader( self, ADDON_NAME, L["ShieldsUp is a monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] )
 
 	--------------------------------------------------------------------
 
@@ -374,7 +374,7 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( L["Alerts"], ADDON_NAME
 
 	--------------------------------------------------------------------
 
-	local title, notes = LibStub("PhanxConfig-Header").CreateHeader( self.name, L["Use these settings to configure how ShieldsUp alerts you when a shield expires or is removed."] )
+	local title, notes = LibStub("PhanxConfig-Header").CreateHeader( self, self.name, L["Use these settings to configure how ShieldsUp alerts you when a shield expires or is removed."] )
 
 	--------------------------------------------------------------------
 
@@ -664,7 +664,7 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( L["Visibility"], ADDON_
 
 	--------------------------------------------------------------------
 
-	local title, notes = LibStub("PhanxConfig-Header").CreateHeader( self.name, L["Use these settings to control when the ShieldsUp display should be shown or hidden."] )
+	local title, notes = LibStub("PhanxConfig-Header").CreateHeader( self, self.name, L["Use these settings to control when the ShieldsUp display should be shown or hidden."] )
 
 	--------------------------------------------------------------------
 
@@ -809,8 +809,8 @@ optionsPanels[ #optionsPanels +1 ] = LibStub("LibAboutPanel").new( ADDON_NAME, A
 SLASH_SHIELDSUP1 = "/sup"
 SLASH_SHIELDSUP2 = "/shieldsup"
 SlashCmdList.SHIELDSUP = function()
-	InterfaceOptionsFrame_OpenToCategory( optionsPanels[1] )
 	InterfaceOptionsFrame_OpenToCategory( optionsPanels[ #optionsPanels ] )
+	InterfaceOptionsFrame_OpenToCategory( optionsPanels[1] )
 end
 
 ------------------------------------------------------------------------
