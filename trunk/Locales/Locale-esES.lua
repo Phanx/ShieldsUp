@@ -27,35 +27,35 @@ L["YOU"] = "USTED"
 ------------------------------------------------------------------------
 -- These strings are displayed in the configuration GUI.
 
-L["Click for options."] = "Click para abrir las opciones."
+L["Click for options."] = "Haz clic para abrir las opciones."
 
-L["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "ShieldsUp es un addon para seguir sus Escudos elementales. Estas opciones te permiten modificar la configuración de ShieldsUp."
+L["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "Estas opciones te permiten modificar la configuración de ShieldsUp, un addon para seguir tus Escudos elementales."
 
 L["Horizontal Position"] = "Posición horizontal"
-L["Set the horizontal distance from the center of the screen to place the display."] = "Ajusta la posición horizontal del marco de seguimiento de Escudos elementales."
+L["Set the horizontal distance from the center of the screen to place the display."] = "Ajustar la distancia horizontal desde el centro de la pantalla para colocar el marco."
 
 L["Vertical Position"] = "Posición vertical"
-L["Set the vertical distance from the center of the screen to place the display."] = "Ajusta la posición vertical del marco de seguimiento de Escudos elementales."
+L["Set the vertical distance from the center of the screen to place the display."] = "Ajustar la distancia vertical desde el centro de la pantalla para colocar el marco."
 
 L["Horizontal Padding"] = "Espaciado horizontal"
-L["Set the horizontal space between the charge counts."] = "Ajusta el espaciamiento horizontal de los contadores de cargas de Escudos elementales."
+L["Set the horizontal space between the charge counts."] = "Ajustar el espacio horizontal entre los números de cargas."
 
 L["Vertical Padding"] = "Espaciado vertical"
-L["Set the vertical space between the target name and charge counters."] = "Ajusta el espaciamiento vertical de los contadores de cargas de Escudos elementales."
+L["Set the vertical space between the target name and charge counters."] = "Ajustar el espacio vertical entre el nombre objetivo y los números de cargas."
 
 L["Opacity"] = "Opacidad"
-L["Set the opacity level for the display."] = "Cambia la opacidad del marco de seguimiento de Escudo elementaless."
+L["Set the opacity level for the display."] = "Ajustar la opacidad del marco."
 
-L["Overwrite Alert"] = "Alertas de sobrescribir"
-L["Print a message in the chat frame alerting you who overwrites your %s."] = "Si activas esta opción, aparecerán mensajes de alertar en el ventana de chat cuando otro chamán sobrescribe su %s."
+L["Overwrite Alert"] = "Aviso en sobrescrito"
+L["Print a message in the chat frame alerting you who overwrites your %s."] = "Mostrar una aviso en la ventana de chat cuando otro chamán sobrescribe tu %s."
 
 ------------------------------------------------------------------------
 
 L["Font Face"] = "Fuente"
-L["Set the font face to use for the display text."] = "Cambia la fuente."
+L["Set the font face to use for the display text."] = "Cambiar la fuente."
 
 L["Outline"] = "Perfil de fuente"
-L["Select an outline width for the display text."] = "Ajusta el perfil de la fuente."
+L["Select an outline width for the display text."] = "Ajustar el perfil de la fuente."
 L["None"] = "Ninguno"
 L["Thin"] = "Fino"
 L["Thick"] = "Grueso"
@@ -63,57 +63,57 @@ L["Thick"] = "Grueso"
 L["Shadow"] = "Sombra de fuente"
 L["Add a drop shadow effect to the display text."] = "Mostrar la sombra de la fuente."
 
-L["Counter Size"] = "Tamaño de contadores"
-L["Set the text size for the charge counters."] = "Ajusta el tamaño de la fuente de los contadores de los contadores de cargas de Escudos elementales."
+L["Counter Size"] = "Tamaño de números"
+L["Set the text size for the charge counters."] = "Ajustar el tamaño de los números de cargas."
 
 L["Name Size"] = "Tamaño de nombre"
-L["Set the text size for the target name."] = "Ajusta el tamaño de la fuente del nombre."
+L["Set the text size for the target name."] = "Ajustar el tamaño de la fuente del nombre objetivo."
 
 ------------------------------------------------------------------------
 
 L["Colors"] = "Colores"
-L["Set the color for the %s charge counter."] = "Ajusta el color para la contador de cargas de %s."
+L["Set the color for the %s charge counter."] = "Establecer el color del número de cargas en tu %s."
 
 L["Active"] = "Activo"
-L["Set the color for the target name while your %s is active."] = "Ajusta el color para el nombre de objetivo, mientras que su %s está activo."
+L["Set the color for the target name while your %s is active."] = "Establecer el color del nombre objetivo, mientras que su %s está activo."
 
 L["Overwritten"] = "Sobrescrito"
-L["Set the color for the target name when your %s has been overwritten."] = "Ajusta el color para el nombre de objetivo, mientras que su %s ha sido sobrescrito."
+L["Set the color for the target name when your %s has been overwritten."] = "Ajusta el color del nombre objetivo, mientras que tu %s se ha sobrescrito."
 
 L["Inactive"] = "Inactivo"
-L["Set the color for expired, dispelled, or otherwise inactive shields."] = "Ajusta el color para la contador de cargas de Escudos elementales inactivos."
+L["Set the color for expired, dispelled, or otherwise inactive shields."] = "Ajusta el color de los números de cargas en Escudos inactivos."
 
 L["Colorblind Mode"] = USE_COLORBLIND_MODE -- Leave this as-is unless there is something wrong with Blizzard's translation in your locale
-L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."] = "Si activas esta opción, aparecerán asteriscos alrededor del nombre de objetivo cuando otro chamán sobrescribe su %s, además de cambiar el color."
+L["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."] = "Añadir asteriscos alrededor del nombre de objetivo cuando otro chamán sobrescribe tu %s, además de cambiar el color."
 
 ------------------------------------------------------------------------
 
 L["Alerts"] = "Alertas"
-L["Use these settings to configure how ShieldsUp alerts you when a shield expires or is removed."] = "Estas opciones te permiten modificar la forma ShieldsUp le avisa cuando su Escudos elementales expiran o se quitan."
+L["Use these settings to configure how ShieldsUp alerts you when a shield expires or is removed."] = "Estas opciones te permiten cambiar la forma en ShieldsUp te avisa en un Escudo expira o se quita."
 
-L["Text Alert"] = "Mostrar mensajes"
-L["Show a text message when %s expires."] = "Mostrar un mensaje de alertar cuando expira su %s."
+L["Text Alert"] = "Alertas de texto"
+L["Show a text message when %s expires."] = "Mostrar un mensaje de alerta cuando expira tu %s."
 
-L["Sound Alert"] = "Reproducir sonidos"
-L["Play a sound when %s expires."] = "Reproducir un sonido cuando expira su %s."
+L["Sound Alert"] = "Alertas de sonido"
+L["Play a sound when %s expires."] = "Reproducir un sonido cuando expira tu %s."
 
 L["Sound File"] = "Sonido"
-L["Select the sound to play when %s expires."] = "Cambia el sonido para reproducir cuando expira su %s."
+L["Select the sound to play when %s expires."] = "Establecer el sonido a reproducir cuando expira su %s."
 
-L["Text Output"] = "Salida de mensajes de alertar"
+L["Text Output"] = "Salida de alertas de texto"
 
 ------------------------------------------------------------------------
 
 L["Visibility"] = "Visibilidad"
+L["Use these settings to control when ShieldsUp display should be shown or hidden."] = "Estas opciones le permiten controlar cuando el marco de ShieldsUp se muestran o se ocultan."
 L["Enable"] = "Activar"
-L["Use these settings to control when ShieldsUp display should be shown or hidden."] = "Estas opciones le permiten modificar en el marco de seguimiento de Escudos elementales se muestran o se ocultan."
 
-L["Group Size"] = "Tamaño del grupo"
+L["Group Size"] = "Tamaño de grupo"
 -- L["Solo"] = ""
 L["Show the display while you are not in a group"] = "Mostrar el marco mientras estás solo."
 L["Party"] = "Grupo"
 L["Show the display while you are in a party group"] = "Mostrar el marco mientras estás en un grupo de 5."
-L["Raid"] = "Raid"
+L["Raid"] = "Banda"
 L["Show the display while you are in a raid group"] = "Mostrar el marco mientras estás en un banda."
 
 L["Zone Type"] = "Tipo de Zona"
