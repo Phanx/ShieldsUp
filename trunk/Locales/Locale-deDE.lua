@@ -1,4 +1,4 @@
-﻿
+﻿--[[--------------------------------------------------------------------
 	ShieldsUp
 	Text-based shaman shield monitor.
 	Written by Phanx <addons@phanx.net>
