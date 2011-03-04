@@ -71,7 +71,7 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( ADDON_NAME, nil, functi
 	--------------------------------------------------------------------
 
 	local padh = CreateSlider( self, L["Horizontal Padding"], 0, floor( screenwidth / 10 ) / 2 * 10, 1 )
-	padh.desc = L["Set the horizontal space between the charge counts."]
+	padh.desc = L["Set the horizontal space between the charge counters."]
 	padh:SetPoint( "TOPLEFT", posy, "BOTTOMLEFT", 0, -8 )
 	padh:SetPoint( "TOPRIGHT", posy, "BOTTOMRIGHT", 0, -8 )
 
