@@ -17,7 +17,6 @@ local EARTH_SHIELD = GetSpellInfo(974)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 local WATER_SHIELD = GetSpellInfo(52127)
 
-if not namespace then namespace = _G.ShieldsUpNamespace end -- WoW China
 if not namespace.L then namespace.L = { } end
 
 local L = setmetatable(namespace.L, { __index = function(t, k)

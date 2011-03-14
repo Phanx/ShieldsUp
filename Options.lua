@@ -11,7 +11,6 @@
 if select( 2, UnitClass("player") ) ~= "SHAMAN" then return end
 
 local ADDON_NAME, namespace = ...
-if not namespace then namespace = _G.ShieldsUpNamespace end -- WoW China
 
 local ShieldsUp = namespace.ShieldsUp
 local L = namespace.L
@@ -48,10 +47,8 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( ADDON_NAME, nil, functi
 	posx:SetPoint( "TOPRIGHT", notes, "BOTTOM", -8, 8 )
 
 	posx.OnValueChanged = function( self, value )
-		value = math.floor( value )
 		db.posx = value
 		ShieldsUp:ApplySettings()
-		return value
 	end
 
 	--------------------------------------------------------------------
@@ -62,10 +59,8 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( ADDON_NAME, nil, functi
 	posy:SetPoint( "TOPRIGHT", posx, "BOTTOMRIGHT", 0, -8 )
 
 	posy.OnValueChanged = function( self, value )
-		value = math.floor( value )
 		db.posy = value
 		ShieldsUp:ApplySettings()
-		return value
 	end
 
 	--------------------------------------------------------------------
@@ -76,10 +71,8 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( ADDON_NAME, nil, functi
 	padh:SetPoint( "TOPRIGHT", posy, "BOTTOMRIGHT", 0, -8 )
 
 	padh.OnValueChanged = function( self, value )
-		value = math.floor( value )
 		db.padh = value
 		ShieldsUp:ApplySettings()
-		return value
 	end
 
 	--------------------------------------------------------------------
@@ -90,10 +83,8 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( ADDON_NAME, nil, functi
 	padv:SetPoint( "TOPRIGHT", padh, "BOTTOMRIGHT", 0, -8 )
 
 	padv.OnValueChanged = function( self, value )
-		value = math.floor( value )
 		db.padv = value
 		ShieldsUp:ApplySettings()
-		return value
 	end
 
 	--------------------------------------------------------------------
@@ -203,10 +194,8 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( ADDON_NAME, nil, functi
 	large:SetPoint( "TOPRIGHT", outline, "BOTTOMRIGHT", 0, -8 )
 
 	large.OnValueChanged = function( self, value )
-		value = math.floor( value )
 		db.font.large = value
 		ShieldsUp:ApplySettings()
-		return value
 	end
 
 	--------------------------------------------------------------------
@@ -217,10 +206,8 @@ optionsPanels[ #optionsPanels +1 ] = CreateOptionsPanel( ADDON_NAME, nil, functi
 	small:SetPoint( "TOPRIGHT", large, "BOTTOMRIGHT", 0, -8 )
 
 	small.OnValueChanged = function( self, value )
-		value = math.floor( value )
 		db.font.small = value
 		ShieldsUp:ApplySettings()
-		return value
 	end
 
 	--------------------------------------------------------------------
@@ -823,8 +810,8 @@ if LibDataBroker then
 		label = ADDON_NAME,
 		OnClick = SlashCmdList.SHIELDSUP,
 		OnTooltipShow = function( tooltip )
-			tooltip:SetText( ADDON_NAME )
-			tooltip:AddLine( L["Click for options."], 1, 1, 1 )
+			tooltip:AddLine( ADDON_NAME, 1, 1, 1 )
+			tooltip:AddLine( L["Click for options."] )
 			tooltip:Show()
 		end,
 	} )
