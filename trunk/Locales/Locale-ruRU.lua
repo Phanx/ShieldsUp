@@ -28,7 +28,7 @@ namespace.L = {
 
 	["Click for options."] = "Клик - открывает окно настроек.",
 
---	["ShieldsUp is a monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "",
+--	["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "",
 
 	["Horizontal Position"] = "Горизонтальная позиция",
 	["Set the horizontal distance from the center of the screen to place the display."] = "Установить горизонтальную позицию относительно центра экрана.",
