@@ -28,7 +28,7 @@ namespace.L = {
 
 --	["Click for options."] = "",
 
-	["ShieldsUp is a monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "ShieldsUp是一個薩滿護盾的監視器。使用這些設定來配置插件的外觀和行為.",
+	["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "ShieldsUp是一個薩滿護盾的監視器。使用這些設定來配置插件的外觀和行為.",
 
 	["Horizontal Position"] = "水平位置",
 	["Set the horizontal distance from the center of the screen to place the display."] = "設定插件顯示的相對于屏幕中間的水平位置.",
