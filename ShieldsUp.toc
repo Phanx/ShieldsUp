@@ -1,16 +1,17 @@
-## Interface: 40200
-## Version: 4.2.0.wowi:revision
+## Interface: 40300
+## Version: 4.3.0.wowi:revision
 
 ## Title: ShieldsUp
 ## Notes: Text-based shaman shield monitor.
 ## Notes-esES: Seguir sus Escudos elementales.
 ## Notes-esMX: Seguir sus Escudos elementales.
+## Notes-ptBR: Siga seus escudos elementares.
 ## Author: Phanx, Akkorian
 ## X-Credits: Inspired by Infineon's beSch.
-## X-Email: akkorian@hotmail.com
+## X-Email: addons@phanx.net
 ## X-Copyright: Copyright © 2008–2011 Phanx.
 ## X-License: Some rights reserved. See LICENSE.txt for details.
-## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, ruRU, koKR, zhCN, zhTW
+## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, ptBR, ruRU, koKR, zhCN, zhTW
 ## X-Localizations: enUS, deDE, esES, esMX, frFR, ruRU, zhCN, zhTW
 ## X-Website: http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 ## X-Curse-Project-ID: shieldsup
