@@ -6,7 +6,7 @@
 ## Notes-esES: Seguir sus Escudos elementales.
 ## Notes-esMX: Seguir sus Escudos elementales.
 ## Notes-ptBR: Siga seus escudos elementares.
-## Author: Phanx, Akkorian
+## Author: Phanx
 ## X-Credits: Inspired by Infineon's beSch.
 ## X-Email: addons@phanx.net
 ## X-Copyright: Copyright © 2008–2011 Phanx.
@@ -41,6 +41,7 @@ Locales\Locale-deDE.lua
 Locales\Locale-esES.lua
 # Locales\Locale-esMX.lua
 Locales\Locale-frFR.lua
+# Locales\Locale-ptBR.lua
 # Locales\Locale-koKR.lua
 Locales\Locale-ruRU.lua
 Locales\Locale-zhCN.lua
