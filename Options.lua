@@ -2,7 +2,6 @@
 	ShieldsUp
 	Text-based shaman shield monitor.
 	Written by Phanx <addons@phanx.net>
-	Maintained by Akkorian <akkorian@hotmail.com>
 	Copyright © 2008–2011 Phanx. Some rights reserved. See LICENSE.txt for details.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
