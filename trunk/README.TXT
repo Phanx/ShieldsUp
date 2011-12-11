@@ -35,7 +35,7 @@ Localization
 ------------
 
 ShieldsUp is compatible with English, Deutsch, Español, Français,
-Русский, 한국어, 简体中文, and 正體中文 clients.
+Português, Русский, 한국어, 简体中文, and 正體中文 clients.
 
 The options panel and alert messages are currently translated into
 English, Deutsch, Español, Français, Русский, 简体中文, and 正體中文.
