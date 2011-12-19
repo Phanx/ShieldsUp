@@ -1,7 +1,7 @@
 ShieldsUp
 Text-based shaman shield monitor.
 http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-http://www.curse.com/downloads/wow-addons/details/shieldsup.aspx
+http://www.curse.com/addons/wow/shieldsup
 
 Copyright © 2008–2011 Phanx <addons@phanx.net>
 
