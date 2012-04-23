@@ -821,9 +821,9 @@ function ShieldsUp:ApplySettings()
 	self.waterText:ClearAllPoints()
 	if hasEarthShield and isInGroup then
 		if db.namePosition == "TOP" then
-			self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -db.padh / 2, 0)
+			self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -math.floor(db.padh / 2 + 0.5), 0)
 		else
-			self.waterText:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", -db.padh / 2, 0)
+			self.waterText:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", -math.floor(db.padh / 2 + 0.5), 0)
 		end
 	else
 		if db.namePosition == "TOP" then
@@ -841,9 +841,9 @@ function ShieldsUp:ApplySettings()
 	self.earthText:SetShadowOffset(shadow, -shadow)
 	self.earthText:ClearAllPoints()
 	if db.namePosition == "TOP" then
-		self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", db.padh / 2, 0)
+		self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", math.floor(db.padh / 2 + 0.5), 0)
 	else
-		self.earthText:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", db.padh / 2, 0)
+		self.earthText:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", math.floor(db.padh / 2 + 0.5), 0)
 	end
 	if hasEarthShield and isInGroup then
 		self.earthText:Show()
@@ -857,14 +857,14 @@ function ShieldsUp:ApplySettings()
 	self.nameText:SetFont(face, db.font.small, outline)
 	self.nameText:SetShadowOffset(0, 0)
 	self.nameText:SetShadowOffset(shadow, -shadow)
-	self.nameText:ClearAllPoints()
-	if db.namePosition == "TOP" then
-		self.nameText:SetPoint("BOTTOM", self, "TOP", 0, db.padv)
-	else
-		self.nameText:SetPoint("TOP", self, "BOTTOM", 0, -db.padv)
-	end
 	if hasEarthShield and isInGroup and db.namePosition ~= "NONE" then
 		self.nameText:Show()
+		self.nameText:ClearAllPoints()
+		if db.namePosition == "TOP" then
+			self.nameText:SetPoint("BOTTOM", self, "TOP", 0, db.padv)
+		else
+			self.nameText:SetPoint("TOP", self, "BOTTOM", 0, -db.padv)
+		end
 	else
 		self.nameText:Hide()
 	end
