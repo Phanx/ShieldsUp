@@ -289,11 +289,13 @@ function ShieldsUp:PLAYER_LOGIN()
 			Debug(2, "Lightning Shield found on player")
 		end
 
-		if GetNumRaidMembers() > 0 then
-			Debug(2, "isInGroup = true, RAID")
-			isInGroup = true
+		local numGroupMembers = GetNumGroupMembers()
+
+		if IsInRaid() then
+			Debug(2, "isInGroup = raid")
+			isInGroup = "raid"
 			local unitName
-			for i = 1, GetNumRaidMembers() do
+			for i = 1, numGroupMembers do
 				unitName = UnitName("raid"..i)
 				if unitName ~= playerName then
 					name, _, _, charges, _, duration, expires, caster = UnitAura("raid"..i, EARTH_SHIELD)
@@ -318,11 +320,11 @@ function ShieldsUp:PLAYER_LOGIN()
 					break
 				end
 			end
-		elseif GetNumPartyMembers() > 0 then
-			Debug(2, "isInGroup = true, PARTY")
-			isInGroup = true
+		elseif numGroupMembers > 0 then
+			Debug(2, "isInGroup = party")
+			isInGroup = "party"
 			local name, charges, duration, expires, caster, _
-			for i = 1, GetNumPartyMembers() do
+			for i = 1, numGroupMembers do
 				name, _, _, charges, _, duration, expires, caster = UnitAura("party"..i, EARTH_SHIELD)
 				if name and caster == "player" then
 					earthCount = charges
@@ -359,9 +361,8 @@ function ShieldsUp:PLAYER_LOGIN()
 
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	self:RegisterEvent("PLAYER_TALENT_UPDATE")
-	self:RegisterEvent("PARTY_LEADER_CHANGED")
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
-	self:RegisterEvent("RAID_ROSTER_UPDATE")
+	self:RegisterEvent("PARTY_LEADER_CHANGED") -- removed in MoP ???
+	self:RegisterEvent("GROUP_ROSTER_UPDATE")
 	self:RegisterEvent("UNIT_AURA")
 	self:RegisterEvent("UNIT_SPELLCAST_SENT")
 
@@ -612,11 +613,11 @@ do
 				self:Update()
 			end
 		end
-		if GetNumRaidMembers() > 0 or GetNumPartyMembers() > 0 then
+		if GetNumGroupMembers() > 0 then
 			Debug(3, "In a group")
 			if not isInGroup then
-				Debug(1, "Joined a group")
-				isInGroup = true
+				isInGroup = IsInRaid() and "RAID" or "PARTY"
+				Debug(1, "Joined a", isInGroup, "group")
 				self:ApplySettings()
 				self:UpdateVisibility()
 			end
@@ -631,9 +632,8 @@ do
 		end
 	end
 
-	ShieldsUp.PARTY_LEADER_CHANGED = OnGroupChange
-	ShieldsUp.PARTY_MEMBERS_CHANGED = OnGroupChange
-	ShieldsUp.RAID_ROSTER_UPDATE = OnGroupChange
+	ShieldsUp.PARTY_LEADER_CHANGED = OnGroupChange -- removed in MoP ???
+	ShieldsUp.GROUP_ROSTER_UPDATE = OnGroupChange
 end
 
 ------------------------------------------------------------------------
@@ -724,14 +724,8 @@ end
 function ShieldsUp:UpdateVisibility()
 	Debug(2, "UpdateVisibility")
 
-	-- PARTY_MEMBERS_CHANGED
-	-- RAID_ROSTER_CHANGED
-	local groupType = "solo"
-	if GetNumRaidMembers() > 0 then
-		groupType = "raid"
-	elseif GetNumPartyMembers() > 0 then
-		groupType = "party"
-	end
+	-- GROUP_ROSTER_CHANGED
+	local groupType = isInGroup or "solo"
 	if not db.show.group[groupType] then
 		return self:Hide()
 	end
