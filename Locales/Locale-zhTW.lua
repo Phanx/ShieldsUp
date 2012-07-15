@@ -6,7 +6,7 @@
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/addons/wow/shieldsup
 ------------------------------------------------------------------------
-	Localization for zhTW / Traditional Chinese / 正體中文
+	Localization for zhTW / Traditional Chinese / 繁體中文
 	Last updated 2009-07-15 by www.wowui.cn
 ----------------------------------------------------------------------]]
 
