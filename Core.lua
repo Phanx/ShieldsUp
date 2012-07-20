@@ -10,6 +10,8 @@
 local ADDON_NAME, namespace = ...
 if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAME) end
 
+local MoP = select(4, GetBuildInfo()) > 50000
+
 ------------------------------------------------------------------------
 
 local EARTH_SHIELD = GetSpellInfo(974)
@@ -289,9 +291,19 @@ function ShieldsUp:PLAYER_LOGIN()
 			Debug(2, "Lightning Shield found on player")
 		end
 
-		local numGroupMembers = GetNumGroupMembers()
+		local numGroupMembers, isInRaid
+		if MoP then
+			numGroupMembers = GetNumGroupMembers()
+			isInRaid = IsInRaid()
+		else
+			numGroupMembers = GetNumRaidMembers()
+			isInRaid = numGroupMembers > 0
+			if not isInRaid then
+				numGroupMembers = GetNumPartyMembers()
+			end
+		end
 
-		if IsInRaid() then
+		if isInRaid then
 			Debug(2, "isInGroup = raid")
 			isInGroup = "raid"
 			local unitName
@@ -394,7 +406,7 @@ end
 function ShieldsUp:CHARACTER_POINTS_CHANGED()
 	Debug(1, "CHARACTER_POINTS_CHANGED")
 
-	if IsSpellKnown(974) then
+	if (IsPlayerSpell or IsSpellKnown)(974) then
 		Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
@@ -408,7 +420,7 @@ end
 function ShieldsUp:PLAYER_TALENT_UPDATE()
 	Debug(1, "PLAYER_TALENT_UPDATE")
 
-	if IsSpellKnown(974) then
+	if (IsPlayerSpell or IsSpellKnown)(974) then
 		Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
