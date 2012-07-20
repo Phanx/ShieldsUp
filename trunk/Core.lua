@@ -420,7 +420,7 @@ end
 function ShieldsUp:PLAYER_TALENT_UPDATE()
 	Debug(1, "PLAYER_TALENT_UPDATE")
 
-	if (IsPlayerSpell or IsSpellKnown)(974)(974) then
+	if (IsPlayerSpell or IsSpellKnown)(974) then
 		Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
