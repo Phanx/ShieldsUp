@@ -7,7 +7,8 @@
 	http://www.curse.com/addons/wow/shieldsup
 ------------------------------------------------------------------------
 	Localization for deDE / German / Deutsch
-	Last updated 2009-07-14 by Søøm < graninibanane AT gmx DOT de >
+	Last updated 2012-03-10 by Estadon on CurseForge
+	Previous updates by Søøm < graninibanane AT gmx DOT de >
 ----------------------------------------------------------------------]]
 
 if GetLocale() ~= "deDE" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
@@ -44,8 +45,8 @@ namespace.L = {
 	["Opacity"] = "Durchsichtigkeit",
 	["Set the opacity level for the display."] = "Konfiguriere die Durchsichtigkeit der Anzeige.",
 
---	["Overwrite Alert"] = "",
---	["Print a message in the chat frame alerting you who overwrites your %s."] = "",
+	["Overwrite Alert"] = "Überschreib-Alarm",
+	["Print a message in the chat frame alerting you who overwrites your %s."] = "Eine Nachricht im Chatfenster ausgeben, die dich alarmiert, wer dein %s überschreibt.",
 
 ------------------------------------------------------------------------
 
