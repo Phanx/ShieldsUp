@@ -14,128 +14,93 @@ if GetLocale() ~= "ruRU" or select(2, UnitClass("player")) ~= "SHAMAN" then retu
 
 local _, namespace = ...
 namespace.L = {
-
-------------------------------------------------------------------------
--- These strings are displayed when shields expire.
+	["L"] = "М",
+	["W"] = "В",
 
 	["%s faded!"] = "%s спал!",
-	["%s faded from %s!"] = "%s спал с %s!",
+	["%1$s faded from %2$s!"] = "%1$s спал с %2$s!",
 	["YOU"] = "ВАС",
-
-------------------------------------------------------------------------
--- These strings are displayed in the configuration GUI.
 
 	["Click for options."] = "Клик - открывает окно настроек.",
 
---	["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "",
-
+	--["ShieldsUp is a monitor for your shaman shields. These settings allow you to customize the addon's appearance and behavior."] = "",
 	["Horizontal Position"] = "Горизонтальная позиция",
-	["Set the horizontal distance from the center of the screen to place the display."] = "Установить горизонтальную позицию относительно центра экрана.",
-
+	["Move the display left or right relative to the center of the screen."] = "Установить горизонтальную позицию относительно центра экрана.",
 	["Vertical Position"] = "Вертикальная позиция",
-	["Set the vertical distance from the center of the screen to place the display."] = "Установить вертикальную позицию относительно центра экрана.",
-
+	["Move the display up or down relative to the center of the screen."] = "Установить вертикальную позицию относительно центра экрана.",
 	["Horizontal Padding"] = "Горизонтальный отступ",
-	["Set the horizontal space between the charge counters."] = "Установить горизонтальный отступ между элементами текста.",
-
+	["Change the horizontal distance between the charge counters."] = "Установить горизонтальный отступ между элементами текста.",
 	["Vertical Padding"] = "Вертикальный отступ",
-	["Set the vertical space between the target name and charge counters."] = "Установить вертикальный отступ между элементами текста.",
-
+	["Change the vertical distance between the charge counters and the target name."] = "Установить вертикальный отступ между элементами текста.",
 	["Opacity"] = "Прозрачность",
-	["Set the opacity level for the display."] = "Установить уровень прозрачности.",
+	["Change the opacity of the display."] = "Установить уровень прозрачности.",
 
---	["Overwrite Alert"] = "",
---	["Print a message in the chat frame alerting you who overwrites your %s."] = "",
-
-------------------------------------------------------------------------
-
-	["Font Face"] = "Шрифт",
-	["Set the font face to use for the display text."] = "Установить размер шрифта для имени.",
-
-	["Outline"] = "Обрисовка",
---	["Select an outline width for the display text."] = "",
---	["None"] = "",
---	["Thin"] = "",
---	["Thick"] = "",
-
---	["Shadow"] = "",
---	["Add a drop shadow effect to the display text."] = "",
-
+	["Font"] = "Шрифт",
+	["Change the font used for the display text."] = "Установить размер шрифта для имени.",
+	["Text Outline"] = "Обрисовка",
+	--["Choose an outline weight for the display text."] = "",
+	--["None"] = "",
+	--["Thin"] = "",
+	--["Thick"] = "",
 	["Counter Size"] = "Размер числа",
-	["Set the text size for the charge counters."] = "Установить размер шрифта для счетчиков.",
-
+	["Change the size of the counter text."] = "Установить размер шрифта для счетчиков.",
 	["Name Size"] = "Размер имени",
-	["Set the text size for the target name."] = "Установить размер шрифта для имени.",
-
-------------------------------------------------------------------------
+	["Change the size of the name text."] = "Использовать этот цвет для счетчика зарядов %s.",
+	--["Shadow"] = "",
+	--["Add a drop shadow effect to the display text."] = "",
 
 	["Colors"] = "Цвета",
 	["Set the color for the %s charge counter."] = "Использовать этот цвет для счетчика зарядов %s.",
-
 	["Active"] = "Обычные",
 	["Set the color for the target name while your %s is active."] = "Использовать этот цвет для цели, на которой %s.",
-
 	["Overwritten"] = "Перебит",
 	["Set the color for the target name when your %s has been overwritten."] = "Использовать этот цвет для цели, на которой %s, в случае если чужой щит перебил ваш на этой цели.",
-
 	["Inactive"] = "Предупреждение",
 	["Set the color for expired, dispelled, or otherwise inactive shields."] = "Использовать этот цвет, когда счечик зарядов на нуле.",
 
-	["Colorblind Mode"] = USE_COLORBLIND_MODE, -- Leave this as-is unless there is something wrong with Blizzard's translation in your locale
---	["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."] = "",
-
-------------------------------------------------------------------------
-
 	["Alerts"] = "Предупреждения",
---	["Use these settings to configure how ShieldsUp alerts you when a shield expires or is removed."] = "",
-
+	--["These settings allow you to customize how ShieldsUp alerts you when a shield expires or is removed."] = "",
 	["Text Alert"] = "Текст",
-	["Show a text message when %s expires."] = "Показывать предупреждение, когда спадает %s.",
-
+	["Show a message when your %s expires or is removed."] = "Показывать предупреждение, когда спадает %s.",
 	["Sound Alert"] = "Звук",
-	["Play a sound when %s expires."] = "Проигрывать звук, когда спадает %s.",
-
+	["Play a sound when your %s expires or is removed."] = "Проигрывать звук, когда спадает %s.",
 	["Sound File"] = "Звуковой файл",
---	["Select the sound to play when %s expires."] = "",
+	--["Choose the sound to play when your %s expires or is removed."] = "",
+	--["Alert when overwritten"] = "",
+	--["Also alert when another shaman overwrites your %s."] = "",
 
---	["Text Output"] = "",
-
-------------------------------------------------------------------------
+	--["Text Output"] = "",
 
 	["Visibility"] = "Видимость",
-	["Use these settings to control when the ShieldsUp display should be shown or hidden."] = "Настройка отображения в зависимости от следующих условий.",
---	["Enable"] = "",
+	["These settings allow you to customize when the ShieldsUp display is shown."] = "Настройка отображения в зависимости от следующих условий.",
 
-	["Group Size"] = "Размер группы",
+	["Show in group types:"] = "Размер группы",
 	["Solo"] = "Соло",
-	["Show the display while you are not in a group"] = "Показывать, когда не в группе.",
+	["Show the display while you are not in a group."] = "Показывать, когда не в группе.",
 	["Party"] = "Группа",
-	["Show the display while you are in a 5-man party"] = "Показывать, когда в группе из 5 человек.",
+	["Show the display while you are in a party."] = "Показывать, когда в группе из 5 человек.",
 	["Raid"] = "Рейд",
-	["Show the display while you are in a raid group"] = "Показывать, когда в рейд.е",
+	["Show the display while you are in a raid."] = "Показывать, когда в рейде.",
 
-	["Zone Type"] = "Тип зоны",
+	["Show in zone types:"] = "Тип зоны",
 	["World"] = "Мир",
-	["Show the display while you are in the outdoor world"] = "Показывать, когда в мире.",
+	["Show the display while you are in the outdoor world."] = "Показывать, когда в мире.",
 	["Dungeon"] = "Подземелье",
-	["Show the display while you are in a party dungeon"] = "Показывать, когда в подземелье на 5 человек.",
-	["Raid Dungeon"] = "Инстанс-рейд",
-	["Show the display while you are in a raid dungeon"] = "Показывать, когда в инстансе-рейде.",
+	["Show the display while you are in a dungeon."] = "Показывать, когда в подземелье на 5 человек.",
+	["Raid Instance"] = "Инстанс-рейд",
+	["Show the display while you are in a raid instance."] = "Показывать, когда в инстансе-рейде.",
 	["Arena"] = "Арена",
-	["Show the display while you are in a PvP arena"] = "Показывать, когда на арене(PvP).",
+	["Show the display while you are in a PvP arena."] = "Показывать, когда на арене(PvP).",
 	["Battleground"] = "Поле боя",
-	["Show the display while you are in a PvP battleground"] = "Показывать, когда на поле боя(PvP).",
+	["Show the display while you are in a PvP battleground."] = "Показывать, когда на поле боя(PvP).",
 
---	["Exceptions"] = "",
---	["Dead"] = "",
---	["Hide the display while you are dead"] = "",
---	["Out Of Combat"] = "",
---	["Hide the display while you are out of combat"] = "",
---	["Resting"] = "",
---	["Hide the display while you are in an inn or major city"] = "",
---	["Vehicle"] = "",
---	["Hide the display while you are controlling a vehicle"] = "",
-
-------------------------------------------------------------------------
-
+	--["Hide when:"] = "",
+	--["Dead"] = "",
+	--["Hide the display while you are dead."] = "",
+	--["Out of Combat"] = "",
+	--["Hide the display while you are out of combat."] = "",
+	--["Resting"] = "",
+	--["Hide the display while you are in an inn or major city."] = "",
+	--["Vehicle"] = "",
+	--["Hide the display while you are controlling a vehicle."] = "",
 }

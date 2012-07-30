@@ -1,4 +1,4 @@
-﻿--[[--------------------------------------------------------------------
+--[[--------------------------------------------------------------------
 	ShieldsUp
 	Text-based shaman shield monitor.
 	Copyright (c) 2008-2012 Phanx <addons@phanx.net>. All rights reserved.
@@ -6,136 +6,101 @@
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/addons/wow/shieldsup
 ------------------------------------------------------------------------
-	Spanish / Español (EU) + Latin American Spanish / Español (AL)
-	Last updated 2010-12-22 by Akkorian
+	Spanish / Español
+	Last updated 2012-07-29 by Phanx
 ----------------------------------------------------------------------]]
 
 if not (GetLocale() == "esES" or GetLocale() == "esMX") or select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
 local _, namespace = ...
 namespace.L = {
-
-------------------------------------------------------------------------
--- These strings are displayed when shields expire.
+	["L"] = "R",
+	["W"] = "A",
 
 	["%s faded!"] = "%s desapareció!",
-	["%s faded from %s!"] = "%s desapareció de %s!",
-	["YOU"] = "TÚ MISMO",
+	["%1$s faded from %2$s!"] = "%1$s desapareció de %2$s!",
+	["YOU"] = "TI",
 
-------------------------------------------------------------------------
--- These strings are displayed in the configuration GUI.
+	["Click for options."] = "",
 
-	["Click for options."] = "Haz clic para abrir las opciones.",
-
-	["ShieldsUp is a simple monitor for your shaman shields. Use these settings to configure the addon's appearance and behavior."] = "Estas opciones te permiten modificar la configuración de ShieldsUp, un addon para seguir tus Escudos elementales.",
-
+	["ShieldsUp is a monitor for your shaman shields. These settings allow you to customize the addon's appearance and behavior."] = "Estes opciones te permiten personalizar como ShieldsUp sigue tus Escudos elementales.",
 	["Horizontal Position"] = "Posición horizontal",
-	["Set the horizontal distance from the center of the screen to place the display."] = "Ajustar la distancia horizontal desde el centro de la pantalla para colocar el marco.",
-
+	["Move the display left or right relative to the center of the screen."] = "Mueve el marco de la izquierda o la derecha con respecto al centro de la pantalla.",
 	["Vertical Position"] = "Posición vertical",
-	["Set the vertical distance from the center of the screen to place the display."] = "Ajustar la distancia vertical desde el centro de la pantalla para colocar el marco.",
-
+	["Move the display up or down relative to the center of the screen."] = "Mueve el marco arriba o abajo con respecto al centro de la pantalla.",
 	["Horizontal Padding"] = "Espaciado horizontal",
-	["Set the horizontal space between the charge counters."] = "Ajustar el espacio horizontal entre los números de cargas.",
-
+	["Change the horizontal distance between the charge counters."] = "Ajusta el espacio horizontal entre los contadores de cargas.",
 	["Vertical Padding"] = "Espaciado vertical",
-	["Set the vertical space between the target name and charge counters."] = "Ajustar el espacio vertical entre el nombre objetivo y los números de cargas.",
-
+	["Change the vertical distance between the charge counters and the target name."] = "Ajusta el espacio vertical entre los números de cargas y el nombre de objetivo.",
 	["Opacity"] = "Opacidad",
-	["Set the opacity level for the display."] = "Ajustar la opacidad del marco.",
+	["Change the opacity of the display."] = "Ajusta la opacidad del marco.",
 
-	["Overwrite Alert"] = "Aviso en sobrescrito",
-	["Print a message in the chat frame alerting you who overwrites your %s."] = "Mostrar una aviso en la ventana de chat cuando otro chamán sobrescribe tu %s.",
-
-------------------------------------------------------------------------
-
-	["Font Face"] = "Fuente",
-	["Set the font face to use for the display text."] = "Cambiar la fuente.",
-
-	["Outline"] = "Perfil de fuente",
-	["Select an outline width for the display text."] = "Ajustar el perfil de la fuente.",
+	["Font"] = "Tipo de letra",
+	["Change the font used for the display text."] = "Cambia el tipo de letra utilizado por texto en el marco.",
+	["Text Outline"] = "Contorno",
+	["Choose an outline weight for the display text."] = "Seleccione el grueso del texto.",
 	["None"] = "Ninguno",
 	["Thin"] = "Fino",
 	["Thick"] = "Grueso",
-
-	["Shadow"] = "Sombra de fuente",
-	["Add a drop shadow effect to the display text."] = "Mostrar la sombra de la fuente.",
-
 	["Counter Size"] = "Tamaño de números",
-	["Set the text size for the charge counters."] = "Ajustar el tamaño de los números de cargas.",
-
+	["Change the size of the counter text."] = "Ajusta el tamaño de texto para los números de cargas.",
 	["Name Size"] = "Tamaño de nombre",
-	["Set the text size for the target name."] = "Ajustar el tamaño de la fuente del nombre objetivo.",
-
-------------------------------------------------------------------------
+	["Change the size of the name text."] = "Ajusta el tamaño de texto para el nombre del objetivo.",
+	["Shadow"] = "Sombra",
+	["Add a drop shadow effect to the display text."] = "Mustra un sombra en el texto.",
 
 	["Colors"] = "Colores",
-	["Set the color for the %s charge counter."] = "Ajustar el color del número de cargas en tu %s.",
-
+	["Set the color for the %s charge counter."] = "Elige el color para los números de cargas de %s.",
 	["Active"] = "Activo",
-	["Set the color for the target name while your %s is active."] = "Ajustar el color del nombre objetivo, mientras que tu %s está activo.",
-
+	["Set the color for the target name while your %s is active."] = "Elige el color para el nombre de objetivo mientras tu %s está activo.",
 	["Overwritten"] = "Sobrescrito",
-	["Set the color for the target name when your %s has been overwritten."] = "Ajustar el color del nombre objetivo, mientras que tu %s se ha sobrescrito.",
-
+	["Set the color for the target name when your %s has been overwritten."] = "Elige el color para el nombre de objetivo cuando otro chamán sobrescribe tu %s.",
 	["Inactive"] = "Inactivo",
-	["Set the color for expired, dispelled, or otherwise inactive shields."] = "Ajustar el color de los números de cargas, mientras que tu Escudo está inactivo.",
-
-	["Colorblind Mode"] = USE_COLORBLIND_MODE, -- Leave this as-is unless there is something wrong with Blizzard's translation in your locale
-	["Add asterisks around the target name when your %s has been overwritten, in addition to changing the color."] = "Añadir asteriscos alrededor del nombre objetivo cuando otro chamán sobrescribe tu %s, además de cambiar el color.",
-
-------------------------------------------------------------------------
+	["Set the color for expired, dispelled, or otherwise inactive shields."] = "Elige el color para Escudos expirados, disipados, o inactivos.",
 
 	["Alerts"] = "Alertas",
-	["Use these settings to configure how ShieldsUp alerts you when a shield expires or is removed."] = "Estas opciones te permiten cambiar la forma en ShieldsUp te avisa en un Escudo expira o se quita.",
-
+	["These settings allow you to customize how ShieldsUp alerts you when a shield expires or is removed."] = "Estes opciones te permiten cambiar como ShieldsUp te avisa cuando tu Escudos expira o se disipa.",
 	["Text Alert"] = "Alertas de texto",
-	["Show a text message when %s expires."] = "Mostrar un mensaje de alerta cuando expira tu %s.",
-
+	["Show a message when your %s expires or is removed."] = "Muestra un mensaje cuando tu %s expira o se disipa.",
 	["Sound Alert"] = "Alertas de sonido",
-	["Play a sound when %s expires."] = "Reproducir un sonido cuando expira tu %s.",
-
+	["Play a sound when your %s expires or is removed."] = "Reproduce un sonido cuando tu %s expira o se disipa.",
 	["Sound File"] = "Sonido",
-	["Select the sound to play when %s expires."] = "Establecer el sonido a reproducir cuando expira su %s.",
+	["Choose the sound to play when your %s expires or is removed."] = "Elige el sonido para reproducir cuando tu %s expira o se disipa.",
+	["Alert when overwritten"] = "Alerta cuando sobrescrito",
+	["Also alert when another shaman overwrites your %s."] = "También avise cuando otro chamán sobrescribe tu %s.",
 
-	["Text Output"] = "Salida de alertas de texto",
-
-------------------------------------------------------------------------
+	["Text Output"] = "Salida de texto",
 
 	["Visibility"] = "Visibilidad",
-	["Use these settings to control when ShieldsUp should be shown or hidden."] = "Estas opciones le permiten controlar cuando el marco de ShieldsUp se muestran o se ocultan.",
-	["Enable"] = "Activar",
+	["These settings allow you to customize when the ShieldsUp display is shown."] = "Estas opciones te permiten personalizar cuándo mostrar u ocultar el marco de ShieldsUp.",
 
-	["Group Size"] = "Tamaño de grupo",
---	["Solo"] = "",
-	["Show the display while you are not in a group"] = "Mostrar el marco mientras estás solo.",
+	["Show in group types:"] = "Muestra en tipos de grupo:",
+	["Solo"] = "Solo",
+	["Show the display while you are not in a group."] = "Muestra el marco mientras que estás solo.",
 	["Party"] = "Grupo",
-	["Show the display while you are in a party group"] = "Mostrar el marco mientras estás en un grupo de 5.",
+	["Show the display while you are in a party."] = "Muestra el marco mientras que estás en un grupo de 5.",
 	["Raid"] = "Banda",
-	["Show the display while you are in a raid group"] = "Mostrar el marco mientras estás en un banda.",
+	["Show the display while you are in a raid."] = "Muestra el marco mientras que estás en un banda.",
 
-	["Zone Type"] = "Tipo de Zona",
+	["Show in zone types:"] = "Muestra en tipos de zona:",
 	["World"] = "Mundo",
-	["Show the display while you are in the outdoor world"] = "Mostrar el marco mientras estás en el mundo, no una mazmorra.",
+	["Show the display while you are in the outdoor world."] = "Muestra el marco mientras que no estás en una instancia.",
 	["Dungeon"] = "Mazmorra",
-	["Show the display while you are in a party dungeon"] = "Mostrar el marco mientras estás en una mazmorra.",
-	["Raid Dungeon"] = "Mazmorra de banda",
-	["Show the display while you are in a raid dungeon"] = "Mostrar el marco mientras estás en una mazmorra de banda.",
---	["Arena"] = "",
-	["Show the display while you are in a PvP arena"] = "Mostrar el marco mientras estás en una arena JcJ.",
+	["Show the display while you are in a dungeon."] = "Muestra el marco mientras que estás en una mazmorra.",
+	["Raid Instance"] = "Instancia de banda",
+	["Show the display while you are in a raid instance."] = "Muestra el marco mientras que estás en una instancia de banda.",
+	["Arena"] = "Arena",
+	["Show the display while you are in a PvP arena."] = "Muestra el marco mientras que estás en una arena JcJ.",
 	["Battleground"] = "Campo de batalla",
-	["Show the display while you are in a PvP battleground"] = "Mostrar el marco mientras estás en un campo de batalla JcJ.",
+	["Show the display while you are in a PvP battleground."] = "Muestra el marco mientras que estás en un campo de batalla.",
 
-	["Exceptions"] = "Excepciones",
+	["Hide when:"] = "Oculta cuando:",
 	["Dead"] = "Muerto",
-	["Hide the display while you are dead"] = "Ocultar el marco mientras estás muerto.",
-	["Out Of Combat"] = "Fuera de combate",
-	["Hide the display while you are out of combat"] = "Ocultar el marco mientras estás fuera de combate.",
+	["Hide the display while you are dead."] = "Oculta el marco mientras que estás muerto.",
+	["Out of Combat"] = "Fuera de combate",
+	["Hide the display while you are out of combat."] = "Oculta el marco mientras que estás fuera de combate.",
 	["Resting"] = "Reposo",
-	["Hide the display while you are in an inn or major city"] = "Ocultar el marco mientras estás en una fonda o gran ciudad (reposo).",
+	["Hide the display while you are in an inn or major city."] = "Oculta el marco mientras que estás en una fonda o gran ciudad (reposo).",
 	["Vehicle"] = "Vehículo",
-	["Hide the display while you are controlling a vehicle"] = "Ocultar el marco mientras estás manejando un vehículo.",
-
-------------------------------------------------------------------------
-
+	["Hide the display while you are controlling a vehicle."] = "Oculta el marco mientras que estás manejando un vehículo.",
 }

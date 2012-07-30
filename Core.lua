@@ -690,7 +690,15 @@ function ShieldsUp:Update()
 		else
 			self.waterText:SetTextColor(unpack(db.color.alert))
 		end
-		self.waterText:SetText(waterCount)
+		if MoP and waterCount > 0 then
+			if waterSpell == LIGHTNING_SHIELD then
+				self.waterText:SetText(L["L"])
+			else
+				self.waterText:SetText(L["W"])
+			end
+		else
+			self.waterText:SetText(waterCount)
+		end
 	end
 end
 
@@ -703,7 +711,7 @@ function ShieldsUp:Alert(spell)
 	if spell == EARTH_SHIELD then
 		if db.alert.earth.text then
 			r, g, b = unpack(db.color.earth)
-			text = string.format(L["%s faded from %s!"], spell, earthName == playerName and L["YOU"] or earthName)
+			text = string.format(L["%1$s faded from %2$s!"], spell, earthName == playerName and L["YOU"] or earthName)
 		end
 		if db.alert.earth.sound then
 			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile)) or "Sound\\Doodad\\BellTollHorde.wav"
