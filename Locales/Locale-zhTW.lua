@@ -48,6 +48,8 @@ namespace.L = {
 	["Change the size of the name text."] = "設定目標名字的文字大小。",
 	["Shadow"] = "陰影效果",
 	["Add a drop shadow effect to the display text."] = "為顯示文字增加一個陰影效果。",
+	--["Use Class Color"] = "",
+	--["Color the target name by class color when your %s is active."] = "",
 
 	["Colors"] = "顏色",
 	["Set the color for the %s charge counter."] = "設定 %s 計數器的顏色。",
@@ -66,7 +68,7 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "當 %s 到期時播放一個音效警報。",
 	["Sound File"] = "音效檔案",
 	["Choose the sound to play when your %s expires or is removed."] = "選擇當 %s 到期時音效警報的檔案。",
-	--["Alert when overwritten"] = "",
+	--["Alert When Overwritten"] = "",
 	--["Also alert when another shaman overwrites your %s."] = "",
 
 	["Text Output"] = "文字輸出",

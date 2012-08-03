@@ -19,6 +19,8 @@ ShieldsUp.optionsPanels = optionsPanels
 
 local CreateOptionsPanel = LibStub("PhanxConfig-OptionsPanel").CreateOptionsPanel
 
+local floor, format, unpack = math.floor, string.format, unpack
+
 ------------------------------------------------------------------------
 
 optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(self)
@@ -40,7 +42,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	--------------------------------------------------------------------
 
-	local posx = CreateSlider(self, L["Horizontal Position"], math.floor(screenwidth / 10) / 2 * -10, math.floor(screenwidth / 10) / 2 * 10, 5)
+	local posx = CreateSlider(self, L["Horizontal Position"], floor(screenwidth / 10) / 2 * -10, floor(screenwidth / 10) / 2 * 10, 5)
 	posx.desc = L["Move the display left or right relative to the center of the screen."]
 	posx:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -4, -8)
 	posx:SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 8)
@@ -234,7 +236,18 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	--------------------------------------------------------------------
 
-	local vdist = -8 - face:GetHeight() - 8 - outline:GetHeight() - 8 - large:GetHeight() - 8 - small:GetHeight() - 8 - opacity:GetHeight() - 4
+	local class = CreateCheckbox(self, L["Use Class Color"])
+	class.desc = format(L["Color the target name by class color when your %s is active."], L["Earth Shield"])
+	class:SetPoint("TOPLEFT", shadow, "BOTTOMLEFT", 0, -8)
+
+	class.OnClick = function(self, checked)
+		db.color.useClassColor = checked
+		ShieldsUp:Update()
+	end
+
+	--------------------------------------------------------------------
+
+	local vdist = -16 - face:GetHeight() - 8 - outline:GetHeight() - 8 - large:GetHeight() - 8 - small:GetHeight() - 8 - opacity:GetHeight() - 4
 
 	local colors = CreatePanel(self)
 
@@ -242,13 +255,13 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	colors.label:SetPoint("BOTTOMLEFT", colors, "TOPLEFT", 4, 0)
 	colors.label:SetText(L["Colors"])
 
-	colors:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, vdist - colors.label:GetHeight())
+	colors:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -1, vdist - colors.label:GetHeight())
 	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, vdist - colors.label:GetHeight())
 
 	--------------------------------------------------------------------
 
 	local earth = CreateColorPicker(self, L["Earth Shield"])
-	earth.desc = string.format(L["Set the color for the %s charge counter."], L["Earth Shield"])
+	earth.desc = format(L["Set the color for the %s charge counter."], L["Earth Shield"])
 	earth:SetPoint("TOPLEFT", colors, 8, -8)
 	earth.GetColor = function() return unpack(db.color.earth) end
 	earth.OnColorChanged = function(self, r, g, b)
@@ -261,7 +274,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	--------------------------------------------------------------------
 
 	local lightning = CreateColorPicker(self, L["Lightning Shield"])
-	lightning.desc = string.format(L["Set the color for the %s charge counter."], L["Lightning Shield"])
+	lightning.desc = format(L["Set the color for the %s charge counter."], L["Lightning Shield"])
 	lightning:SetPoint("TOPLEFT", earth, "BOTTOMLEFT", 0, -8)
 	lightning.GetColor = function() return unpack(db.color.lightning) end
 	lightning.OnColorChanged = function(self, r, g, b)
@@ -274,7 +287,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	--------------------------------------------------------------------
 
 	local water = CreateColorPicker(self, L["Water Shield"])
-	water.desc = string.format(L["Set the color for the %s charge counter."], L["Water Shield"])
+	water.desc = format(L["Set the color for the %s charge counter."], L["Water Shield"])
 	water:SetPoint("TOPLEFT", lightning, "BOTTOMLEFT", 0, -8)
 	water.GetColor = function() return unpack(db.color.water) end
 	water.OnColorChanged = function(self, r, g, b)
@@ -287,7 +300,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	--------------------------------------------------------------------
 
 	local normal = CreateColorPicker(self, L["Active"])
-	normal.desc = string.format(L["Set the color for the target name while your %s is active."], L["Earth Shield"])
+	normal.desc = format(L["Set the color for the target name while your %s is active."], L["Earth Shield"])
 	normal:SetPoint("TOPLEFT", colors, "TOP", 8, -8)
 	normal.GetColor = function() return unpack(db.color.normal) end
 	normal.OnColorChanged = function(self, r, g, b)
@@ -300,7 +313,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	--------------------------------------------------------------------
 
 	local overwritten = CreateColorPicker(self, L["Overwritten"])
-	overwritten.desc = string.format(L["Set the color for the target name when your %s has been overwritten."], L["Earth Shield"])
+	overwritten.desc = format(L["Set the color for the target name when your %s has been overwritten."], L["Earth Shield"])
 	overwritten:SetPoint("TOPLEFT", normal, "BOTTOMLEFT", 0, -8)
 	overwritten.GetColor = function() return unpack(db.color.overwritten) end
 	overwritten.OnColorChanged = function(self, r, g, b)
@@ -340,6 +353,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 		large:SetValue(db.font.large)
 		small:SetValue(db.font.small)
 		shadow:SetChecked(db.font.shadow)
+		class:SetChecked(db.color.useClassColor)
 		earth:SetColor(unpack(db.color.earth))
 		lightning:SetColor(unpack(db.color.lightning))
 		water:SetColor(unpack(db.color.water))
@@ -422,7 +436,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Alerts"], ADDON_NAME, f
 
 	--------------------------------------------------------------------
 
-	local overwritten = CreateCheckbox(self, L["Alert when overwritten"])
+	local overwritten = CreateCheckbox(self, L["Alert When Overwritten"])
 	overwritten.desc = L["Also alert when another shaman overwrites your %s."]:format(L["Earth Shield"])
 	overwritten:SetPoint("TOPLEFT", esound, "BOTTOMLEFT", 0, -8)
 	overwritten.OnClick = function(self, checked)
