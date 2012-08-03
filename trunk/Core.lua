@@ -142,7 +142,7 @@ local function GetAuraCharges(unit, aura)
 	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
 	if not name then
 		return 0
-	elseif charges > 0 then
+	elseif charges > 1 then
 		return charges, caster == "player", caster
 	else
 		return 1, caster == "player", caster
@@ -275,8 +275,6 @@ function ShieldsUp:PLAYER_LOGIN()
 	end
 
 	if earthName ~= playerName then
-		local name, charges, duration, expires, caster, _
-
 		name, _, _, charges = UnitAura("player", WATER_SHIELD)
 		if name then
 			waterCount = charges
@@ -306,14 +304,15 @@ function ShieldsUp:PLAYER_LOGIN()
 		if isInRaid then
 			Debug(2, "isInGroup = raid")
 			isInGroup = "raid"
-			local unitName
+			local unit, unitName
 			for i = 1, numGroupMembers do
-				unitName = UnitName("raid"..i)
+				unit = "raid"..i
+				unitName = UnitName(unit)
 				if unitName ~= playerName then
-					name, _, _, charges, _, duration, expires, caster = UnitAura("raid"..i, EARTH_SHIELD)
+					name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
 					if name and caster == "player" then
 						earthCount = charges
-						earthGUID = UnitGUID("raid"..i)
+						earthGUID = UnitGUID(unit)
 						earthName = unitName
 						earthUnit = "raid"..i
 						earthTime = expires - duration
@@ -321,21 +320,22 @@ function ShieldsUp:PLAYER_LOGIN()
 						break
 					end
 				end
-				name, _, _, charges, _, duration, expires, caster = UnitAura("raid"..i.."pet", EARTH_SHIELD)
+				unit = "raidpet"..i
+				name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
 				if name and caster == "player" then
 					earthCount = charges
-					earthGUID = UnitGUID("raid"..i.."pet")
-					earthName = UnitName("raid"..i.."pet")
-					earthUnit = "raid"..i.."pet"
+					earthGUID = UnitGUID(unit)
+					earthName = UnitName(unit)
+					earthUnit = unit
 					earthTime = expires - duration
-					Debug(2, "Earth Shield found on raidpet%d %s", i, earthName)
+					Debug(2, "Earth Shield found on %s %s", unit, earthName)
 					break
 				end
 			end
 		elseif numGroupMembers > 0 then
 			Debug(2, "isInGroup = party")
 			isInGroup = "party"
-			local name, charges, duration, expires, caster, _
+			local unit
 			for i = 1, numGroupMembers do
 				name, _, _, charges, _, duration, expires, caster = UnitAura("party"..i, EARTH_SHIELD)
 				if name and caster == "player" then
@@ -625,10 +625,23 @@ do
 				self:Update()
 			end
 		end
-		if GetNumGroupMembers() > 0 then
+
+		local numGroupMembers, isInRaid
+		if MoP then
+			numGroupMembers = GetNumGroupMembers()
+			isInRaid = IsInRaid()
+		else
+			numGroupMembers = GetNumRaidMembers()
+			isInRaid = numGroupMembers > 0
+			if not isInRaid then
+				numGroupMembers = GetNumPartyMembers()
+			end
+		end
+
+		if numGroupMembers > 0 then
 			Debug(3, "In a group")
 			if not isInGroup then
-				isInGroup = IsInRaid() and "RAID" or "PARTY"
+				isInGroup = isInRaid and "raid" or "party"
 				Debug(1, "Joined a", isInGroup, "group")
 				self:ApplySettings()
 				self:UpdateVisibility()
@@ -690,7 +703,7 @@ function ShieldsUp:Update()
 		else
 			self.waterText:SetTextColor(unpack(db.color.alert))
 		end
-		if MoP and waterCount > 0 then
+		if MoP then
 			if waterSpell == LIGHTNING_SHIELD then
 				self.waterText:SetText(L["L"])
 			else
