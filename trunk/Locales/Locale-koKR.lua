@@ -48,6 +48,8 @@ namespace.L = {
 	--["Change the size of the name text."] = "",
 	--["Shadow"] = "",
 	--["Add a drop shadow effect to the display text."] = "",
+	--["Use Class Color"] = "",
+	--["Color the target name by class color when your %s is active."] = "",
 
 	--["Colors"] = "",
 	--["Set the color for the %s charge counter."] = "",
@@ -66,7 +68,7 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "%s 은이 만료 사운드를 재생합니다.",
 	["Sound File"] = "사운드 파일",
 	["Choose the sound to play when your %s expires or is removed."] = "%s 은이 만료되면 재생할 사운드를 선택합니다.",
-	--["Alert when overwritten"] = "",
+	--["Alert When Overwritten"] = "",
 	--["Also alert when another shaman overwrites your %s."] = "",
 
 	["Text Output"] = "텍스트 출력",

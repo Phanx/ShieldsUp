@@ -34,6 +34,8 @@ namespace.L = {
 	["Change the vertical distance between the charge counters and the target name."] = "设定目标名字和计数器的垂直距离。",
 	["Opacity"] = "不透明度",
 	["Change the opacity of the display."] = "设定显示的不透明度等级。",
+	--["Use Class Color"] = "",
+	--["Color the target name by class color when your %s is active."] = "",
 
 	["Font"] = "字体",
 	["Change the font used for the display text."] = "设定显示文字的字体。",
@@ -66,7 +68,7 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "当 %s 到期时播放一个音效警报。",
 	["Sound File"] = "音效文件",
 	["Choose the sound to play when your %s expires or is removed."] = "选择当 %s 到期时音效警报的文件。",
-	--["Alert when overwritten"] = "",
+	--["Alert When Overwritten"] = "",
 	--["Also alert when another shaman overwrites your %s."] = "",
 
 	["Text Output"] = "文字输出",

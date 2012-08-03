@@ -34,6 +34,8 @@ namespace.L = {
 	["Change the vertical distance between the charge counters and the target name."] = "Défini l'espacement vertical entre le nom de la cible et les compteurs de charges.",
 	["Opacity"] = "Opacité",
 	["Change the opacity of the display."] = "Défini le niveau d'opacité de l'affichage.",
+	["Use Class Color"] = "Couleur de classe",
+	["Color the target name by class color when your %s is active."] = "Colore le nom de la cible avec la couleur de classe appropriée.",
 
 	["Font"] = "Police de caractère",
 	["Change the font used for the display text."] = "Défini la police de caractère utilisée pour l'affichage du texte.",
@@ -66,7 +68,7 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "Joue un son quand le %s expire.",
 	["Sound File"] = "Fichier son",
 	["Choose the sound to play when your %s expires or is removed."] = "Selectionnez le fichier son à jouer quand %s expire.",
-	--["Alert when overwritten"] = "",
+	--["Alert When Overwritten"] = "",
 	--["Also alert when another shaman overwrites your %s."] = "",
 
 	["Text Output"] = "Affichage du texte",

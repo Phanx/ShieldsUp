@@ -48,13 +48,15 @@ namespace.L = {
 	["Change the size of the name text."] = "Ajusta el tamaño de texto para el nombre del objetivo.",
 	["Shadow"] = "Sombra",
 	["Add a drop shadow effect to the display text."] = "Mustra un sombra en el texto.",
+	["Use Class Color"] = "Color de clase",
+	["Color the target name by class color when your %s is active."] = "Colorea el nombre de objetivo por el color de clase, mientras que tu %s está activo.",
 
 	["Colors"] = "Colores",
 	["Set the color for the %s charge counter."] = "Elige el color para los números de cargas de %s.",
 	["Active"] = "Activo",
-	["Set the color for the target name while your %s is active."] = "Elige el color para el nombre de objetivo mientras tu %s está activo.",
+	["Set the color for the target name while your %s is active."] = "Elige el color para el nombre de objetivo, mientras que tu %s está activo.",
 	["Overwritten"] = "Sobrescrito",
-	["Set the color for the target name when your %s has been overwritten."] = "Elige el color para el nombre de objetivo cuando otro chamán sobrescribe tu %s.",
+	["Set the color for the target name when your %s has been overwritten."] = "Elige el color para el nombre de objetivo, cuando otro chamán sobrescribe tu %s.",
 	["Inactive"] = "Inactivo",
 	["Set the color for expired, dispelled, or otherwise inactive shields."] = "Elige el color para Escudos expirados, disipados, o inactivos.",
 
@@ -66,7 +68,7 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "Reproduce un sonido cuando tu %s expira o se disipa.",
 	["Sound File"] = "Sonido",
 	["Choose the sound to play when your %s expires or is removed."] = "Elige el sonido para reproducir cuando tu %s expira o se disipa.",
-	["Alert when overwritten"] = "Alerta cuando sobrescrito",
+	["Alert When Overwritten"] = "Alerta cuando sobrescrito",
 	["Also alert when another shaman overwrites your %s."] = "También avise cuando otro chamán sobrescribe tu %s.",
 
 	["Text Output"] = "Salida de texto",

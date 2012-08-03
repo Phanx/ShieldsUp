@@ -48,6 +48,8 @@ namespace.L = {
 	["Change the size of the name text."] = "Использовать этот цвет для счетчика зарядов %s.",
 	--["Shadow"] = "",
 	--["Add a drop shadow effect to the display text."] = "",
+	["Use Class Color"] = "Цвет класса",
+	["Color the target name by class color when your %s is active."] = "Окрашивать имя цветам, соответствующими классу.",
 
 	["Colors"] = "Цвета",
 	["Set the color for the %s charge counter."] = "Использовать этот цвет для счетчика зарядов %s.",
@@ -66,7 +68,7 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "Проигрывать звук, когда спадает %s.",
 	["Sound File"] = "Звуковой файл",
 	--["Choose the sound to play when your %s expires or is removed."] = "",
-	--["Alert when overwritten"] = "",
+	--["Alert When Overwritten"] = "",
 	--["Also alert when another shaman overwrites your %s."] = "",
 
 	--["Text Output"] = "",

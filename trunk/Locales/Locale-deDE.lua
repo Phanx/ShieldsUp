@@ -49,6 +49,8 @@ namespace.L = {
 	["Change the size of the name text."] = "Wähle die Textgröße des Zielnamens.",
 	["Shadow"] = "Schatten",
 	["Add a drop shadow effect to the display text."] = "Füge einen Schatteneffekt hinzu.",
+	["Use Class Color"] = "Klassenfarben anzeigen",
+	["Color the target name by class color when your %s is active."] = "Zeigt den Zielname in der jeweiligen Klassenfarbe, wenn Ihr %s aktiv ist.",
 
 	["Colors"] = "Farben",
 	["Set the color for the %s charge counter."] = "Wähle die Farbe der Aufladungen von %s.",
@@ -67,7 +69,7 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "Spielt einen Ton ab, wenn %s abläuft.",
 	["Sound File"] = "Musikdatei",
 	["Choose the sound to play when your %s expires or is removed."] = "Wähle eine Musikdatei zum abspielen, wenn %s abläuft.",
-	["Alert when overwritten"] = "Überschreib-Alarm",
+	["Alert When Overwritten"] = "Überschreib-Alarm",
 	["Also alert when another shaman overwrites your %s."] = "Auch informieren, dein %s von einem anderen Schamanen überzaubert wurde.",
 
 	["Text Output"] = "Textausgabe",

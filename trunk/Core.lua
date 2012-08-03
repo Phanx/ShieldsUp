@@ -68,6 +68,7 @@ local defaults = {
 		alert = { 1, 0, 0 },
 		normal = { 1, 1, 1 },
 		overwritten = { 1, 1, 0 },
+		useClassColor = false,
 	},
 	font = {
 		face = "Friz Quadrata TT",
@@ -634,7 +635,7 @@ end
 
 function ShieldsUp:Update()
 	Debug(3, "Update")
-	if GetTime() - earthTime > 900 then
+	if GetTime() - earthTime > 300 then
 		earthCount = 0
 		earthName = ""
 	end
@@ -643,6 +644,10 @@ function ShieldsUp:Update()
 		self.nameText:SetTextColor(unpack(db.color.alert))
 	elseif earthOverwritten then
 		self.nameText:SetTextColor(unpack(db.color.overwritten))
+	elseif db.color.useClassColor then
+		local _, class = UnitClass(earthUnit)
+		local color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
+		self.nameText:SetTextColor(color.r, color.g, color.b)
 	else
 		self.nameText:SetTextColor(unpack(db.color.normal))
 	end

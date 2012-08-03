@@ -48,6 +48,8 @@ namespace.L = {
 	--["Change the size of the name text."] = "",
 	["Shadow"] = "Ombra",
 	--["Add a drop shadow effect to the display text."] = "",
+	["Use Class Color"] = "Colore di classe",
+	["Color the target name by class color when your %s is active."] = "Colora il nome del bersaglio con l'appropriato colore di classe.",
 
 	["Colors"] = "Colori",
 	--["Set the color for the %s charge counter."] = "",
@@ -66,7 +68,7 @@ namespace.L = {
 	--["Play a sound when your %s expires or is removed."] = "",
 	["Sound File"] = "File audio",
 	--["Choose the sound to play when your %s expires or is removed."] = "",
-	["Alert when overwritten"] = "Avvisa quando sovrascritto",
+	["Alert When Overwritten"] = "Avvisa quando sovrascritto",
 	--["Also alert when another shaman overwrites your %s."] = "",
 
 	--["Text Output"] = "",
