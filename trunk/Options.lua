@@ -44,8 +44,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local posx = CreateSlider(self, L["Horizontal Position"], floor(screenwidth / 10) / 2 * -10, floor(screenwidth / 10) / 2 * 10, 5)
 	posx.desc = L["Move the display left or right relative to the center of the screen."]
-	posx:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -4, -8)
-	posx:SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 8)
+	posx:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -4, -12)
+	posx:SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 12)
 
 	posx.OnValueChanged = function(self, value)
 		db.posx = value
@@ -56,8 +56,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local posy = CreateSlider(self, L["Vertical Position"], floor(screenheight / 10) / 2 * -10, floor(screenheight / 10) / 2 * 10, 5)
 	posy.desc = L["Move the display up or down relative to the center of the screen."]
-	posy:SetPoint("TOPLEFT", posx, "BOTTOMLEFT", 0, -8)
-	posy:SetPoint("TOPRIGHT", posx, "BOTTOMRIGHT", 0, -8)
+	posy:SetPoint("TOPLEFT", posx, "BOTTOMLEFT", 0, -12)
+	posy:SetPoint("TOPRIGHT", posx, "BOTTOMRIGHT", 0, -12)
 
 	posy.OnValueChanged = function(self, value)
 		db.posy = value
@@ -68,8 +68,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local padh = CreateSlider(self, L["Horizontal Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
 	padh.desc = L["Change the horizontal distance between the charge counters."]
-	padh:SetPoint("TOPLEFT", posy, "BOTTOMLEFT", 0, -8)
-	padh:SetPoint("TOPRIGHT", posy, "BOTTOMRIGHT", 0, -8)
+	padh:SetPoint("TOPLEFT", posy, "BOTTOMLEFT", 0, -12)
+	padh:SetPoint("TOPRIGHT", posy, "BOTTOMRIGHT", 0, -12)
 
 	padh.OnValueChanged = function(self, value)
 		db.padh = value
@@ -80,8 +80,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local padv = CreateSlider(self, L["Vertical Padding"], 0, floor(screenwidth / 10) / 2 * 10, 1)
 	padv.desc = L["Change the vertical distance between the charge counters and the target name."]
-	padv:SetPoint("TOPLEFT", padh, "BOTTOMLEFT", 0, -8)
-	padv:SetPoint("TOPRIGHT", padh, "BOTTOMRIGHT", 0, -8)
+	padv:SetPoint("TOPLEFT", padh, "BOTTOMLEFT", 0, -12)
+	padv:SetPoint("TOPRIGHT", padh, "BOTTOMRIGHT", 0, -12)
 
 	padv.OnValueChanged = function(self, value)
 		db.padv = value
@@ -92,8 +92,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local opacity = CreateSlider(self, L["Opacity"], 0, 1, 0.05, true)
 	opacity.desc = L["Change the opacity of the display."]
-	opacity:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", 0, -8)
-	opacity:SetPoint("TOPRIGHT", padv, "BOTTOMRIGHT", 0, -8)
+	opacity:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", 0, -12)
+	opacity:SetPoint("TOPRIGHT", padv, "BOTTOMRIGHT", 0, -12)
 
 	opacity.OnValueChanged = function(self, value)
 		db.alpha = value
@@ -104,8 +104,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local face = LibStub("PhanxConfig-ScrollingDropdown").CreateScrollingDropdown(self, L["Font"], ShieldsUp.fonts)
 	face.desc = L["Change the font used for the display text."]
-	face:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -8)
-	face:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -8)
+	face:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -12)
+	face:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -12)
 	do
 		local _, height, flags = face.valueText:GetFont()
 		face.valueText:SetFont(SharedMedia:Fetch("font", db.font.face or "Friz Quadrata TT"), height, flags)
@@ -196,15 +196,15 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 		end)
 	end
 	outline.desc = L["Choose an outline weight for the display text."]
-	outline:SetPoint("TOPLEFT", face, "BOTTOMLEFT", 0, -8)
-	outline:SetPoint("TOPRIGHT", face, "BOTTOMRIGHT", 0, -8)
+	outline:SetPoint("TOPLEFT", face, "BOTTOMLEFT", 0, -12)
+	outline:SetPoint("TOPRIGHT", face, "BOTTOMRIGHT", 0, -12)
 
 	--------------------------------------------------------------------
 
 	local large = CreateSlider(self, L["Counter Size"], 6, 32, 1)
 	large.desc = L["Change the size of the counter text."]
-	large:SetPoint("TOPLEFT", outline, "BOTTOMLEFT", 0, -8)
-	large:SetPoint("TOPRIGHT", outline, "BOTTOMRIGHT", 0, -8)
+	large:SetPoint("TOPLEFT", outline, "BOTTOMLEFT", 0, -12)
+	large:SetPoint("TOPRIGHT", outline, "BOTTOMRIGHT", 0, -12)
 
 	large.OnValueChanged = function(self, value)
 		db.font.large = value
@@ -215,8 +215,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local small = CreateSlider(self, L["Name Size"], 6, 32, 1)
 	small.desc = L["Change the size of the name text."]
-	small:SetPoint("TOPLEFT", large, "BOTTOMLEFT", 0, -8)
-	small:SetPoint("TOPRIGHT", large, "BOTTOMRIGHT", 0, -8)
+	small:SetPoint("TOPLEFT", large, "BOTTOMLEFT", 0, -12)
+	small:SetPoint("TOPRIGHT", large, "BOTTOMRIGHT", 0, -12)
 
 	small.OnValueChanged = function(self, value)
 		db.font.small = value
@@ -227,7 +227,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local shadow = CreateCheckbox(self, L["Shadow"])
 	shadow.desc = L["Add a drop shadow effect to the display text."]
-	shadow:SetPoint("TOPLEFT", small, "BOTTOMLEFT", 0, -8)
+	shadow:SetPoint("TOPLEFT", small, "BOTTOMLEFT", 0, -9)
 
 	shadow.OnClick = function(self, checked)
 		db.font.shadow = checked
@@ -238,7 +238,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	local class = CreateCheckbox(self, L["Use Class Color"])
 	class.desc = format(L["Color the target name by class color when your %s is active."], L["Earth Shield"])
-	class:SetPoint("TOPLEFT", shadow, "BOTTOMLEFT", 0, -8)
+	class:SetPoint("TOPLEFT", shadow, "BOTTOMLEFT", 0, -6)
 
 	class.OnClick = function(self, checked)
 		db.color.useClassColor = checked
@@ -247,7 +247,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	--------------------------------------------------------------------
 
-	local vdist = -16 - face:GetHeight() - 8 - outline:GetHeight() - 8 - large:GetHeight() - 8 - small:GetHeight() - 8 - opacity:GetHeight() - 4
+	local vdist = -(5 * (12 + face:GetHeight()) + 12)
 
 	local colors = CreatePanel(self)
 
@@ -255,7 +255,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	colors.label:SetPoint("BOTTOMLEFT", colors, "TOPLEFT", 4, 0)
 	colors.label:SetText(L["Colors"])
 
-	colors:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -1, vdist - colors.label:GetHeight())
+	colors:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -2, vdist - colors.label:GetHeight())
 	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, vdist - colors.label:GetHeight())
 
 	--------------------------------------------------------------------
