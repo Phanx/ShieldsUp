@@ -120,7 +120,7 @@ local defaults = {
 
 local function Print(str, ...)
 	if (...) then
-		if str:match("%%dfqsx%.%d") then
+		if str:match("%%[dfqsx%.%d]") then
 			str = format(str, ...)
 		else
 			str = join(", ", ...)
@@ -130,15 +130,16 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 0 then return end
-	if ... then
-		if str:match("%%dfqsx%.%d") then
-			str = format(str, ...)
-		else
-			str = join(", ", str, ...)
+	if lvl <= 0 then
+		if ... then
+			if str:match("%%[dfqsx%.%d]") then
+				str = format(str, ...)
+			else
+				str = join(", ", str, ...)
+			end
 		end
+		print(format("|cffff7f7f[DEBUG] ShieldsUp:|r %s", str))
 	end
-	print(format("|cffff7f7f[DEBUG] ShieldsUp:|r %s", str))
 end
 
 ------------------------------------------------------------------------
@@ -219,13 +220,13 @@ function ShieldsUp:PLAYER_LOGIN()
 		for i, v in pairs(SharedMedia:List("font")) do
 			tinsert(self.fonts, v)
 		end
-		table.sort(self.fonts)
+		sort(self.fonts)
 
 		self.sounds = {}
 		for i, v in pairs(SharedMedia:List("sound")) do
 			tinsert(self.sounds, v)
 		end
-		table.sort(self.sounds)
+		sort(self.sounds)
 
 		function ShieldsUp:SharedMedia_Registered(mediatype)
 			if mediatype == "font" then
@@ -233,14 +234,14 @@ function ShieldsUp:PLAYER_LOGIN()
 				for i, v in pairs(SharedMedia:List("font")) do
 					tinsert(self.fonts, v)
 				end
-				table.sort(self.fonts)
+				sort(self.fonts)
 				self:ApplySettings()
 			elseif mediatype == "sound" then
 				wipe(self.sounds)
 				for i, v in pairs(SharedMedia:List("sound")) do
 					tinsert(self.sounds, v)
 				end
-				table.sort(self.sounds)
+				sort(self.sounds)
 			end
 		end
 
