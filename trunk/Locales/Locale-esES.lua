@@ -55,8 +55,8 @@ namespace.L = {
 	["Set the color for the %s charge counter."] = "Elige el color para los números de cargas de %s.",
 	["Active"] = "Activo",
 	["Set the color for the target name while your %s is active."] = "Elige el color para el nombre de objetivo, mientras que tu %s está activo.",
-	["Overwritten"] = "Sobrescrito",
-	["Set the color for the target name when your %s has been overwritten."] = "Elige el color para el nombre de objetivo, cuando otro chamán sobrescribe tu %s.",
+	["Overwritten"] = "Reemplazado",
+	["Set the color for the target name when your %s has been overwritten."] = "Elige el color para el nombre de objetivo, cuando tu %s ha sido reemplazado por otro chamán.",
 	["Inactive"] = "Inactivo",
 	["Set the color for expired, dispelled, or otherwise inactive shields."] = "Elige el color para Escudos expirados, disipados, o inactivos.",
 
@@ -68,8 +68,8 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "Reproduce un sonido cuando tu %s expira o se disipa.",
 	["Sound File"] = "Sonido",
 	["Choose the sound to play when your %s expires or is removed."] = "Elige el sonido para reproducir cuando tu %s expira o se disipa.",
-	["Alert When Overwritten"] = "Alerta cuando sobrescrito",
-	["Also alert when another shaman overwrites your %s."] = "También avise cuando otro chamán sobrescribe tu %s.",
+	["Alert When Overwritten"] = "Alerta cuando reemplazado",
+	["Also alert when another shaman overwrites your %s."] = "También avise cuando otro chamán reemplaza tu %s.",
 
 	["Text Output"] = "Salida de texto",
 
