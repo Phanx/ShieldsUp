@@ -23,7 +23,7 @@ namespace.L = {
 
 	["Click for options."] = "Клик - открывает окно настроек.",
 
-	--["ShieldsUp is a monitor for your shaman shields. These settings allow you to customize the addon's appearance and behavior."] = "",
+	["ShieldsUp is a monitor for your shaman shields. These settings allow you to customize the addon's appearance and behavior."] = "ShieldsUp отслеживает щитов шамана. Эти настройки позволяют настроить внешний вид и поведение модификации.",
 	["Horizontal Position"] = "Горизонтальная позиция",
 	["Move the display left or right relative to the center of the screen."] = "Установить горизонтальную позицию относительно центра экрана.",
 	["Vertical Position"] = "Вертикальная позиция",
@@ -61,17 +61,17 @@ namespace.L = {
 	["Set the color for expired, dispelled, or otherwise inactive shields."] = "Использовать этот цвет, когда счечик зарядов на нуле.",
 
 	["Alerts"] = "Предупреждения",
-	--["These settings allow you to customize how ShieldsUp alerts you when a shield expires or is removed."] = "",
+	["These settings allow you to customize how ShieldsUp alerts you when a shield expires or is removed."] = "Эти настройки позволяют настроить, как ShieldsUp уведомляет вас, когда щит истекает или рассеивается.",
 	["Text Alert"] = "Текст",
 	["Show a message when your %s expires or is removed."] = "Показывать предупреждение, когда спадает %s.",
 	["Sound Alert"] = "Звук",
 	["Play a sound when your %s expires or is removed."] = "Проигрывать звук, когда спадает %s.",
 	["Sound File"] = "Звуковой файл",
-	--["Choose the sound to play when your %s expires or is removed."] = "",
-	--["Alert When Overwritten"] = "",
-	--["Also alert when another shaman overwrites your %s."] = "",
+	["Choose the sound to play when your %s expires or is removed."] = "Выберите, какой звук играть, когда спадает %s.",
+	["Alert When Overwritten"] = "Уведомление когда заменен",
+	["Also alert when another shaman overwrites your %s."] = "Также уведомление, когда другой шаман заменяет ваш щит.",
 
-	--["Text Output"] = "",
+	["Text Output"] = "Вывода текста",
 
 	["Visibility"] = "Видимость",
 	["These settings allow you to customize when the ShieldsUp display is shown."] = "Настройка отображения в зависимости от следующих условий.",

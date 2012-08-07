@@ -68,8 +68,8 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "Joue un son quand le %s expire.",
 	["Sound File"] = "Fichier son",
 	["Choose the sound to play when your %s expires or is removed."] = "Selectionnez le fichier son à jouer quand %s expire.",
-	--["Alert When Overwritten"] = "",
-	--["Also alert when another shaman overwrites your %s."] = "",
+	["Alert When Overwritten"] = "Alerter quand recouvert",
+	["Also alert when another shaman overwrites your %s."] = "En outre alerter quand un autre chaman recouvre votre %s.",
 
 	["Text Output"] = "Affichage du texte",
 

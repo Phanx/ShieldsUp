@@ -12,7 +12,7 @@ local MoP = select(4, GetBuildInfo()) > 50000
 local ADDON_NAME, namespace = ...
 if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAME) end
 
-local format, join = string.format, string.join
+local format, strfind, strjoin = format, strfind, strjoin
 local tostring, unpack = tostring, unpack
 local UnitAura = UnitAura
 
@@ -120,10 +120,10 @@ local defaults = {
 
 local function Print(str, ...)
 	if (...) then
-		if str:match("%%[dfqsx%.%d]") then
+		if strfind(str, "%%[dfqsx%.%d]") then
 			str = format(str, ...)
 		else
-			str = join(", ", ...)
+			str = strjoin(", ", ...)
 		end
 	end
 	print(format("|cff00ddbaShieldsUp:|r %s", str))
@@ -132,10 +132,10 @@ end
 local function Debug(lvl, str, ...)
 	if lvl <= 0 then
 		if ... then
-			if str:match("%%[dfqsx%.%d]") then
+			if strfind(str, "%%[dfqsx%.%d]") then
 				str = format(str, ...)
 			else
-				str = join(", ", str, ...)
+				str = strjoin(", ", str, ...)
 			end
 		end
 		print(format("|cffff7f7f[DEBUG] ShieldsUp:|r %s", str))
@@ -208,23 +208,23 @@ function ShieldsUp:PLAYER_LOGIN()
 	if SharedMedia then
 		Debug(2, "LibSharedMedia-3.0 found.")
 
-		SharedMedia:Register("sound", "Alliance Bell", "Sound\\Doodad\\BellTollAlliance.wav")
-		SharedMedia:Register("sound", "Cannon Blast", "Sound\\Doodad\\Cannon01_BlastA.wav")
-		SharedMedia:Register("sound", "Dynamite", "Sound\\Spells\\DynamiteExplode.wav")
-		SharedMedia:Register("sound", "Gong", "Sound\\Doodad\\G_GongTroll01.wav")
-		SharedMedia:Register("sound", "Horde Bell", "Sound\\Doodad\\BellTollHorde.wav")
-		SharedMedia:Register("sound", "Serpent", "Sound\\Creature\\TotemAll\\SerpentTotemAttackA.wav")
-		SharedMedia:Register("sound", "Tribal Bell", "Sound\\Doodad\\BellTollTribal.wav")
+		SharedMedia:Register("sound", "Alliance Bell", "Sound\\Doodad\\BellTollAlliance.ogg")
+		SharedMedia:Register("sound", "Cannon Blast", "Sound\\Doodad\\Cannon01_BlastA.ogg")
+		SharedMedia:Register("sound", "Dynamite", "Sound\\Spells\\DynamiteExplode.ogg")
+		SharedMedia:Register("sound", "Gong", "Sound\\Doodad\\G_GongTroll01.ogg")
+		SharedMedia:Register("sound", "Horde Bell", "Sound\\Doodad\\BellTollHorde.ogg")
+		SharedMedia:Register("sound", "Serpent", "Sound\\Creature\\TotemAll\\SerpentTotemAttackA.ogg")
+		SharedMedia:Register("sound", "Tribal Bell", "Sound\\Doodad\\BellTollTribal.ogg")
 
 		self.fonts = {}
 		for i, v in pairs(SharedMedia:List("font")) do
-			tinsert(self.fonts, v)
+			self.fonts[i] = v
 		end
 		sort(self.fonts)
 
 		self.sounds = {}
 		for i, v in pairs(SharedMedia:List("sound")) do
-			tinsert(self.sounds, v)
+			self.sounds[i] = v
 		end
 		sort(self.sounds)
 
@@ -232,14 +232,14 @@ function ShieldsUp:PLAYER_LOGIN()
 			if mediatype == "font" then
 				wipe(self.fonts)
 				for i, v in pairs(SharedMedia:List("font")) do
-					tinsert(self.fonts, v)
+					self.fonts[i] = v
 				end
 				sort(self.fonts)
 				self:ApplySettings()
 			elseif mediatype == "sound" then
 				wipe(self.sounds)
 				for i, v in pairs(SharedMedia:List("sound")) do
-					tinsert(self.sounds, v)
+					self.sounds[i] = v
 				end
 				sort(self.sounds)
 			end
@@ -702,7 +702,7 @@ function ShieldsUp:Alert(spell)
 			text = format(L["%1$s faded from %2$s!"], spell, earthName == playerName and L["YOU"] or earthName)
 		end
 		if db.alert.earth.sound then
-			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile)) or "Sound\\Doodad\\BellTollHorde.wav"
+			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
 		end
 	else
 		if db.alert.water.text then
@@ -710,7 +710,7 @@ function ShieldsUp:Alert(spell)
 			text = format(L["%s faded!"], spell)
 		end
 		if db.alert.water.sound then
-			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.water.soundFile)) or "Sound\\Doodad\\BellTollHorde.wav"
+			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.water.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
 		end
 	end
 	if r and g and b and text then
@@ -721,7 +721,7 @@ function ShieldsUp:Alert(spell)
 		end
 	end
 	if sound then
-		PlaySoundFile(sound)
+		PlaySoundFile(sound, "Master")
 	end
 	Debug(1, "Alert, spell: %s, text: %s, sound: %s", tostring(spell), tostring(text), tostring(sound))
 end
