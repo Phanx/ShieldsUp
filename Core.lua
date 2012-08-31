@@ -50,7 +50,7 @@ local earthOverwritten = false
 local earthPending = nil
 
 local waterCount = 0
-local waterSpell = WATER_SHIELD
+local waterSpell = LIGHTNING_SHIELD
 
 ------------------------------------------------------------------------
 
@@ -336,6 +336,10 @@ function ShieldsUp:PLAYER_TALENT_UPDATE()
 	else
 		Debug(2, "I don't have the Earth Shield spell.")
 		hasEarthShield = false
+	end
+
+	if waterCount == 0 then
+		waterSpell = hasEarthShield and WATER_SHIELD or LIGHTNING_SHIELD
 	end
 
 	self:ApplySettings()
@@ -678,14 +682,10 @@ function ShieldsUp:Update()
 		else
 			self.waterText:SetTextColor(unpack(db.color.alert))
 		end
-		if MoP then
-			if waterSpell == LIGHTNING_SHIELD then
-				self.waterText:SetText(L["L"])
-			else
-				self.waterText:SetText(L["W"])
-			end
-		else
+		if waterCount > 1 or not MoP then
 			self.waterText:SetText(waterCount)
+		else
+			self.waterText:SetText(waterSpell == WATER_SHIELD and L["W"] or L["L"])
 		end
 	end
 end
