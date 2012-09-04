@@ -7,7 +7,8 @@
 	http://www.curse.com/addons/wow/shieldsup
 ------------------------------------------------------------------------
 	Localization for zhTW / Traditional Chinese / 繁體中文
-	Last updated 2009-07-15 by www.wowui.cn
+	Last updated 2012-08-30 by awaited @ CurseForge
+	Previous contributors: www.wowui.cn
 ----------------------------------------------------------------------]]
 
 if GetLocale() ~= "zhTW" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
@@ -21,7 +22,7 @@ namespace.L = {
 	["%1$s faded from %2$s!"] = "%1$s 在 %2$s 上消失!",
 	["YOU"] = "自身",
 
-	--["Click for options."] = "",
+	["Click for options."] = "點擊開啟選單",
 
 	["ShieldsUp is a monitor for your shaman shields. These settings allow you to customize the addon's appearance and behavior."] = "ShieldsUp是一個薩滿護盾的監視器。使用這些設定來配置插件的外觀和行為。",
 	["Horizontal Position"] = "水平位置",
@@ -48,8 +49,8 @@ namespace.L = {
 	["Change the size of the name text."] = "設定目標名字的文字大小。",
 	["Shadow"] = "陰影效果",
 	["Add a drop shadow effect to the display text."] = "為顯示文字增加一個陰影效果。",
-	--["Use Class Color"] = "",
-	--["Color the target name by class color when your %s is active."] = "",
+	["Use Class Color"] = "啟用職業顏色",
+	["Color the target name by class color when your %s is active."] = "當 %s 作用時以職業顏色顯示目標名稱。",
 
 	["Colors"] = "顏色",
 	["Set the color for the %s charge counter."] = "設定 %s 計數器的顏色。",
@@ -68,8 +69,8 @@ namespace.L = {
 	["Play a sound when your %s expires or is removed."] = "當 %s 到期時播放一個音效警報。",
 	["Sound File"] = "音效檔案",
 	["Choose the sound to play when your %s expires or is removed."] = "選擇當 %s 到期時音效警報的檔案。",
-	--["Alert When Overwritten"] = "",
-	--["Also alert when another shaman overwrites your %s."] = "",
+	["Alert When Overwritten"] = "被覆蓋時提示",
+	["Also alert when another shaman overwrites your %s."] = "當%s被其他薩滿覆蓋時提示。",
 
 	["Text Output"] = "文字輸出",
 
