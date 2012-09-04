@@ -12,7 +12,7 @@
 
 if GetLocale() ~= "zhCN" or select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
-local _, namespace = ...; if not namespace then namespace = { } _G.ShieldsUpNamespace = namespace end
+local _, namespace = ...
 namespace.L = {
 	["L"] = "闪",
 	["W"] = "水",
