@@ -736,7 +736,7 @@ function ShieldsUp:UpdateVisibility()
 
 	-- PET_BATTLE_OPENING_START
 	-- PET_BATTLE_CLOSE
-	if C_PetBattles.IsInBattle then
+	if C_PetBattles.IsInBattle() then
 		return self:Hide()
 	end
 
