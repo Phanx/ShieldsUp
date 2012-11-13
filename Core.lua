@@ -295,8 +295,10 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("PLAYER_UPDATE_RESTING")
-	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	self:RegisterEvent("UNIT_EXITED_VEHICLE")
+	self:RegisterEvent("PET_BATTLE_OPENING_START")
+	self:RegisterEvent("PET_BATTLE_CLOSE")
+	self:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
+	self:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
 
 	self:RegisterEvent("PLAYER_LOGOUT")
 
@@ -732,6 +734,12 @@ end
 function ShieldsUp:UpdateVisibility()
 	Debug(2, "UpdateVisibility")
 
+	-- PET_BATTLE_OPENING_START
+	-- PET_BATTLE_CLOSE
+	if C_PetBattles.IsInBattle then
+		return self:Hide()
+	end
+
 	-- GROUP_ROSTER_CHANGED
 	local groupType = isInGroup or "solo"
 	if not db.show.group[groupType] then
@@ -776,28 +784,17 @@ function ShieldsUp:UpdateVisibility()
 	self:Show()
 end
 
-ShieldsUp.ZONE_CHANGED_NEW_AREA = ShieldsUp.UpdateVisibility
-
+ShieldsUp.PET_BATTLE_OPENING_START = ShieldsUp.UpdateVisibility
+ShieldsUp.PET_BATTLE_CLOSE = ShieldsUp.UpdateVisibility
 ShieldsUp.PLAYER_DEAD = ShieldsUp.UpdateVisibility
 ShieldsUp.PLAYER_ALIVE = ShieldsUp.UpdateVisibility
 ShieldsUp.PLAYER_UNGHOST = ShieldsUp.UpdateVisibility
-
 ShieldsUp.PLAYER_REGEN_DISABLED = ShieldsUp.UpdateVisibility
 ShieldsUp.PLAYER_REGEN_ENABLED = ShieldsUp.UpdateVisibility
-
 ShieldsUp.PLAYER_UPDATE_RESTING = ShieldsUp.UpdateVisibility
-
-function ShieldsUp:UNIT_ENTERED_VEHICLE(unit)
-	if unit == "player" then
-		self:UpdateVisibility()
-	end
-end
-
-function ShieldsUp:UNIT_EXITED_VEHICLE(unit)
-	if unit == "player" then
-		self:UpdateVisibility()
-	end
-end
+ShieldsUp.UNIT_ENTERED_VEHICLE = ShieldsUp.UpdateVisibility
+ShieldsUp.UNIT_EXITED_VEHICLE = ShieldsUp.UpdateVisibility
+ShieldsUp.ZONE_CHANGED_NEW_AREA = ShieldsUp.UpdateVisibility
 
 ------------------------------------------------------------------------
 
