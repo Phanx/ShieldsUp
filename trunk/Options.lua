@@ -414,7 +414,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Alerts"], ADDON_NAME, f
 	local esoundfile
 	do
 		local function OnClick(self)
-			PlaySoundFile(SharedMedia:Fetch("sound", self.value))
+			PlaySoundFile(SharedMedia:Fetch("sound", self.value), "Master")
 			db.alert.earth.soundFile = self.value
 			esoundfile:SetValue(self.value, self.text)
 		end
@@ -512,15 +512,16 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Alerts"], ADDON_NAME, f
 	local sinkOptions, outputNames, slabel, spanel, output, scrollarea, sticky, UpdateOutputPanel
 	if ShieldsUp.Pour then
 		sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
-
-		outputNames = { }
-		for k, v in pairs(sinkOptions.args) do
-			if k ~= "Default" and k ~= "Sticky" and k ~= "Channel" and v.type == "toggle" then
-				outputNames[k] = v.name
-			end
-		end
+		outputNames = {}
 
 		function UpdateOutputPanel()
+			wipe(outputNames)
+			for k, v in pairs(sinkOptions.args) do
+				if k ~= "Default" and k ~= "Sticky" and k ~= "Channel" and v.type == "toggle" then
+					outputNames[k] = v.name
+				end
+			end
+
 			output:SetValue(db.alert.output.sink20OutputSink, outputNames[db.alert.output.sink20OutputSink])
 
 			sinkOptions.set(db.alert.output.sink20OutputSink, true) -- hax!
@@ -575,8 +576,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Alerts"], ADDON_NAME, f
 				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
 
 				UpdateOutputPanel()
-
-				output:SetValue(self.value, self.text)
+				output:SetValue(self.value, self.text or outputNames[self.value])
 			end
 
 			local info = { }
