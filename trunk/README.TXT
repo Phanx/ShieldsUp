@@ -1,14 +1,15 @@
 ﻿ShieldsUp
-=========
+=============
 
-* Copyright (c) 2008-2012 Phanx <addons@phanx.net>. All rights reserved.
-* See the accompanying README and LICENSE files for more information.
-* http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
-* http://www.curse.com/addons/wow/shieldsup
+	A World of Warcraft user interface addon
+	Copyright (c) 2008-2013 Phanx <addons@phanx.net>. All rights reserved.
+	See the accompanying README and LICENSE files for more information.
+	http://www.wowinterface.com/downloads/info9165-ShieldsUp
+	http://www.curse.com/addons/wow/shieldsup
 
 
 Description
------------
+---------------
 
 ShieldsUp monitors your Earth, Lightning, and Water Shield spells with
 a clear text display that shows the number of charges remaining, and the
@@ -25,14 +26,14 @@ and position are also customizable.
 
 
 Usage
------
+---------
 
-Options are available by typing "/sup", or browsing to the ShieldsUp
-panel in the standard Interface Options window.
+Type "/sup" for options, or browse to the ShieldsUp panel in the
+standard Interface Options window.
 
 
 Localization
-------------
+----------------
 
 Compatible with English, Deutsch, Español (EU), Español (AL), Français,
 Italiano, Português, Русский, 한국어, 简体中文, and 繁體中文 clients.
@@ -40,30 +41,29 @@ Italiano, Português, Русский, 한국어, 简体中文, and 繁體中文 
 Translated into English, Deutsch, Español, Français, Italiano (partial),
 Português, Русский (partial), 한국어 (partial), 简体中文, and 繁體中文.
 
-To add or update translations for any language, see the Localization tab
-on the CurseForge project page:
+To add or update translations for any language, see the [ShieldsUp
+localization page] [1] on CurseForge.
 
-http://wow.curseforge.com/addons/shieldsup/localization/
+	[1]: http://wow.curseforge.com/addons/shieldsup/localization/
 
 
 Feedback
---------
+------------
 
-Bugs, errors, or other problems:
-	Submit a bug report ticket on either download page.
+To report a bug or suggest a feature, submit a ticket using the links on
+either download page.
 
-Feature requests or other suggestions:
-	Submit a feature request ticket system on either download page.
+For general questions or comments, post a comment on WoWInterface.
 
-General questions or comments:
-	Post a comment on the WoWInterface download page.
-
-If you need to contact me privately for a reason other than those listed
-above, you can send me a private message on either download site, or
-email me at <addons@phanx.net>.
+If you need to contact me privately for some other reason, you can email
+me at <addons@phanx.net> or send a private message to Phanx on either
+download site. Please *do not* send me email or PMs about addon bugs,
+feature requests, addon support, or code help; I do not provide private
+support or tutoring of any kind, and will not reply to such messages.
+Post a ticket, comment, or forum thread instead!
 
 
 Credits
--------
+-----------
 
 ShieldsUp was inspired by Infineon's beSch.
