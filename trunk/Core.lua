@@ -7,31 +7,21 @@
 	http://www.curse.com/addons/wow/shieldsup
 ----------------------------------------------------------------------]]
 
-local MoP = select(4, GetBuildInfo()) > 50000
-
-local ADDON_NAME, namespace = ...
+local ADDON_NAME, private = ...
 if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(ADDON_NAME) end
 
 local format, strfind, strjoin = format, strfind, strjoin
 local tostring, unpack = tostring, unpack
 local UnitAura = UnitAura
 
-------------------------------------------------------------------------
-
 local EARTH_SHIELD = GetSpellInfo(974)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 local WATER_SHIELD = GetSpellInfo(52127)
 
-if not namespace.L then namespace.L = {} end
-
-local L = setmetatable(namespace.L, { __index = function(t, k)
-	t[k] = k
-	return k
-end })
-
-L["Earth Shield"] = EARTH_SHIELD
-L["Lightning Shield"] = LIGHTNING_SHIELD
-L["Water Shield"] = WATER_SHIELD
+local L = private.L
+L.EarthShield = EARTH_SHIELD
+L.LightningShield = LIGHTNING_SHIELD
+L.WaterShield = WATER_SHIELD
 
 ------------------------------------------------------------------------
 
@@ -80,14 +70,12 @@ local defaults = {
 	alert = {
 		earth = {
 			text = true,
-			sound = true,
-			soundFile = "Tribal Bell",
+			sound = "Tribal Bell",
 			overwritten = false,
 		},
 		water = {
 			text = true,
-			sound = true,
-			soundFile = "Tribal Bell",
+			sound = "Tribal Bell",
 		},
 		output = {
 			sink20OutputSink = "RaidWarning",
@@ -119,27 +107,26 @@ local defaults = {
 ------------------------------------------------------------------------
 
 local function Print(str, ...)
-	if (...) then
+	if select("#", ...) > 0 then
 		if strfind(str, "%%[dfqsx%.%d]") then
-			str = format(str, ...)
+			return print("|cff00ddbaShieldsUp:|r", format(str, ...))
 		else
-			str = strjoin(", ", ...)
+			return print("|cff00ddbaShieldsUp:|r", str, ...)
 		end
 	end
-	print(format("|cff00ddbaShieldsUp:|r %s", str))
+	print("|cff00ddbaShieldsUp:|r", str)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl <= 0 then
-		if ... then
-			if strfind(str, "%%[dfqsx%.%d]") then
-				str = format(str, ...)
-			else
-				str = strjoin(", ", str, ...)
-			end
+	if lvl > 0 then return end
+	if select("#", ...) > 0 then
+		if strfind(str, "%%[dfqsx%.%d]") then
+			return print("|cffff7f7f[DEBUG] ShieldsUp:|r %s", format(str, ...))
+		else
+			return print("|cffff7f7f[DEBUG] ShieldsUp:|r %s", str, ...)
 		end
-		print(format("|cffff7f7f[DEBUG] ShieldsUp:|r %s", str))
 	end
+	print("|cffff7f7f[DEBUG] ShieldsUp:|r %s", str)
 end
 
 ------------------------------------------------------------------------
@@ -158,12 +145,9 @@ end
 
 ------------------------------------------------------------------------
 
-local ShieldsUp = CreateFrame("Frame", nil, UIParent)
+local ShieldsUp = CreateFrame("Frame", "ShieldsUp", UIParent)
 ShieldsUp:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, ...) end)
 ShieldsUp:RegisterEvent("ADDON_LOADED")
-
-namespace.ShieldsUp = ShieldsUp
-_G.ShieldsUp = ShieldsUp
 
 ------------------------------------------------------------------------
 
@@ -174,20 +158,20 @@ function ShieldsUp:ADDON_LOADED(addon)
 	if not ShieldsUpDB then
 		ShieldsUpDB = {}
 	end
-	local function safecopy(src, dst)
+	local function CopyDefaults(src, dst)
 		if type(src) ~= "table" then return {} end
 		if type(dst) ~= "table" then dst = {} end
 
 		for k, v in pairs(src) do
 			if type(v) == "table" then
-				dst[k] = safecopy(v, dst[k])
+				dst[k] = CopyDefaults(v, dst[k])
 			elseif type(dst[k]) ~= type(v) then
 				dst[k] = v
 			end
 		end
 		return dst
 	end
-	db = safecopy(defaults, ShieldsUpDB)
+	db = CopyDefaults(defaults, ShieldsUpDB)
 
 	self:UnregisterEvent("ADDON_LOADED")
 	self.ADDON_LOADED = nil
@@ -275,15 +259,8 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:PLAYER_TALENT_UPDATE()
 	self:GROUP_ROSTER_UPDATE()
 
-	self:RegisterEvent("CHARACTER_POINTS_CHANGED") -- removed in MoP?
 	self:RegisterEvent("PLAYER_TALENT_UPDATE")
-	if MoP then
-		self:RegisterEvent("GROUP_ROSTER_UPDATE")
-	else
-		self:RegisterEvent("PARTY_LEADER_CHANGED")
-		self:RegisterEvent("PARTY_MEMBERS_CHANGED")
-		self:RegisterEvent("RAID_ROSTER_UPDATE")
-	end
+	self:RegisterEvent("GROUP_ROSTER_UPDATE")
 	self:RegisterEvent("UNIT_AURA")
 	self:RegisterEvent("UNIT_SPELLCAST_SENT")
 
@@ -317,7 +294,7 @@ end
 function ShieldsUp:CHARACTER_POINTS_CHANGED()
 	Debug(1, "CHARACTER_POINTS_CHANGED")
 
-	if (IsPlayerSpell or IsSpellKnown)(974) then
+	if IsPlayerSpell(974) then
 		Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
@@ -332,7 +309,7 @@ end
 function ShieldsUp:PLAYER_TALENT_UPDATE()
 	Debug(1, "PLAYER_TALENT_UPDATE")
 
-	if (IsPlayerSpell or IsSpellKnown)(974) then
+	if IsPlayerSpell(974) then
 		Debug(2, "I have the Earth Shield spell.")
 		hasEarthShield = true
 	else
@@ -496,12 +473,7 @@ end
 
 function ShieldsUp:GROUP_ROSTER_UPDATE()
 	Debug(4, "GROUP_ROSTER_UPDATE")
-	local newGroup
-	if MoP then
-		newGroup = IsInRaid() and "raid" or IsInGroup() and "party" or false
-	else
-		newGroup = GetNumRaidMembers() > 0 and "raid" or GetNumPartyMembers() > 0 and "party" or false
-	end
+	local newGroup = IsInRaid() and "raid" or IsInGroup() and "party" or false
 
 	if newGroup then
 		Debug(3, "In a group")
@@ -523,12 +495,6 @@ function ShieldsUp:GROUP_ROSTER_UPDATE()
 
 	self:ScanForShields()
 	self:Update()
-end
-
-if not MoP then
-	ShieldsUp.PARTY_LEADER_CHANGED = ShieldsUp.GROUP_ROSTER_UPDATE
-	ShieldsUp.PARTY_MEMBERS_CHANGED = ShieldsUp.GROUP_ROSTER_UPDATE
-	ShieldsUp.RAID_ROSTER_UPDATE = ShieldsUp.GROUP_ROSTER_UPDATE
 end
 
 ------------------------------------------------------------------------
@@ -563,23 +529,11 @@ function ShieldsUp:ScanForShields()
 			Debug(2, "Lightning Shield found on player")
 		end
 
-		local numGroupMembers, isInRaid
-		if MoP then
-			numGroupMembers = GetNumGroupMembers()
-			isInRaid = IsInRaid()
-		else
-			numGroupMembers = GetNumRaidMembers()
-			isInRaid = numGroupMembers > 0
-			if not isInRaid then
-				numGroupMembers = GetNumPartyMembers()
-			end
-		end
-
-		if isInRaid then
+		if IsInRaid() then
 			Debug(2, "isInGroup = raid")
 			isInGroup = "raid"
 			local unit, unitName
-			for i = 1, numGroupMembers do
+			for i = 1, GetNumGroupMembers() do
 				unit = "raid"..i
 				unitName = UnitName(unit)
 				if unitName ~= playerName then
@@ -606,11 +560,11 @@ function ShieldsUp:ScanForShields()
 					break
 				end
 			end
-		elseif numGroupMembers > 0 then
+		elseif IsInGroup() then
 			Debug(2, "isInGroup = party")
 			isInGroup = "party"
 			local unit
-			for i = 1, numGroupMembers do
+			for i = 1, GetNumGroupMembers() do
 				unit = "party"..i
 				name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
 				if not name or caster ~= "player" then
@@ -684,10 +638,10 @@ function ShieldsUp:Update()
 		else
 			self.waterText:SetTextColor(unpack(db.color.alert))
 		end
-		if waterCount > 1 or not MoP then
+		if waterCount > 1 then
 			self.waterText:SetText(waterCount)
 		else
-			self.waterText:SetText(waterSpell == WATER_SHIELD and L["W"] or L["L"])
+			self.waterText:SetText(waterSpell == WATER_SHIELD and L.WaterAbbrev or L.LightningAbbrev)
 		end
 	end
 end
@@ -701,7 +655,7 @@ function ShieldsUp:Alert(spell)
 	if spell == EARTH_SHIELD then
 		if db.alert.earth.text then
 			r, g, b = unpack(db.color.earth)
-			text = format(L["%1$s faded from %2$s!"], spell, earthName == playerName and L["YOU"] or earthName)
+			text = format(L.ShieldFadedFrom, spell, earthName == playerName and L.YOU or earthName)
 		end
 		if db.alert.earth.sound then
 			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
@@ -709,7 +663,7 @@ function ShieldsUp:Alert(spell)
 	else
 		if db.alert.water.text then
 			r, g, b = unpack(spell == LIGHTNING_SHIELD and db.color.lightning or db.color.water)
-			text = format(L["%s faded!"], spell)
+			text = format(L.ShieldFaded, spell)
 		end
 		if db.alert.water.sound then
 			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.water.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
