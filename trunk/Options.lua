@@ -9,17 +9,16 @@
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
-local ADDON_NAME, namespace = ...
+local ADDON_NAME, private = ...
+local ShieldsUp = ShieldsUp
+local L = private.L
 
-local ShieldsUp = namespace.ShieldsUp
-local L = namespace.L
+local floor, format, unpack = math.floor, string.format, unpack
 
 local optionsPanels = { }
 ShieldsUp.optionsPanels = optionsPanels
 
 local CreateOptionsPanel = LibStub("PhanxConfig-OptionsPanel").CreateOptionsPanel
-
-local floor, format, unpack = math.floor, string.format, unpack
 
 ------------------------------------------------------------------------
 
@@ -27,107 +26,82 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	local db = ShieldsUpDB
 	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-	local screenwidth = UIParent:GetWidth()
-	local screenheight = UIParent:GetHeight()
+	local UIWIDTH = UIParent:GetWidth()
+	local UIHEIGHT = UIParent:GetHeight()
 
-	local CreatePanel = LibStub("PhanxConfig-Panel").CreatePanel
 	local CreateCheckbox = LibStub("PhanxConfig-Checkbox").CreateCheckbox
 	local CreateColorPicker = LibStub("PhanxConfig-ColorPicker").CreateColorPicker
 	local CreateDropdown = LibStub("PhanxConfig-Dropdown").CreateDropdown
+	local CreatePanel = LibStub("PhanxConfig-Panel").CreatePanel
 	local CreateSlider = LibStub("PhanxConfig-Slider").CreateSlider
 
-	--------------------------------------------------------------------
-
-	local title, notes = LibStub("PhanxConfig-Header").CreateHeader(self, ADDON_NAME,
-		L["ShieldsUp is a monitor for your shaman shields. These settings allow you to customize the addon's appearance and behavior."])
+	local Title, Notes = LibStub("PhanxConfig-Header").CreateHeader(self, ADDON_NAME, L.OptionsDesc)
 
 	--------------------------------------------------------------------
 
-	local posx = CreateSlider(self, L["Horizontal Position"],
-		L["Move the display left or right relative to the center of the screen."],
-		floor(screenwidth / 10) / 2 * -10, floor(screenwidth / 10) / 2 * 10, 5)
-	posx:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -4, -12)
-	posx:SetPoint("TOPRIGHT", notes, "BOTTOM", -8, 12)
-
-	posx.OnValueChanged = function(self, value)
+	local PositionX = CreateSlider(self, L.PositionX, nil, floor(UIWIDTH / 10) / 2 * -10, floor(UIWIDTH / 10) / 2 * 10, 5)
+	PositionX:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -4, -12)
+	PositionX:SetPoint("TOPRIGHT", Notes, "BOTTOM", -8, 12)
+	function PositionX:OnValueChanged(value)
 		db.posx = value
 		ShieldsUp:ApplySettings()
 	end
 
-	--------------------------------------------------------------------
-
-	local posy = CreateSlider(self, L["Vertical Position"],
-		L["Move the display up or down relative to the center of the screen."],
-		floor(screenheight / 10) / 2 * -10, floor(screenheight / 10) / 2 * 10, 5)
-
-	posy:SetPoint("TOPLEFT", posx, "BOTTOMLEFT", 0, -12)
-	posy:SetPoint("TOPRIGHT", posx, "BOTTOMRIGHT", 0, -12)
-
-	posy.OnValueChanged = function(self, value)
+	local PositionY = CreateSlider(self, L.PositionY, nil, floor(UIHEIGHT / 10) / 2 * -10, floor(UIHEIGHT / 10) / 2 * 10, 5)
+	PositionY:SetPoint("TOPLEFT", PositionX, "BOTTOMLEFT", 0, -12)
+	PositionY:SetPoint("TOPRIGHT", PositionX, "BOTTOMRIGHT", 0, -12)
+	function PositionY:OnValueChanged(value)
 		db.posy = value
 		ShieldsUp:ApplySettings()
 	end
 
-	--------------------------------------------------------------------
-
-	local padh = CreateSlider(self, L["Horizontal Padding"],
-		L["Change the horizontal distance between the charge counters."],
-		0, floor(screenwidth / 10) / 2 * 10, 1)
-	padh:SetPoint("TOPLEFT", posy, "BOTTOMLEFT", 0, -12)
-	padh:SetPoint("TOPRIGHT", posy, "BOTTOMRIGHT", 0, -12)
-
-	padh.OnValueChanged = function(self, value)
+	local PaddingH = CreateSlider(self, L.PaddingH, L.PaddingH_Desc, 0, floor(UIWIDTH / 10) / 2 * 10, 1)
+	PaddingH:SetPoint("TOPLEFT", PositionY, "BOTTOMLEFT", 0, -12)
+	PaddingH:SetPoint("TOPRIGHT", PositionY, "BOTTOMRIGHT", 0, -12)
+	function PaddingH:OnValueChanged(value)
 		db.padh = value
 		ShieldsUp:ApplySettings()
 	end
 
-	--------------------------------------------------------------------
-
-	local padv = CreateSlider(self, L["Vertical Padding"],
-		L["Change the vertical distance between the charge counters and the target name."],
-		0, floor(screenwidth / 10) / 2 * 10, 1)
-	padv:SetPoint("TOPLEFT", padh, "BOTTOMLEFT", 0, -12)
-	padv:SetPoint("TOPRIGHT", padh, "BOTTOMRIGHT", 0, -12)
-
-	padv.OnValueChanged = function(self, value)
+	local PaddingV = CreateSlider(self, L.PaddingV, L.PaddingV_Desc, 0, floor(UIWIDTH / 10) / 2 * 10, 1)
+	PaddingV:SetPoint("TOPLEFT", PaddingH, "BOTTOMLEFT", 0, -12)
+	PaddingV:SetPoint("TOPRIGHT", PaddingH, "BOTTOMRIGHT", 0, -12)
+	function PaddingV:OnValueChanged(value)
 		db.padv = value
 		ShieldsUp:ApplySettings()
 	end
 
-	--------------------------------------------------------------------
-
-	local opacity = CreateSlider(self, L["Opacity"], L["Change the opacity of the display."], 0, 1, 0.05, true)
-	opacity:SetPoint("TOPLEFT", padv, "BOTTOMLEFT", 0, -12)
-	opacity:SetPoint("TOPRIGHT", padv, "BOTTOMRIGHT", 0, -12)
-
-	opacity.OnValueChanged = function(self, value)
+	local Opacity = CreateSlider(self, L.Opacity, 0, 1, 0.05, true)
+	Opacity:SetPoint("TOPLEFT", PaddingV, "BOTTOMLEFT", 0, -12)
+	Opacity:SetPoint("TOPRIGHT", PaddingV, "BOTTOMRIGHT", 0, -12)
+	function Opacity:OnValueChanged(value)
 		db.alpha = value
 		ShieldsUp:ApplySettings()
 	end
 
 	--------------------------------------------------------------------
 
-	local face = LibStub("PhanxConfig-ScrollingDropdown").CreateScrollingDropdown(self, L["Font"], L["Change the font used for the display text."], ShieldsUp.fonts)
-	face:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -12)
-	face:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -12)
+	local Font = LibStub("PhanxConfig-ScrollingDropdown").CreateScrollingDropdown(self, L.Font, nil, ShieldsUp.fonts)
+	Font:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -12)
+	Font:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, -12)
 	do
-		local _, height, flags = face.valueText:GetFont()
-		face.valueText:SetFont(SharedMedia:Fetch("font", db.font.face or "Friz Quadrata TT"), height, flags)
+		local _, height, flags = Font.valueText:GetFont()
+		Font.valueText:SetFont(SharedMedia:Fetch("font", db.font.face or "Friz Quadrata TT"), height, flags)
 
-		function face:OnValueChanged(value)
+		function Font:OnValueChanged(value)
 			local _, height, flags = self.valueText:GetFont()
 			self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
 			db.font.face = value
 			ShieldsUp:ApplySettings()
 		end
 
-		local button_OnClick = face.button:GetScript("OnClick")
-		face.button:SetScript("OnClick", function(self)
+		local button_OnClick = Font.button:GetScript("OnClick")
+		Font.button:SetScript("OnClick", function(self)
 			button_OnClick(self)
-			face.dropdown.list:Hide()
+			Font.dropdown.list:Hide()
 
 			local function SetButtonFonts(self)
-				local buttons = face.dropdown.list.buttons
+				local buttons = Font.dropdown.list.buttons
 				for i = 1, #buttons do
 					local button = buttons[i]
 					if button.value and button:IsShown() then
@@ -136,20 +110,20 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 				end
 			end
 
-			local OnShow = face.dropdown.list:GetScript("OnShow")
-			face.dropdown.list:SetScript("OnShow", function(self)
+			local OnShow = Font.dropdown.list:GetScript("OnShow")
+			Font.dropdown.list:SetScript("OnShow", function(self)
 				OnShow(self)
 				SetButtonFonts(self)
 			end)
 
-			local OnVerticalScroll = face.dropdown.list.scrollFrame:GetScript("OnVerticalScroll")
-			face.dropdown.list.scrollFrame:SetScript("OnVerticalScroll", function(self, delta)
+			local OnVerticalScroll = Font.dropdown.list.scrollFrame:GetScript("OnVerticalScroll")
+			Font.dropdown.list.scrollFrame:SetScript("OnVerticalScroll", function(self, delta)
 				OnVerticalScroll(self, delta)
 				SetButtonFonts(self)
 			end)
 
-			local SetText = face.dropdown.list.text.SetText
-			face.dropdown.list.text.SetText = function(self, text)
+			local SetText = Font.dropdown.list.text.SetText
+			Font.dropdown.list.text.SetText = function(self, text)
 				self:SetFont(SharedMedia:Fetch("font", text), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT + 1)
 				SetText(self, text)
 			end
@@ -161,210 +135,173 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 	--------------------------------------------------------------------
 
-	local outlines = {
-		["NONE"] = L["None"],
-		["OUTLINE"] = L["Thin"],
-		["THICKOUTLINE"] = L["Thick"],
+	local outlineValues = {
+		NONE = L.None,
+		OUTLINE = L.Thin,
+		THICKOUTLINE = L.Thick,
 	}
-
-	local outline
+	local Outline
 	do
 		local function OnClick(self)
 			db.font.outline = self.value
 			ShieldsUp:ApplySettings()
-			outline:SetValue(self.value, self.text)
+			Outline:SetValue(self.value, self.text or outlineValues[self.text])
 		end
-
-		outline = CreateDropdown(self, L["Text Outline"], L["Choose an outline weight for the display text."], function()
-			local info = UIDropDownMenu_CreateInfo()
+		Outline = CreateDropdown(self, L.Outline, nil, function()
 			local selected = db.font.outline
 
-			info.text = L["None"]
-			info.value = "NONE"
+			local info = UIDropDownMenu_CreateInfo()
 			info.func = OnClick
+
+			info.text = L.None
+			info.value = "NONE"
 			info.checked = "NONE" == selected
 			UIDropDownMenu_AddButton(info)
 
-			info.text = L["Thin"]
+			info.text = L.Thin
 			info.value = "OUTLINE"
-			info.func = OnClick
 			info.checked = "THIN" == selected
 			UIDropDownMenu_AddButton(info)
 
-			info.text = L["Thick"]
+			info.text = L.Thick
 			info.value = "THICKOUTLINE"
-			info.func = OnClick
 			info.checked = "THICK" == selected
 			UIDropDownMenu_AddButton(info)
 		end)
-
-		outline:SetPoint("TOPLEFT", face, "BOTTOMLEFT", 0, -12)
-		outline:SetPoint("TOPRIGHT", face, "BOTTOMRIGHT", 0, -12)
+		Outline:SetPoint("TOPLEFT", Font, "BOTTOMLEFT", 0, -12)
+		Outline:SetPoint("TOPRIGHT", Font, "BOTTOMRIGHT", 0, -12)
 	end
 
-	--------------------------------------------------------------------
-
-	local large = CreateSlider(self, L["Counter Size"], L["Change the size of the counter text."], 6, 32, 1)
-	large:SetPoint("TOPLEFT", outline, "BOTTOMLEFT", 0, -12)
-	large:SetPoint("TOPRIGHT", outline, "BOTTOMRIGHT", 0, -12)
-
-	large.OnValueChanged = function(self, value)
+	local CounterSize = CreateSlider(self, L.CounterSize, nil, 6, 32, 1)
+	CounterSize:SetPoint("TOPLEFT", Outline, "BOTTOMLEFT", 0, -12)
+	CounterSize:SetPoint("TOPRIGHT", Outline, "BOTTOMRIGHT", 0, -12)
+	function CounterSize:OnValueChanged(value)
 		db.font.large = value
 		ShieldsUp:ApplySettings()
 	end
 
-	--------------------------------------------------------------------
-
-	local small = CreateSlider(self, L["Name Size"], L["Change the size of the name text."], 6, 32, 1)
-	small:SetPoint("TOPLEFT", large, "BOTTOMLEFT", 0, -12)
-	small:SetPoint("TOPRIGHT", large, "BOTTOMRIGHT", 0, -12)
-
-	small.OnValueChanged = function(self, value)
+	local NameSize = CreateSlider(self, L.NameSize, nil, 6, 32, 1)
+	NameSize:SetPoint("TOPLEFT", CounterSize, "BOTTOMLEFT", 0, -12)
+	NameSize:SetPoint("TOPRIGHT", CounterSize, "BOTTOMRIGHT", 0, -12)
+	function NameSize:OnValueChanged(value)
 		db.font.small = value
 		ShieldsUp:ApplySettings()
 	end
 
-	--------------------------------------------------------------------
-
-	local shadow = CreateCheckbox(self, L["Shadow"], L["Add a drop shadow effect to the display text."])
-	shadow:SetPoint("TOPLEFT", small, "BOTTOMLEFT", 0, -9)
-
-	shadow.OnClick = function(self, checked)
-		db.font.shadow = checked
+	local Shadow = CreateCheckbox(self, L.Shadow)
+	Shadow:SetPoint("TOPLEFT", NameSize, "BOTTOMLEFT", 0, -9)
+	function Shadow:OnValueChanged(value)
+		db.font.shadow = value
 		ShieldsUp:ApplySettings()
 	end
 
-	--------------------------------------------------------------------
-
-	local class = CreateCheckbox(self, L["Use Class Color"], format(L["Color the target name by class color when your %s is active."], L["Earth Shield"]))
-	class:SetPoint("TOPLEFT", shadow, "BOTTOMLEFT", 0, -6)
-
-	class.OnClick = function(self, checked)
-		db.color.useClassColor = checked
+	local ClassColor = CreateCheckbox(self, L.ClassColor, format(L.ClassColor_Desc, L.EarthShield))
+	ClassColor:SetPoint("TOPLEFT", Shadow, "BOTTOMLEFT", 0, -6)
+	function ClassColor:OnValueChanged(value)
+		db.color.useClassColor = value
 		ShieldsUp:Update()
 	end
 
 	--------------------------------------------------------------------
 
-	local vdist = -(5 * (12 + face:GetHeight()) + 12)
+	local ColorPanel = CreatePanel(self)
 
-	local colors = CreatePanel(self)
+	ColorPanel.label = ColorPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	ColorPanel.label:SetPoint("BOTTOMLEFT", ColorPanel, "TOPLEFT", 4, 0)
+	ColorPanel.label:SetText(L.Colors)
 
-	colors.label = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	colors.label:SetPoint("BOTTOMLEFT", colors, "TOPLEFT", 4, 0)
-	colors.label:SetText(L["Colors"])
+	local py = -96 - (5 * ClassColor:GetHeight())
+	ColorPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, py - ColorPanel.label:GetHeight())
+	ColorPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, py - ColorPanel.label:GetHeight())
 
-	colors:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", -2, vdist - colors.label:GetHeight())
-	colors:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, vdist - colors.label:GetHeight())
-
-	--------------------------------------------------------------------
-
-	local earth = CreateColorPicker(self, L["Earth Shield"], format(L["Set the color for the %s charge counter."], L["Earth Shield"]))
-
-	earth:SetPoint("TOPLEFT", colors, 8, -8)
-	earth.GetColor = function() return unpack(db.color.earth) end
-	earth.OnColorChanged = function(self, r, g, b)
+	local ColorEarth = CreateColorPicker(self, L.EarthShield)
+	ColorEarth:SetPoint("TOPLEFT", ColorPanel, 8, -8)
+	ColorEarth.GetColor = function() return unpack(db.color.earth) end
+	ColorEarth.OnColorChanged = function(self, r, g, b)
 		db.color.earth[1] = r
 		db.color.earth[2] = g
 		db.color.earth[3] = b
 		ShieldsUp:Update()
 	end
 
-	--------------------------------------------------------------------
-
-	local lightning = CreateColorPicker(self, L["Lightning Shield"], format(L["Set the color for the %s charge counter."], L["Lightning Shield"]))
-
-	lightning:SetPoint("TOPLEFT", earth, "BOTTOMLEFT", 0, -8)
-	lightning.GetColor = function() return unpack(db.color.lightning) end
-	lightning.OnColorChanged = function(self, r, g, b)
+	local ColorLightning = CreateColorPicker(self, L.LightningShield)
+	ColorLightning:SetPoint("TOPLEFT", ColorEarth, "BOTTOMLEFT", 0, -8)
+	ColorLightning.GetColor = function() return unpack(db.color.lightning) end
+	ColorLightning.OnColorChanged = function(self, r, g, b)
 		db.color.lightning[1] = r
 		db.color.lightning[2] = g
 		db.color.lightning[3] = b
 		ShieldsUp:Update()
 	end
 
-	--------------------------------------------------------------------
-
-	local water = CreateColorPicker(self, L["Water Shield"], format(L["Set the color for the %s charge counter."], L["Water Shield"]))
-
-	water:SetPoint("TOPLEFT", lightning, "BOTTOMLEFT", 0, -8)
-	water.GetColor = function() return unpack(db.color.water) end
-	water.OnColorChanged = function(self, r, g, b)
+	local ColorWater = CreateColorPicker(self, L.WaterShield)
+	ColorWater:SetPoint("TOPLEFT", ColorLightning, "BOTTOMLEFT", 0, -8)
+	ColorWater.GetColor = function() return unpack(db.color.water) end
+	ColorWater.OnColorChanged = function(self, r, g, b)
 		db.color.water[1] = r
 		db.color.water[2] = g
 		db.color.water[3] = b
 		ShieldsUp:Update()
 	end
 
-	--------------------------------------------------------------------
-
-	local normal = CreateColorPicker(self, L["Active"], format(L["Set the color for the target name while your %s is active."], L["Earth Shield"]))
-
-	normal:SetPoint("TOPLEFT", colors, "TOP", 8, -8)
-	normal.GetColor = function() return unpack(db.color.normal) end
-	normal.OnColorChanged = function(self, r, g, b)
+	local ColorActive = CreateColorPicker(self, L.Active, format(L.Active_Desc, L.EarthShield))
+	ColorActive:SetPoint("TOPLEFT", ColorPanel, "TOP", 8, -8)
+	ColorActive.GetColor = function() return unpack(db.color.normal) end
+	ColorActive.OnColorChanged = function(self, r, g, b)
 		db.color.normal[1] = r
 		db.color.normal[2] = g
 		db.color.normal[3] = b
 		ShieldsUp:Update()
 	end
 
-	--------------------------------------------------------------------
-
-	local overwritten = CreateColorPicker(self, L["Overwritten"], format(L["Set the color for the target name when your %s has been overwritten."], L["Earth Shield"]))
-
-	overwritten:SetPoint("TOPLEFT", normal, "BOTTOMLEFT", 0, -8)
-	overwritten.GetColor = function() return unpack(db.color.overwritten) end
-	overwritten.OnColorChanged = function(self, r, g, b)
+	local ColorOverwritten = CreateColorPicker(self, L.Overwritten, format(L.Overwritten_Desc, L.EarthShield))
+	ColorOverwritten:SetPoint("TOPLEFT", ColorActive, "BOTTOMLEFT", 0, -8)
+	ColorOverwritten.GetColor = function() return unpack(db.color.overwritten) end
+	ColorOverwritten.OnColorChanged = function(self, r, g, b)
 		db.color.overwritten[1] = r
 		db.color.overwritten[2] = g
 		db.color.overwritten[3] = b
 		ShieldsUp:Update()
 	end
 
-	--------------------------------------------------------------------
-
-	local alert = CreateColorPicker(self, L["Inactive"], L["Set the color for expired, dispelled, or otherwise inactive shields."])
-
-	alert:SetPoint("TOPLEFT", overwritten, "BOTTOMLEFT", 0, -8)
-	alert.GetColor = function() return unpack(db.color.alert) end
-	alert.OnColorChanged = function(self, r, g, b)
+	local ColorMissing = CreateColorPicker(self, L.Missing, L.Missing_Desc)
+	ColorMissing:SetPoint("TOPLEFT", ColorOverwritten, "BOTTOMLEFT", 0, -8)
+	ColorMissing.GetColor = function() return unpack(db.color.alert) end
+	ColorMissing.OnColorChanged = function(self, r, g, b)
 		db.color.alert[1] = r
 		db.color.alert[2] = g
 		db.color.alert[3] = b
 		ShieldsUp:Update()
 	end
 
-	--------------------------------------------------------------------
-
-	colors:SetHeight(earth:GetHeight() * 3 + 32)
+	ColorPanel:SetHeight(ColorEarth:GetHeight() * 3 + 32)
 
 	--------------------------------------------------------------------
 
 	self.refresh = function()
-		posx:SetValue(db.posx)
-		posy:SetValue(db.posy)
-		padh:SetValue(db.padh)
-		padv:SetValue(db.padv)
-		opacity:SetValue(db.alpha)
-		face:SetValue(db.font.face)
-		outline:SetValue(db.font.outline, outlines[db.font.outline])
-		large:SetValue(db.font.large)
-		small:SetValue(db.font.small)
-		shadow:SetChecked(db.font.shadow)
-		class:SetChecked(db.color.useClassColor)
-		earth:SetColor(unpack(db.color.earth))
-		lightning:SetColor(unpack(db.color.lightning))
-		water:SetColor(unpack(db.color.water))
-		normal:SetColor(unpack(db.color.normal))
-		overwritten:SetColor(unpack(db.color.overwritten))
-		alert:SetColor(unpack(db.color.alert))
+		PositionX:SetValue(db.posx)
+		PositionY:SetValue(db.posy)
+		PaddingH:SetValue(db.padh)
+		PaddingV:SetValue(db.padv)
+		Opacity:SetValue(db.alpha)
+		Font:SetValue(db.font.face)
+		Outline:SetValue(db.font.outline, outlineValues[db.font.outline])
+		CounterSize:SetValue(db.font.large)
+		NameSize:SetValue(db.font.small)
+		Shadow:SetChecked(db.font.shadow)
+		ClassColor:SetChecked(db.color.useClassColor)
+		ColorEarth:SetColor(unpack(db.color.earth))
+		ColorLightning:SetColor(unpack(db.color.lightning))
+		ColorWater:SetColor(unpack(db.color.water))
+		ColorActive:SetColor(unpack(db.color.normal))
+		ColorOverwritten:SetColor(unpack(db.color.overwritten))
+		ColorMissing:SetColor(unpack(db.color.alert))
 	end
 end)
 
 ------------------------------------------------------------------------
 
-optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Alerts"], ADDON_NAME, function(self)
+optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, function(self)
 	local db = ShieldsUpDB
 
 	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
@@ -373,51 +310,29 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Alerts"], ADDON_NAME, f
 	local CreateCheckbox = LibStub("PhanxConfig-Checkbox").CreateCheckbox
 	local CreateDropdown = LibStub("PhanxConfig-Dropdown").CreateDropdown
 
-	--------------------------------------------------------------------
-
-	local title, notes = LibStub("PhanxConfig-Header").CreateHeader(self, self.name, L["These settings allow you to customize how ShieldsUp alerts you when a shield expires or is removed."])
-
-	--------------------------------------------------------------------
-	--------------------------------------------------------------------
-
-	local elabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	elabel:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -8)
-	elabel:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -8)
-	elabel:SetJustifyH("LEFT")
-	elabel:SetText(L["Earth Shield"])
-
-	local epanel = CreatePanel(self)
-	epanel:SetPoint("TOPLEFT", elabel, "BOTTOMLEFT", -4, 0)
-	epanel:SetPoint("TOPRIGHT", elabel, "BOTTOMRIGHT", 4, 0)
+	local Title, Notes = LibStub("PhanxConfig-Header").CreateHeader(self, self.name, L.Alerts_Desc)
 
 	--------------------------------------------------------------------
 
-	local etext = CreateCheckbox(self, L["Text Alert"], format(L["Show a message when your %s expires or is removed."], L["Earth Shield"]))
-	etext:SetPoint("TOPLEFT", epanel, 8, -8)
-	etext.OnClick = function(self, checked)
-		db.alert.earth.text = checked
-	end
+	local EarthPanel = CreatePanel(self)
 
-	--------------------------------------------------------------------
+	local EarthLabel = EarthPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	EarthLabel:SetPoint("BOTTOMLEFT", EarthPanel, "TOPLEFT", 4, 0)
+	EarthLabel:SetText(L.EarthShield)
 
-	local esound = CreateCheckbox(self, L["Sound Alert"], format(L["Play a sound when your %s expires or is removed."], L["Earth Shield"]))
-	esound:SetPoint("TOPLEFT", etext, "BOTTOMLEFT", 0, -8)
-	esound.OnClick = function(self, checked)
-		db.alert.earth.sound = checked
-	end
+	EarthPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", 0, -12 - EarthLabel:GetHeight())
+	EarthPanel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -8, -12 - EarthLabel:GetHeight())
 
-	--------------------------------------------------------------------
-
-	local esoundfile
+	local EarthSound
 	do
 		local function OnClick(self)
 			PlaySoundFile(SharedMedia:Fetch("sound", self.value), "Master")
-			db.alert.earth.soundFile = self.value
-			esoundfile:SetValue(self.value, self.text)
+			db.alert.earth.sound = self.value
+			EarthSound:SetValue(self.value, self.text)
 		end
-		esoundfile = CreateDropdown(self, L["Sound File"], format(L["Choose the sound to play when your %s expires or is removed."], L["Earth Shield"]), function(self)
+		EarthSound = CreateDropdown(self, L.AlertSound, format(L.AlertSound_Desc, L.EarthShield), function(self)
 			local info = UIDropDownMenu_CreateInfo()
-			local selected = db.alert.earth.soundFile
+			local selected = db.alert.earth.sound
 			for i, sound in ipairs(ShieldsUp.sounds) do
 				info.text = sound
 				info.value = sound
@@ -426,212 +341,182 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Alerts"], ADDON_NAME, f
 				UIDropDownMenu_AddButton(info)
 			end
 		end)
+		EarthSound:SetPoint("TOPLEFT", EarthPanel, 8, -8)
+		EarthSound:SetPoint("TOPRIGHT", EarthPanel, -8, -8)
 	end
-	esoundfile:SetPoint("BOTTOMLEFT", epanel, "BOTTOM", 8, 8 + esound:GetHeight())
-	esoundfile:SetPoint("BOTTOMRIGHT", epanel, -8, 8 + esound:GetHeight())
 
-	--------------------------------------------------------------------
+	local EarthText = CreateCheckbox(self, L.AlertText, format(L.AlertText_Desc, L.EarthShield))
+	EarthText:SetPoint("TOPLEFT", EarthSound, 8, -8)
+	EarthText.OnValueChanged = function(self, checked)
+		db.alert.earth.text = checked
+	end
 
-	local overwritten = CreateCheckbox(self, L["Alert When Overwritten"], format(L["Also alert when another shaman overwrites your %s."], L["Earth Shield"]))
-	overwritten:SetPoint("TOPLEFT", esound, "BOTTOMLEFT", 0, -8)
-	overwritten.OnClick = function(self, checked)
+	EarthPanel:SetHeight(8 + EarthSound:GetHeight() + 8 + EarthText:GetHeight() + 8)
+
+	local AlertOverwritten = CreateCheckbox(self, L.AlertOverwritten, format(L.AlertOverwritten_Desc, L.EarthShield))
+	AlertOverwritten:SetPoint("TOPLEFT", EarthPanel, "BOTTOMLEFT", 0, -12)
+	AlertOverwritten.OnValueChanged = function(self, checked)
 		db.alert.earth.overwritten = checked
 	end
 
 	--------------------------------------------------------------------
 
-	epanel:SetHeight(8 + etext:GetHeight() + 8 + esound:GetHeight() + 8 + overwritten:GetHeight() + 8)
+	local WaterPanel = CreatePanel(self)
 
-	--------------------------------------------------------------------
-	--------------------------------------------------------------------
+	local WaterLabel = WaterPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	WaterLabel:SetPoint("BOTTOMLEFT", WaterPanel, "TOPLEFT", 4, 0)
+	WaterLabel:SetText(L.WaterShield)
 
-	local wlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	wlabel:SetPoint("TOPLEFT", epanel, "BOTTOMLEFT", 4, -8)
-	wlabel:SetPoint("TOPRIGHT", epanel, "BOTTOMRIGHT", -4, -8)
-	wlabel:SetJustifyH("LEFT")
-	wlabel:SetText(L["Water Shield"])
+	WaterPanel:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -12 - WaterLabel:GetHeight())
+	WaterPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, -12 - WaterLabel:GetHeight())
+	WaterPanel:SetPoint("BOTTOMLEFT", EarthPanel, "BOTTOMRIGHT", 16, 0)
 
-	local wpanel = CreatePanel(self)
-	wpanel:SetPoint("TOPLEFT", wlabel, "BOTTOMLEFT", -4, 0)
-	wpanel:SetPoint("TOPRIGHT", wlabel, "BOTTOMRIGHT", 4, 0)
+	local WaterSound
+	do
+		local function OnClick(self)
+			PlaySoundFile(SharedMedia:Fetch("sound", self.value))
+			db.alert.water.soundFile = self.value
+			WaterSound:SetValue(self.value)
+		end
+		WaterSound = CreateDropdown(self, L.AlertSound, format(L.AlertSound, L.WaterShield), function()
+			local selected = db.alert.water.soundFile
 
-	--------------------------------------------------------------------
+			local info = UIDropDownMenu_CreateInfo()
+			info.func = OnClick
 
-	local wtext = CreateCheckbox(self, L["Text Alert"], format(L["Show a message when your %s expires or is removed."], L["Water Shield"]))
+			for i, sound in ipairs(ShieldsUp.sounds) do
+				info.text = sound
+				info.value = sound
+				info.checked = sound == selected
+				UIDropDownMenu_AddButton(info)
+			end
+		end)
+		WaterSound:SetPoint("BOTTOMLEFT", WaterPanel, "BOTTOM", 8, 8)
+		WaterSound:SetPoint("BOTTOMRIGHT", WaterPanel, -8, 8)
+	end
 
-	wtext:SetPoint("TOPLEFT", wpanel, 8, -8)
-	wtext.OnClick = function(self, checked)
+	local WaterText = CreateCheckbox(self, L.AlertText, format(L.AlertText_Desc, L.WaterShield))
+	WaterText:SetPoint("TOPLEFT", WaterSound, "BOTTOMLEFT", 0, -8)
+	WaterText.OnValueChanged = function(self, checked)
 		db.alert.water.text = checked
 	end
 
 	--------------------------------------------------------------------
 
-	local wsound = CreateCheckbox(self, L["Sound Alert"], format(L["Play a sound when your %s expires or is removed."], L["Water Shield"]))
-
-	wsound:SetPoint("TOPLEFT", wtext, "BOTTOMLEFT", 0, -8)
-	wsound.OnClick = function(self, checked)
-		db.alert.water.sound = checked
-	end
-
-	--------------------------------------------------------------------
-
-	local wsoundfile
-	do
-		local function OnClick(self)
-			PlaySoundFile(SharedMedia:Fetch("sound", self.value))
-			db.alert.water.soundFile = self.value
-			wsoundfile:SetValue(self.value, self.text)
-		end
-		wsoundfile = CreateDropdown(self, L["Sound File"], format(L["Choose the sound to play when your %s expires or is removed."], L["Water Shield"]), function()
-			local info = UIDropDownMenu_CreateInfo()
-			local selected = db.alert.water.soundFile
-			for i, sound in ipairs(ShieldsUp.sounds) do
-				info.text = sound
-				info.value = sound
-				info.func = OnClick
-				info.checked = sound == selected
-				UIDropDownMenu_AddButton(info)
-			end
-		end)
-	end
-
-	wsoundfile:SetPoint("BOTTOMLEFT", wpanel, "BOTTOM", 8, 8)
-	wsoundfile:SetPoint("BOTTOMRIGHT", wpanel, -8, 8)
-
-	--------------------------------------------------------------------
-
-	wpanel:SetHeight(8 + wtext:GetHeight() + 8 + wsound:GetHeight() + 8)
-
-	--------------------------------------------------------------------
-
-	local sinkOptions, outputNames, slabel, spanel, output, scrollarea, sticky, UpdateOutputPanel
+	local SinkOptions, SinkList, SinkLabel, SinkPanel, SinkOutput, SinkScrollArea, SinkSticky, UpdateOutputPanel
 	if ShieldsUp.Pour then
-		sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
-		outputNames = {}
+		SinkList, SinkOptions = {}, ShieldsUp:GetSinkAce2OptionsDataTable().SinkOutput
 
 		function UpdateOutputPanel()
-			wipe(outputNames)
-			for k, v in pairs(sinkOptions.args) do
+			wipe(SinkList)
+			for k, v in pairs(SinkOptions.args) do
 				if k ~= "Default" and k ~= "Sticky" and k ~= "Channel" and v.type == "toggle" then
-					outputNames[k] = v.name
+					SinkList[k] = v.name
 				end
 			end
 
-			output:SetValue(db.alert.output.sink20OutputSink, outputNames[db.alert.output.sink20OutputSink])
+			SinkOutput:SetValue(db.alert.output.sink20OutputSink, SinkList[db.alert.output.sink20OutputSink])
 
-			sinkOptions.set(db.alert.output.sink20OutputSink, true) -- hax!
-			for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
+			SinkOptions.set(db.alert.output.sink20OutputSink, true) -- hax!
+			for i, v in ipairs(SinkOptions.args.ScrollArea.validate) do
 				if v == db.alert.output.sink20ScrollArea then
-					scrollarea:SetValue(db.alert.output.sink20ScrollArea)
+					SinkScrollArea:SetValue(db.alert.output.sink20ScrollArea)
 				end
 			end
 
-			sticky:SetChecked(db.alert.output.sink20Sticky)
+			SinkSticky:SetChecked(db.alert.output.sink20Sticky)
 
-			if sinkOptions.args.ScrollArea.disabled then
-				scrollarea:Hide()
+			if SinkOptions.args.ScrollArea.disabled then
+				SinkScrollArea:Hide()
 			else
-				scrollarea:Show()
+				SinkScrollArea:Show()
 
 				local valid
 				local current = db.alert.output.sink20ScrollArea
-				for i, scrollArea in ipairs(sinkOptions.args.ScrollArea.validate) do
+				for i, scrollArea in ipairs(SinkOptions.args.ScrollArea.validate) do
 					if scrollArea == current then
 						valid = true
 						break
 					end
 				end
 				if not valid then
-					scrollarea.valueText:SetText()
+					SinkScrollArea.valueText:SetText()
 				end
 			end
 
-			if sinkOptions.args.Sticky.disabled then
-				sticky:Hide()
-				spanel:SetHeight(8 + output:GetHeight() + 8 + 8) -- Why the extra 8? I don't know!
+			if SinkOptions.args.Sticky.disabled then
+				SinkSticky:Hide()
+				SinkPanel:SetHeight(8 + SinkOutput:GetHeight() + 8 + 8) -- Why the extra 8? I don't know!
 			else
-				sticky:Show()
-				spanel:SetHeight(8 + output:GetHeight() + 8 + sticky:GetHeight() + 8 + 8)
+				SinkSticky:Show()
+				SinkPanel:SetHeight(8 + SinkOutput:GetHeight() + 8 + SinkSticky:GetHeight() + 8 + 8)
 			end
 		end
 
-		slabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-		slabel:SetPoint("TOPLEFT", wpanel, "BOTTOMLEFT", 4, -8)
-		slabel:SetPoint("TOPRIGHT", wpanel, "BOTTOMRIGHT", -4, -8)
-		slabel:SetJustifyH("LEFT")
-		slabel:SetText(L["Text Output"])
+		SinkPanel = CreatePanel(self)
 
-		spanel = CreatePanel(self)
-		spanel:SetPoint("TOPLEFT", slabel, "BOTTOMLEFT", -4, 0)
-		spanel:SetPoint("TOPRIGHT", slabel, "BOTTOMRIGHT", 4, 0)
+		SinkLabel = SinkPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		SinkLabel:SetPoint("BOTTOMLEFT", WaterPanel, "TOPLEFT", 4, 0)
+		SinkLabel:SetText(L.AlertTextSink)
+
+		SinkPanel:SetPoint("TOPLEFT", AlertOverwritten, "BOTTOMLEFT", 4, -12 - SinkLabel:GetHeight())
+		SinkPanel:SetPoint("TOPRIGHT", WaterPanel, "BOTTOMRIGHT", -4, -12 - AlertOverwritten:GetHeight() - 12 - SinkLabel:GetHeight())
 
 		do
 			local function OnClick(self)
-				sinkOptions.set(self.value, true)
-				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+				SinkOptions.set(self.value, true)
+				SinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().SinkOutput
 
 				UpdateOutputPanel()
-				output:SetValue(self.value, self.text or outputNames[self.value])
+				SinkOutput:SetValue(self.value, self.text or SinkList[self.value])
 			end
+			SinkOutput = CreateDropdown(self, SinkOptions.name, SinkOptions.desc, function()
+				local info = UIDropDownMenu_CreateInfo()
+				info.func = OnClick
 
-			local info = { }
-
-			output = CreateDropdown(self, sinkOptions.name, sinkOptions.desc, function()
 				local selected = db.alert.output.sink20OutputSink
-				for k, v in pairs(sinkOptions.args) do
+				for k, v in pairs(SinkOptions.args) do
 					if k ~= "Default" and k ~= "Sticky" and k ~= "Channel" and v.type == "toggle" and not (v.hidden and v:hidden()) then
 						info.text = v.name
 						info.value = k
-						info.func = OnClick
 						info.checked = v.name == selected
 						UIDropDownMenu_AddButton(info)
 					end
 				end
 			end)
+			SinkOutput:SetPoint("TOPLEFT", SinkPanel, 8, -8)
+			SinkOutput:SetPoint("TOPRIGHT", SinkPanel, "TOP", -4, -8)
 		end
-
-		output:SetPoint("TOPLEFT", spanel, 8, -8)
-		output:SetPoint("TOPRIGHT", spanel, "TOP", -4, -8)
-
-		--------------------------------------------------------------
 
 		do
 			local function OnClick(self)
-				sinkOptions.set("ScrollArea", self.value)
-				sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+				SinkOptions.set("ScrollArea", self.value)
+				SinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().SinkOutput
 
-				scrollarea:SetValue(self.value, self.text)
+				SinkScrollArea:SetValue(self.value, self.text)
 			end
+			SinkScrollArea = CreateDropdown(self, SinkOptions.args.ScrollArea.name, SinkOptions.args.ScrollArea.desc, function()
+				local info = UIDropDownMenu_CreateInfo()
+				info.func = OnClick
 
-			local info = { }
-
-			scrollarea = CreateDropdown(self, sinkOptions.args.ScrollArea.name, sinkOptions.args.ScrollArea.desc, function()
 				local selected = db.alert.output.sink20ScrollArea
-
-				for i, v in ipairs(sinkOptions.args.ScrollArea.validate) do
+				for i, v in ipairs(SinkOptions.args.ScrollArea.validate) do
 					info.text = v
 					info.value = v
-					info.func = OnClick
 					info.checked = v == selected
 					UIDropDownMenu_AddButton(info)
 				end
 			end)
+			SinkScrollArea:SetPoint("TOPLEFT", SinkPanel, "TOP", 4, -8)
+			SinkScrollArea:SetPoint("TOPRIGHT", SinkPanel, -8, -8)
 		end
 
-		scrollarea:SetPoint("TOPLEFT", spanel, "TOP", 4, -8)
-		scrollarea:SetPoint("TOPRIGHT", spanel, -8, -8)
-
-		--------------------------------------------------------------
-
-		sticky = CreateCheckbox(self, sinkOptions.args.Sticky.name, sinkOptions.args.Sticky.desc)
-
-		sticky:SetPoint("TOPLEFT", scrollarea, "BOTTOMLEFT", 0, -8)
-		sticky.OnClick = function(self, checked)
-			sinkOptions.set("Sticky", checked)
-			sinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
+		SinkSticky = CreateCheckbox(self, SinkOptions.args.Sticky.name, SinkOptions.args.Sticky.desc)
+		SinkSticky:SetPoint("TOPLEFT", SinkScrollArea, "BOTTOMLEFT", 0, -8)
+		SinkSticky.OnValueChanged = function(self, checked)
+			SinkOptions.set("Sticky", checked)
+			SinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().SinkOutput
 		end
-
-		--------------------------------------------------------------
 
 		UpdateOutputPanel()
 	end
@@ -639,14 +524,12 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Alerts"], ADDON_NAME, f
 	--------------------------------------------------------------------
 
 	self.refresh = function()
-		etext:SetChecked(db.alert.earth.text)
-		esound:SetChecked(db.alert.earth.sound)
-		esoundfile:SetValue(db.alert.earth.soundFile)
-		overwritten:SetChecked(db.alert.earth.overwritten)
+		EarthText:SetChecked(db.alert.earth.text)
+		EarthSound:SetValue(db.alert.earth.sound)
+		AlertOverwritten:SetChecked(db.alert.earth.overwritten)
 
-		wtext:SetChecked(db.alert.water.text)
-		wsound:SetChecked(db.alert.water.sound)
-		wsoundfile:SetValue(db.alert.water.soundFile)
+		WaterText:SetChecked(db.alert.water.text)
+		WaterSound:SetValue(db.alert.water.sound)
 
 		if UpdateOutputPanel then
 			UpdateOutputPanel()
@@ -656,7 +539,7 @@ end)
 
 ------------------------------------------------------------------------
 
-optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Visibility"], ADDON_NAME, function(self)
+optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, function(self)
 	local db = ShieldsUpDB.show
 
 	local CreatePanel = LibStub("PhanxConfig-Panel").CreatePanel
@@ -669,127 +552,94 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L["Visibility"], ADDON_NAM
 
 	--------------------------------------------------------------------
 
-	local title, notes = LibStub("PhanxConfig-Header").CreateHeader(self, self.name, L["These settings allow you to customize when the ShieldsUp display is shown."])
+	local Title, Notes = LibStub("PhanxConfig-Header").CreateHeader(self, self.name, L.Visibility_Desc)
 
 	--------------------------------------------------------------------
 
-	local glabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	glabel:SetPoint("TOPLEFT", notes, "BOTTOMLEFT", 0, -8)
-	glabel:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -8)
-	glabel:SetJustifyH("LEFT")
-	glabel:SetText(L["Show in group types:"])
+	local ShowLabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	ShowLabel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", 0, -8)
+	ShowLabel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -8, -8)
+	ShowLabel:SetJustifyH("LEFT")
+	ShowLabel:SetText(L.Show)
 
-	local gpanel = CreatePanel(self)
-	gpanel:SetPoint("TOPLEFT", glabel, "BOTTOMLEFT", -4, 0)
-	gpanel:SetPoint("TOPRIGHT", glabel, "BOTTOMRIGHT", 4, 0)
+	local ShowPanel = CreatePanel(self)
+	ShowPanel:SetPoint("TOPLEFT", ShowLabel, "BOTTOMLEFT", -4, 0)
+	ShowPanel:SetPoint("TOPRIGHT", ShowLabel, "BOTTOMRIGHT", 4, 0)
 
-	local gsolo = CreateCheckbox(self, L["Solo"], L["Show the display while you are not in a group."])
-	gsolo:SetPoint("TOPLEFT", gpanel, 8, -8)
-	gsolo.OnClick = OnClick
-	gsolo.tbl, gsolo.key = "group", "solo"
+	local ShowSolo = CreateCheckbox(self, L.ShowSolo)
+	ShowSolo:SetPoint("TOPLEFT", ShowPanel, 8, -8)
+	ShowSolo.OnClick = OnClick
+	ShowSolo.tbl, ShowSolo.key = "group", "solo"
 
-	local gparty = CreateCheckbox(self, L["Party"], L["Show the display while you are in a party."])
-	gparty:SetPoint("TOPLEFT", gsolo, "BOTTOMLEFT", 0, -8)
-	gparty.OnClick = OnClick
-	gparty.tbl, gparty.key = "group", "party"
+	local ShowParty = CreateCheckbox(self, L.ShowParty)
+	ShowParty:SetPoint("TOPLEFT", ShowSolo, "BOTTOMLEFT", 0, -8)
+	ShowParty.OnClick = OnClick
+	ShowParty.tbl, ShowParty.key = "group", "party"
 
-	local graid = CreateCheckbox(self, L["Raid"], L["Show the display while you are in a raid."])
-	graid:SetPoint("TOPLEFT", gpanel, "TOP", 8, -16 - gsolo:GetHeight())
-	graid.OnClick = OnClick
-	graid.tbl, graid.key = "group", "raid"
+	local ShowRaid = CreateCheckbox(self, L.ShowRaid)
+	ShowRaid:SetPoint("TOPLEFT", ShowParty, "BOTTOMLEFT", 0, -8)
+	ShowRaid.OnClick = OnClick
+	ShowRaid.tbl, ShowRaid.key = "group", "raid"
 
-	gpanel:SetHeight(gsolo:GetHeight() * 2 + 24)
+	local ShowArena = CreateCheckbox(self, L.ShowArena)
+	ShowArena:SetPoint("TOPLEFT", ShowRaid, "BOTTOMLEFT", 0, -8)
+	ShowArena.OnClick = OnClick
+	ShowArena.tbl, ShowArena.key = "zone", "arena"
 
-	--------------------------------------------------------------------
+	local ShowBattleground = CreateCheckbox(self, L.ShowBattleground)
+	ShowBattleground:SetPoint("TOPLEFT", ShowArena, "BOTTOMLEFT", 0, -8)
+	ShowBattleground.OnClick = OnClick
+	ShowBattleground.tbl, ShowBattleground.key = "zone", "pvp"
 
-	local zlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	zlabel:SetPoint("TOPLEFT", gpanel, "BOTTOMLEFT", 4, -8)
-	zlabel:SetPoint("TOPRIGHT", gpanel, "BOTTOMRIGHT", -4, -8)
-	zlabel:SetJustifyH("LEFT")
-	zlabel:SetText(L["Show in zone types:"])
-
-	local zpanel = CreatePanel(self)
-	zpanel:SetPoint("TOPLEFT", zlabel, "BOTTOMLEFT", -4, 0)
-	zpanel:SetPoint("TOPRIGHT", zlabel, "BOTTOMRIGHT", 4, 0)
-
-	local zworld = CreateCheckbox(self, L["World"], L["Show the display while you are in the outdoor world."])
-	zworld:SetPoint("TOPLEFT", zpanel, 8, -8)
-	zworld.OnClick = OnClick
-	zworld.tbl, zworld.key = "zone", "none"
-
-	local zparty = CreateCheckbox(self, L["Dungeon"], L["Show the display while you are in a dungeon."])
-	zparty:SetPoint("TOPLEFT", zworld, "BOTTOMLEFT", 0, -8)
-	zparty.OnClick = OnClick
-	zparty.tbl, zparty.key = "zone", "party"
-
-	local zraid = CreateCheckbox(self, L["Raid Instance"], L["Show the display while you are in a raid instance."])
-	zraid:SetPoint("TOPLEFT", zpanel, "TOP", 8, -16 - zworld:GetHeight())
-	zraid.OnClick = OnClick
-	zraid.tbl, zraid.key = "zone", "raid"
-
-	local zarena = CreateCheckbox(self, L["Arena"], L["Show the display while you are in a PvP arena."])
-	zarena:SetPoint("TOPLEFT", zparty, "BOTTOMLEFT", 0, -8)
-	zarena.OnClick = OnClick
-	zarena.tbl, zarena.key = "zone", "arena"
-
-	local zpvp = CreateCheckbox(self, L["Battleground"], L["Show the display while you are in a PvP battleground."])
-	zpvp:SetPoint("TOPLEFT", zraid, "BOTTOMLEFT", 0, -8)
-	zpvp.OnClick = OnClick
-	zpvp.tbl, zpvp.key = "zone", "pvp"
-
-	zpanel:SetHeight(zworld:GetHeight() * 3 + 32)
+	ShowPanel:SetHeight(ShowSolo:GetHeight() * 5 + 48)
 
 	--------------------------------------------------------------------
 
-	local xlabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	xlabel:SetPoint("TOPLEFT", zpanel, "BOTTOMLEFT", 4, -8)
-	xlabel:SetPoint("TOPRIGHT", zpanel, "BOTTOMRIGHT", -4, -8)
-	xlabel:SetJustifyH("LEFT")
-	xlabel:SetText(L["Hide when:"])
+	local HideDead = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	HideDead:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -8)
+	HideDead:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", -8, -8)
+	HideDead:SetJustifyH("LEFT")
+	HideDead:SetText(L.Hide)
 
-	local xpanel = CreatePanel(self)
-	xpanel:SetPoint("TOPLEFT", xlabel, "BOTTOMLEFT", -4, 0)
-	xpanel:SetPoint("TOPRIGHT", xlabel, "BOTTOMRIGHT", 4, 0)
+	local HidePanel = CreatePanel(self)
+	HidePanel:SetPoint("TOPLEFT", HideDead, "BOTTOMLEFT", -4, 0)
+	HidePanel:SetPoint("TOPRIGHT", HideDead, "BOTTOMRIGHT", 4, 0)
 
-	local xdead = CreateCheckbox(self, L["Dead"], L["Hide the display while you are dead."])
-	xdead:SetPoint("TOPLEFT", xpanel, 8, -8)
-	xdead.OnClick = OnClick
-	xdead.tbl, xdead.key = "except", "dead"
+	local HideDead = CreateCheckbox(self, L.HideDead)
+	HideDead:SetPoint("TOPLEFT", HidePanel, 8, -8)
+	HideDead.OnClick = OnClick
+	HideDead.tbl, HideDead.key = "except", "dead"
 
-	local xnocombat = CreateCheckbox(self, L["Out of Combat"], L["Hide the display while you are out of combat."])
-	xnocombat:SetPoint("TOPLEFT", xpanel, "TOP", 8, -8)
-	xnocombat.OnClick = OnClick
-	xnocombat.tbl, xnocombat.key = "except", "nocombat"
+	local HideVehicle = CreateCheckbox(self, L.HideVehicle)
+	HideVehicle:SetPoint("TOPLEFT", HideDead, "BOTTOMLEFT", 0, -8)
+	HideVehicle.OnClick = OnClick
+	HideVehicle.tbl, HideVehicle.key = "except", "vehicle"
 
-	local xresting = CreateCheckbox(self, L["Resting"], L["Hide the display while you are in an inn or major city."])
-	xresting:SetPoint("TOPLEFT", xdead, "BOTTOMLEFT", 0, -8)
-	xresting.OnClick = OnClick
-	xresting.tbl, xresting.key = "except", "resting"
+	local HideOOC = CreateCheckbox(self, L.HideOOC)
+	HideOOC:SetPoint("TOPLEFT", HideVehicle, "BOTTOMLEFT", 0, -8)
+	HideOOC.OnClick = OnClick
+	HideOOC.tbl, HideOOC.key = "except", "nocombat"
 
-	local xvehicle = CreateCheckbox(self, L["Vehicle"], L["Hide the display while you are controlling a vehicle."])
-	xvehicle:SetPoint("TOPLEFT", xnocombat, "BOTTOMLEFT", 0, -8)
-	xvehicle.OnClick = OnClick
-	xvehicle.tbl, xvehicle.key = "except", "vehicle"
+	local HideResting = CreateCheckbox(self, L.HideResting)
+	HideResting:SetPoint("TOPLEFT", HideOOC, "BOTTOMLEFT", 0, -8)
+	HideResting.OnClick = OnClick
+	HideResting.tbl, HideResting.key = "except", "resting"
 
-	xpanel:SetHeight(xdead:GetHeight() * 2 + 24)
+	HidePanel:SetHeight(HideDead:GetHeight() * 4 + 40)
 
 	--------------------------------------------------------------------
 
 	self.refresh = function()
-		gsolo:SetChecked(db.group.solo)
-		gparty:SetChecked(db.group.party)
-		graid:SetChecked(db.group.raid)
+		ShowSolo:SetChecked(db.group.solo)
+		ShowParty:SetChecked(db.group.party)
+		ShowRaid:SetChecked(db.group.raid)
+		ShowArena:SetChecked(db.zone.arena)
+		ShowBattleground:SetChecked(db.zone.pvp)
 
-		zworld:SetChecked(db.zone.none)
-		zparty:SetChecked(db.zone.party)
-		zraid:SetChecked(db.zone.raid)
-		zarena:SetChecked(db.zone.arena)
-		zpvp:SetChecked(db.zone.pvp)
-
-		xdead:SetChecked(db.except.dead)
-		xnocombat:SetChecked(db.except.nocombat)
-		xresting:SetChecked(db.except.resting)
-		xvehicle:SetChecked(db.except.vehicle)
+		HideDead:SetChecked(db.except.dead)
+		HideOOC:SetChecked(db.except.nocombat)
+		HideResting:SetChecked(db.except.resting)
+		HideVehicle:SetChecked(db.except.vehicle)
 	end
 end)
 
@@ -817,7 +667,7 @@ if LibDataBroker then
 		OnClick = SlashCmdList.SHIELDSUP,
 		OnTooltipShow = function(tooltip)
 			tooltip:AddLine(ADDON_NAME, 1, 1, 1)
-			tooltip:AddLine(L["Click for options."])
+			tooltip:AddLine(L.ClickForOptions)
 			tooltip:Show()
 		end,
 	})

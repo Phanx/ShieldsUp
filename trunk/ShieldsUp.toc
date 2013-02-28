@@ -39,13 +39,14 @@ Libs\PhanxConfig-Panel\PhanxConfig-Panel.lua
 Libs\PhanxConfig-ScrollingDropdown\PhanxConfig-ScrollingDropdown.lua
 Libs\PhanxConfig-Slider\PhanxConfig-Slider.lua
 
-Locales\Locale-deDE.lua
-Locales\Locale-esES.lua
-Locales\Locale-frFR.lua
-Locales\Locale-itIT.lua
-Locales\Locale-ptBR.lua
-Locales\Locale-koKR.lua
-Locales\Locale-ruRU.lua
+Locales\Locale-en.lua
+Locales\Locale-de.lua
+Locales\Locale-es.lua
+Locales\Locale-fr.lua
+Locales\Locale-it.lua
+Locales\Locale-pt.lua
+Locales\Locale-ko.lua
+Locales\Locale-ru.lua
 Locales\Locale-zhCN.lua
 Locales\Locale-zhTW.lua
 
