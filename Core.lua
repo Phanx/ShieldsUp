@@ -55,9 +55,9 @@ local defaults = {
 		earth = { 0.65, 1, 0.25 },
 		lightning = { 0.25, 0.65, 1 },
 		water = { 0.25, 0.65, 1 },
-		alert = { 1, 0, 0 },
 		normal = { 1, 1, 1 },
 		overwritten = { 1, 1, 0 },
+		alert = { 1, 0, 0 },
 		useClassColor = false,
 	},
 	font = {
@@ -657,7 +657,7 @@ function ShieldsUp:Alert(spell)
 			r, g, b = unpack(db.color.earth)
 			text = format(L.ShieldFadedFrom, spell, earthName == playerName and L.YOU or earthName)
 		end
-		if db.alert.earth.sound then
+		if db.alert.earth.sound ~= "None" then
 			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
 		end
 	else
@@ -665,7 +665,7 @@ function ShieldsUp:Alert(spell)
 			r, g, b = unpack(spell == LIGHTNING_SHIELD and db.color.lightning or db.color.water)
 			text = format(L.ShieldFaded, spell)
 		end
-		if db.alert.water.sound then
+		if db.alert.water.sound ~= "None" then
 			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.water.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
 		end
 	end
@@ -688,50 +688,18 @@ end
 function ShieldsUp:UpdateVisibility()
 	Debug(2, "UpdateVisibility")
 
-	-- PET_BATTLE_OPENING_START
-	-- PET_BATTLE_CLOSE
-	if C_PetBattles.IsInBattle() then
-		return self:Hide()
-	end
-
-	-- GROUP_ROSTER_CHANGED
-	local groupType = isInGroup or "solo"
-	if not db.show.group[groupType] then
-		return self:Hide()
-	end
-
-	-- ZONE_CHANGED_NEW_AREA
 	local _, zoneType = IsInInstance()
-	if not zoneType then
-		zoneType = "none"
-	elseif zoneType == "none" and GetZonePVPInfo() == "combat" then
-		zoneType = "pvp"
-	end
-	if not db.show.zone[zoneType] then
-		return self:Hide()
-	end
 
-	-- PLAYER_DEAD
-	-- PLAYER_ALIVE
-	-- PLAYER_UNGHOST
-	if db.show.except.dead and UnitIsDeadOrGhost("player") then
-		return self:Hide()
-	end
-
-	-- PLAYER_REGEN_DISABLED
-	-- PLAYER_REGEN_ENABLED
-	if db.show.except.nocombat and not UnitAffectingCombat("player") then
-		return self:Hide()
-	end
-
-	-- PLAYER_UPDATE_RESTING
-	if db.show.except.resting and IsResting() then
-		return self:Hide()
-	end
-
-	-- UNIT_ENTERED_VEHICLE
-	-- UNIT_EXITED_VEHICLE
-	if db.show.except.vehicle and UnitInVehicle("player") then
+	if C_PetBattles.IsInBattle()
+	or ( db.show.except.dead and UnitIsDeadOrGhost("player") )
+	or ( db.show.except.nocombat and not UnitAffectingCombat("player") )
+	or ( db.show.except.resting and IsResting() )
+	or ( db.show.except.vehicle and UnitInVehicle("player") )
+	or ( not db.show.zone.arena and zoneType == "arena" )
+	or ( not db.show.zone.pvp and ( zoneType == "pvp" or (zoneType == "none" and GetZonePVPInfo() == "combat") ) )
+	or ( not db.show.group.raid and isInGroup == "raid" )
+	or ( not db.show.group.party and isInGroup == "party" )
+	or ( not db.show.group.solo and not isInGroup ) then
 		return self:Hide()
 	end
 
