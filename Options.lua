@@ -22,7 +22,7 @@ local CreateOptionsPanel = LibStub("PhanxConfig-OptionsPanel").CreateOptionsPane
 
 ------------------------------------------------------------------------
 
-optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(self)
+optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function(self)
 	local db = ShieldsUpDB
 	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
 
@@ -71,7 +71,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 		ShieldsUp:ApplySettings()
 	end
 
-	local Opacity = CreateSlider(self, L.Opacity, 0, 1, 0.05, true)
+	local Opacity = CreateSlider(self, L.Opacity, nil, 0, 1, 0.05, true)
 	Opacity:SetPoint("TOPLEFT", PaddingV, "BOTTOMLEFT", 0, -12)
 	Opacity:SetPoint("TOPRIGHT", PaddingV, "BOTTOMRIGHT", 0, -12)
 	function Opacity:OnValueChanged(value)
@@ -95,6 +95,12 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 			ShieldsUp:ApplySettings()
 		end
 
+		function Font.dropdown:OnListButtonChanged(button, item, selected)
+			if button.value and button:IsShown() then
+				button.label:SetFont(SharedMedia:Fetch("font", button.value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
+			end
+		end
+--[[
 		local button_OnClick = Font.button:GetScript("OnClick")
 		Font.button:SetScript("OnClick", function(self)
 			button_OnClick(self)
@@ -127,10 +133,10 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 				self:SetFont(SharedMedia:Fetch("font", text), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT + 1)
 				SetText(self, text)
 			end
-
 			button_OnClick(self)
 			self:SetScript("OnClick", button_OnClick)
 		end)
+]]
 	end
 
 	--------------------------------------------------------------------
@@ -160,12 +166,12 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 
 			info.text = L.Thin
 			info.value = "OUTLINE"
-			info.checked = "THIN" == selected
+			info.checked = "OUTLINE" == selected
 			UIDropDownMenu_AddButton(info)
 
 			info.text = L.Thick
 			info.value = "THICKOUTLINE"
-			info.checked = "THICK" == selected
+			info.checked = "THICKOUTLINE" == selected
 			UIDropDownMenu_AddButton(info)
 		end)
 		Outline:SetPoint("TOPLEFT", Font, "BOTTOMLEFT", 0, -12)
@@ -189,14 +195,14 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	end
 
 	local Shadow = CreateCheckbox(self, L.Shadow)
-	Shadow:SetPoint("TOPLEFT", NameSize, "BOTTOMLEFT", 0, -9)
+	Shadow:SetPoint("TOPLEFT", NameSize, "BOTTOMLEFT", 0, -8)
 	function Shadow:OnValueChanged(value)
 		db.font.shadow = value
 		ShieldsUp:ApplySettings()
 	end
 
 	local ClassColor = CreateCheckbox(self, L.ClassColor, format(L.ClassColor_Desc, L.EarthShield))
-	ClassColor:SetPoint("TOPLEFT", Shadow, "BOTTOMLEFT", 0, -6)
+	ClassColor:SetPoint("TOPLEFT", Shadow, "BOTTOMLEFT", 0, -4)
 	function ClassColor:OnValueChanged(value)
 		db.color.useClassColor = value
 		ShieldsUp:Update()
@@ -210,7 +216,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 	ColorPanel.label:SetPoint("BOTTOMLEFT", ColorPanel, "TOPLEFT", 4, 0)
 	ColorPanel.label:SetText(L.Colors)
 
-	local py = -96 - (5 * ClassColor:GetHeight())
+	local py = -5 * (Opacity:GetHeight() + 12)
 	ColorPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, py - ColorPanel.label:GetHeight())
 	ColorPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, py - ColorPanel.label:GetHeight())
 
@@ -284,18 +290,20 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(ADDON_NAME, nil, function(
 		PaddingH:SetValue(db.padh)
 		PaddingV:SetValue(db.padv)
 		Opacity:SetValue(db.alpha)
+
 		Font:SetValue(db.font.face)
 		Outline:SetValue(db.font.outline, outlineValues[db.font.outline])
 		CounterSize:SetValue(db.font.large)
 		NameSize:SetValue(db.font.small)
 		Shadow:SetChecked(db.font.shadow)
 		ClassColor:SetChecked(db.color.useClassColor)
-		ColorEarth:SetColor(unpack(db.color.earth))
-		ColorLightning:SetColor(unpack(db.color.lightning))
-		ColorWater:SetColor(unpack(db.color.water))
-		ColorActive:SetColor(unpack(db.color.normal))
-		ColorOverwritten:SetColor(unpack(db.color.overwritten))
-		ColorMissing:SetColor(unpack(db.color.alert))
+
+		ColorEarth:SetValue(db.color.earth)
+		ColorLightning:SetValue(db.color.lightning)
+		ColorWater:SetValue(db.color.water)
+		ColorActive:SetValue(db.color.normal)
+		ColorOverwritten:SetValue(db.color.overwritten)
+		ColorMissing:SetValue(db.color.alert)
 	end
 end)
 
@@ -320,7 +328,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 	EarthLabel:SetPoint("BOTTOMLEFT", EarthPanel, "TOPLEFT", 4, 0)
 	EarthLabel:SetText(L.EarthShield)
 
-	EarthPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", 0, -12 - EarthLabel:GetHeight())
+	EarthPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -8, -12 - EarthLabel:GetHeight())
 	EarthPanel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -8, -12 - EarthLabel:GetHeight())
 
 	local EarthSound
@@ -341,23 +349,23 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 				UIDropDownMenu_AddButton(info)
 			end
 		end)
-		EarthSound:SetPoint("TOPLEFT", EarthPanel, 8, -8)
-		EarthSound:SetPoint("TOPRIGHT", EarthPanel, -8, -8)
+		EarthSound:SetPoint("TOPLEFT", EarthPanel, 16, -16)
+		EarthSound:SetPoint("TOPRIGHT", EarthPanel, -16, -16)
 	end
 
 	local EarthText = CreateCheckbox(self, L.AlertText, format(L.AlertText_Desc, L.EarthShield))
-	EarthText:SetPoint("TOPLEFT", EarthSound, 8, -8)
+	EarthText:SetPoint("TOPLEFT", EarthSound, "BOTTOMLEFT", 0, -8)
 	EarthText.OnValueChanged = function(self, checked)
 		db.alert.earth.text = checked
 	end
 
-	EarthPanel:SetHeight(8 + EarthSound:GetHeight() + 8 + EarthText:GetHeight() + 8)
-
 	local AlertOverwritten = CreateCheckbox(self, L.AlertOverwritten, format(L.AlertOverwritten_Desc, L.EarthShield))
-	AlertOverwritten:SetPoint("TOPLEFT", EarthPanel, "BOTTOMLEFT", 0, -12)
+	AlertOverwritten:SetPoint("TOPLEFT", EarthText, "BOTTOMLEFT", 0, -8)
 	AlertOverwritten.OnValueChanged = function(self, checked)
 		db.alert.earth.overwritten = checked
 	end
+
+	EarthPanel:SetHeight(16 + EarthSound:GetHeight() + 8 + EarthText:GetHeight() + 8 + AlertOverwritten:GetHeight() + 16)
 
 	--------------------------------------------------------------------
 
@@ -365,50 +373,52 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 	local WaterLabel = WaterPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	WaterLabel:SetPoint("BOTTOMLEFT", WaterPanel, "TOPLEFT", 4, 0)
-	WaterLabel:SetText(L.WaterShield)
+	WaterLabel:SetText(L.WaterShield .. " & " .. L.LightningShield) -- TODO: Does "&" need localization?
 
 	WaterPanel:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -12 - WaterLabel:GetHeight())
-	WaterPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, -12 - WaterLabel:GetHeight())
-	WaterPanel:SetPoint("BOTTOMLEFT", EarthPanel, "BOTTOMRIGHT", 16, 0)
+	WaterPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 8, -12 - WaterLabel:GetHeight())
 
 	local WaterSound
 	do
 		local function OnClick(self)
-			PlaySoundFile(SharedMedia:Fetch("sound", self.value))
-			db.alert.water.soundFile = self.value
-			WaterSound:SetValue(self.value)
+			PlaySoundFile(SharedMedia:Fetch("sound", self.value), "Master")
+			db.alert.water.sound = self.value
+			WaterSound:SetValue(self.value, self.text)
 		end
-		WaterSound = CreateDropdown(self, L.AlertSound, format(L.AlertSound, L.WaterShield), function()
-			local selected = db.alert.water.soundFile
-
+		WaterSound = CreateDropdown(self, L.AlertSound, format(L.AlertSound_Desc, L.WaterShield), function(self)
 			local info = UIDropDownMenu_CreateInfo()
-			info.func = OnClick
-
+			local selected = db.alert.water.sound
 			for i, sound in ipairs(ShieldsUp.sounds) do
 				info.text = sound
 				info.value = sound
+				info.func = OnClick
 				info.checked = sound == selected
 				UIDropDownMenu_AddButton(info)
 			end
 		end)
-		WaterSound:SetPoint("BOTTOMLEFT", WaterPanel, "BOTTOM", 8, 8)
-		WaterSound:SetPoint("BOTTOMRIGHT", WaterPanel, -8, 8)
+		WaterSound:SetPoint("TOPLEFT", WaterPanel, 16, -16)
+		WaterSound:SetPoint("TOPRIGHT", WaterPanel, -16, -16)
 	end
 
 	local WaterText = CreateCheckbox(self, L.AlertText, format(L.AlertText_Desc, L.WaterShield))
 	WaterText:SetPoint("TOPLEFT", WaterSound, "BOTTOMLEFT", 0, -8)
 	WaterText.OnValueChanged = function(self, checked)
-		db.alert.water.text = checked
+		db.alert.Water.text = checked
 	end
+
+	WaterPanel:SetHeight(16 + WaterSound:GetHeight() + 8 + WaterText:GetHeight() + 16)
 
 	--------------------------------------------------------------------
 
-	local SinkOptions, SinkList, SinkLabel, SinkPanel, SinkOutput, SinkScrollArea, SinkSticky, UpdateOutputPanel
+	local SinkOptions, SinkList, SinkLabel, SinkPanel, SinkOutput, SinkScrollArea, SinkSticky, SinkPanel_Update
 	if ShieldsUp.Pour then
-		SinkList, SinkOptions = {}, ShieldsUp:GetSinkAce2OptionsDataTable().SinkOutput
+		SinkList = {}
+		SinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
 
-		function UpdateOutputPanel()
+		function SinkPanel_Update()
 			wipe(SinkList)
+
+			SinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().output
 			for k, v in pairs(SinkOptions.args) do
 				if k ~= "Default" and k ~= "Sticky" and k ~= "Channel" and v.type == "toggle" then
 					SinkList[k] = v.name
@@ -416,6 +426,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 			end
 
 			SinkOutput:SetValue(db.alert.output.sink20OutputSink, SinkList[db.alert.output.sink20OutputSink])
+			print("output:", db.alert.output.sink20OutputSink)
 
 			SinkOptions.set(db.alert.output.sink20OutputSink, true) -- hax!
 			for i, v in ipairs(SinkOptions.args.ScrollArea.validate) do
@@ -423,12 +434,16 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 					SinkScrollArea:SetValue(db.alert.output.sink20ScrollArea)
 				end
 			end
+			print("scrollarea:", db.alert.output.sink20ScrollArea)
 
 			SinkSticky:SetChecked(db.alert.output.sink20Sticky)
+			print("sticky:", db.alert.output.sink20Sticky)
 
 			if SinkOptions.args.ScrollArea.disabled then
+				print("scrollArea disabled")
 				SinkScrollArea:Hide()
 			else
+				print("scrollArea enabled")
 				SinkScrollArea:Show()
 
 				local valid
@@ -445,29 +460,29 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 			end
 
 			if SinkOptions.args.Sticky.disabled then
+				print("sticky disabled")
 				SinkSticky:Hide()
-				SinkPanel:SetHeight(8 + SinkOutput:GetHeight() + 8 + 8) -- Why the extra 8? I don't know!
+				SinkPanel:SetHeight(12 + SinkOutput:GetHeight() + 12)
 			else
+				print("sticky enabled")
 				SinkSticky:Show()
-				SinkPanel:SetHeight(8 + SinkOutput:GetHeight() + 8 + SinkSticky:GetHeight() + 8 + 8)
+				SinkPanel:SetHeight(12 + SinkOutput:GetHeight() + 8 + SinkSticky:GetHeight() + 12)
 			end
 		end
 
 		SinkPanel = CreatePanel(self)
 
 		SinkLabel = SinkPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-		SinkLabel:SetPoint("BOTTOMLEFT", WaterPanel, "TOPLEFT", 4, 0)
+		SinkLabel:SetPoint("BOTTOMLEFT", SinkPanel, "TOPLEFT", 4, 0)
 		SinkLabel:SetText(L.AlertTextSink)
 
-		SinkPanel:SetPoint("TOPLEFT", AlertOverwritten, "BOTTOMLEFT", 4, -12 - SinkLabel:GetHeight())
-		SinkPanel:SetPoint("TOPRIGHT", WaterPanel, "BOTTOMRIGHT", -4, -12 - AlertOverwritten:GetHeight() - 12 - SinkLabel:GetHeight())
+		SinkPanel:SetPoint("TOPLEFT", EarthPanel, "BOTTOMLEFT", 0, -12 - SinkLabel:GetHeight())
+		SinkPanel:SetPoint("TOPRIGHT", WaterPanel, "BOTTOMRIGHT", 0, -12 - SinkLabel:GetHeight())
 
 		do
 			local function OnClick(self)
 				SinkOptions.set(self.value, true)
-				SinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().SinkOutput
-
-				UpdateOutputPanel()
+				SinkPanel_Update()
 				SinkOutput:SetValue(self.value, self.text or SinkList[self.value])
 			end
 			SinkOutput = CreateDropdown(self, SinkOptions.name, SinkOptions.desc, function()
@@ -484,15 +499,14 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 					end
 				end
 			end)
-			SinkOutput:SetPoint("TOPLEFT", SinkPanel, 8, -8)
-			SinkOutput:SetPoint("TOPRIGHT", SinkPanel, "TOP", -4, -8)
+			SinkOutput:SetPoint("TOPLEFT", SinkPanel, 12, -12)
+			SinkOutput:SetPoint("TOPRIGHT", SinkPanel, "TOP", -8, -12)
 		end
 
 		do
 			local function OnClick(self)
 				SinkOptions.set("ScrollArea", self.value)
-				SinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().SinkOutput
-
+				SinkPanel_Update()
 				SinkScrollArea:SetValue(self.value, self.text)
 			end
 			SinkScrollArea = CreateDropdown(self, SinkOptions.args.ScrollArea.name, SinkOptions.args.ScrollArea.desc, function()
@@ -507,18 +521,18 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 					UIDropDownMenu_AddButton(info)
 				end
 			end)
-			SinkScrollArea:SetPoint("TOPLEFT", SinkPanel, "TOP", 4, -8)
-			SinkScrollArea:SetPoint("TOPRIGHT", SinkPanel, -8, -8)
+			SinkScrollArea:SetPoint("TOPLEFT", SinkPanel, "TOP", 8, -12)
+			SinkScrollArea:SetPoint("TOPRIGHT", SinkPanel, -12, -12)
 		end
 
 		SinkSticky = CreateCheckbox(self, SinkOptions.args.Sticky.name, SinkOptions.args.Sticky.desc)
 		SinkSticky:SetPoint("TOPLEFT", SinkScrollArea, "BOTTOMLEFT", 0, -8)
 		SinkSticky.OnValueChanged = function(self, checked)
 			SinkOptions.set("Sticky", checked)
-			SinkOptions = ShieldsUp:GetSinkAce2OptionsDataTable().SinkOutput
+			SinkPanel_Update()
 		end
 
-		UpdateOutputPanel()
+		SinkPanel_Update()
 	end
 
 	--------------------------------------------------------------------
@@ -531,8 +545,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 		WaterText:SetChecked(db.alert.water.text)
 		WaterSound:SetValue(db.alert.water.sound)
 
-		if UpdateOutputPanel then
-			UpdateOutputPanel()
+		if SinkPanel_Update then
+			SinkPanel_Update()
 		end
 	end
 end)
@@ -556,18 +570,15 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 
 	--------------------------------------------------------------------
 
-	local ShowLabel = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	local ShowLabel = self:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
 	ShowLabel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", 0, -8)
 	ShowLabel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -8, -8)
 	ShowLabel:SetJustifyH("LEFT")
+	ShowLabel:SetTextColor(GameFontNormal:GetTextColor())
 	ShowLabel:SetText(L.Show)
 
-	local ShowPanel = CreatePanel(self)
-	ShowPanel:SetPoint("TOPLEFT", ShowLabel, "BOTTOMLEFT", -4, 0)
-	ShowPanel:SetPoint("TOPRIGHT", ShowLabel, "BOTTOMRIGHT", 4, 0)
-
 	local ShowSolo = CreateCheckbox(self, L.ShowSolo)
-	ShowSolo:SetPoint("TOPLEFT", ShowPanel, 8, -8)
+	ShowSolo:SetPoint("TOPLEFT", ShowLabel, "BOTTOMLEFT", 0, -8)
 	ShowSolo.OnClick = OnClick
 	ShowSolo.tbl, ShowSolo.key = "group", "solo"
 
@@ -591,22 +602,17 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	ShowBattleground.OnClick = OnClick
 	ShowBattleground.tbl, ShowBattleground.key = "zone", "pvp"
 
-	ShowPanel:SetHeight(ShowSolo:GetHeight() * 5 + 48)
-
 	--------------------------------------------------------------------
 
-	local HideDead = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	HideDead:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -8)
-	HideDead:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", -8, -8)
-	HideDead:SetJustifyH("LEFT")
-	HideDead:SetText(L.Hide)
-
-	local HidePanel = CreatePanel(self)
-	HidePanel:SetPoint("TOPLEFT", HideDead, "BOTTOMLEFT", -4, 0)
-	HidePanel:SetPoint("TOPRIGHT", HideDead, "BOTTOMRIGHT", 4, 0)
+	local HideLabel = self:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
+	HideLabel:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -8)
+	HideLabel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", -8, -8)
+	HideLabel:SetJustifyH("LEFT")
+	HideLabel:SetTextColor(GameFontNormal:GetTextColor())
+	HideLabel:SetText(L.Hide)
 
 	local HideDead = CreateCheckbox(self, L.HideDead)
-	HideDead:SetPoint("TOPLEFT", HidePanel, 8, -8)
+	HideDead:SetPoint("TOPLEFT", HideLabel, "BOTTOMLEFT", 0, -8)
 	HideDead.OnClick = OnClick
 	HideDead.tbl, HideDead.key = "except", "dead"
 
@@ -624,8 +630,6 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	HideResting:SetPoint("TOPLEFT", HideOOC, "BOTTOMLEFT", 0, -8)
 	HideResting.OnClick = OnClick
 	HideResting.tbl, HideResting.key = "except", "resting"
-
-	HidePanel:SetHeight(HideDead:GetHeight() * 4 + 40)
 
 	--------------------------------------------------------------------
 
