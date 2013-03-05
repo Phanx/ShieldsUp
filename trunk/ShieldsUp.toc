@@ -1,5 +1,5 @@
-## Interface: 50100
-## Version: 5.1.0.wowi:revision
+## Interface: 50200
+## Version: 5.2.0.wowi:revision
 
 ## Title: ShieldsUp
 ## Notes: Text-based shaman shield monitor.
@@ -8,6 +8,7 @@
 ## Notes-esMX: Seguir a sus Escudos elementales.
 ## Notes-frFR: Suivez vos Boucliers élémentaires.
 ## Notes-ptBR: Siga os seus Escudos Elementares.
+
 ## Author: Phanx
 ## X-Credits: Inspired by Infineon's beSch.
 ## X-Email: addons@phanx.net

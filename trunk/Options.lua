@@ -195,14 +195,14 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	end
 
 	local Shadow = CreateCheckbox(self, L.Shadow)
-	Shadow:SetPoint("TOPLEFT", NameSize, "BOTTOMLEFT", 0, -8)
+	Shadow:SetPoint("TOPLEFT", NameSize, "BOTTOMLEFT", 0, -12)
 	function Shadow:OnValueChanged(value)
 		db.font.shadow = value
 		ShieldsUp:ApplySettings()
 	end
 
 	local ClassColor = CreateCheckbox(self, L.ClassColor, format(L.ClassColor_Desc, L.EarthShield))
-	ClassColor:SetPoint("TOPLEFT", Shadow, "BOTTOMLEFT", 0, -4)
+	ClassColor:SetPoint("TOPLEFT", Shadow, "BOTTOMLEFT", 0, -8)
 	function ClassColor:OnValueChanged(value)
 		db.color.useClassColor = value
 		ShieldsUp:Update()
@@ -216,9 +216,9 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	ColorPanel.label:SetPoint("BOTTOMLEFT", ColorPanel, "TOPLEFT", 4, 0)
 	ColorPanel.label:SetText(L.Colors)
 
-	local py = -5 * (Opacity:GetHeight() + 12)
-	ColorPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, py - ColorPanel.label:GetHeight())
-	ColorPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, py - ColorPanel.label:GetHeight())
+	local py = 5 * (Opacity:GetHeight() + 12)
+	ColorPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, -12 - py - ColorPanel.label:GetHeight())
+	ColorPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, -12 - py - ColorPanel.label:GetHeight())
 
 	local ColorEarth = CreateColorPicker(self, L.EarthShield)
 	ColorEarth:SetPoint("TOPLEFT", ColorPanel, 8, -8)
@@ -426,7 +426,6 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 			end
 
 			SinkOutput:SetValue(db.alert.output.sink20OutputSink, SinkList[db.alert.output.sink20OutputSink])
-			print("output:", db.alert.output.sink20OutputSink)
 
 			SinkOptions.set(db.alert.output.sink20OutputSink, true) -- hax!
 			for i, v in ipairs(SinkOptions.args.ScrollArea.validate) do
@@ -434,16 +433,12 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 					SinkScrollArea:SetValue(db.alert.output.sink20ScrollArea)
 				end
 			end
-			print("scrollarea:", db.alert.output.sink20ScrollArea)
 
 			SinkSticky:SetChecked(db.alert.output.sink20Sticky)
-			print("sticky:", db.alert.output.sink20Sticky)
 
 			if SinkOptions.args.ScrollArea.disabled then
-				print("scrollArea disabled")
 				SinkScrollArea:Hide()
 			else
-				print("scrollArea enabled")
 				SinkScrollArea:Show()
 
 				local valid
@@ -460,11 +455,9 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 			end
 
 			if SinkOptions.args.Sticky.disabled then
-				print("sticky disabled")
 				SinkSticky:Hide()
 				SinkPanel:SetHeight(12 + SinkOutput:GetHeight() + 12)
 			else
-				print("sticky enabled")
 				SinkSticky:Show()
 				SinkPanel:SetHeight(12 + SinkOutput:GetHeight() + 8 + SinkSticky:GetHeight() + 12)
 			end
@@ -526,7 +519,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 		end
 
 		SinkSticky = CreateCheckbox(self, SinkOptions.args.Sticky.name, SinkOptions.args.Sticky.desc)
-		SinkSticky:SetPoint("TOPLEFT", SinkScrollArea, "BOTTOMLEFT", 0, -8)
+		SinkSticky:SetPoint("TOPLEFT", SinkOutput, "BOTTOMLEFT", 0, -8)
 		SinkSticky.OnValueChanged = function(self, checked)
 			SinkOptions.set("Sticky", checked)
 			SinkPanel_Update()
