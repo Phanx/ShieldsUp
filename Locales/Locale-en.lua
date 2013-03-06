@@ -7,14 +7,14 @@
 	http://www.curse.com/addons/wow/shieldsup
 ------------------------------------------------------------------------
 	English localization
-	***
 	These strings are used if no localized version overrides them.
 ----------------------------------------------------------------------]]
 
 local _, private = ...
-if select(2, UnitClass("player")) ~= "SHAMAN" then private.UNLOAD = true end
+if select(2, UnitClass("player")) ~= "SHAMAN" then private.UNLOAD = true return end
 
 local L = {}
+
 private.L = L
 
 L.Active = "Active"
@@ -56,7 +56,7 @@ L.OverwrittenBy = "Your %1$s has been overwritten by %2$s!"
 L.PaddingH = "Horizontal padding"
 L.PaddingH_Desc = "Change the padding between the two shield counters."
 L.PaddingV = "Vertical padding"
-L.PaddingV_Desc = "Change the padding between the shield counters and the target name"
+L.PaddingV_Desc = "Change the padding between the shield counters and the target name."
 L.PositionX = "Horizontal position"
 L.PositionY = "Vertical position"
 L.Shadow = "Shadow"

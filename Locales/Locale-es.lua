@@ -9,13 +9,13 @@
 	Spanish localization
 	Last updated 2012-03-10 by Phanx
 	***
+	***
 ----------------------------------------------------------------------]]
 
 local _, private = ...
 if private.UNLOAD or not strmatch(GetLocale(), "^es") then return end
 
-local L = {}
-private.L = L
+local L = private.L
 
 L.Active = "Activo"
 L.Active_Desc = "Establecer el color para el nombre de objetivo, mientras que tu %s está activo."
