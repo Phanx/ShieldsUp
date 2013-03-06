@@ -8,14 +8,14 @@
 ------------------------------------------------------------------------
 	German localization
 	Last updated 2012-03-10 by Estadon
-	See end of file for full list of contributors.
+	Previous contributors:
+	- Søøm
 ----------------------------------------------------------------------]]
 
 local _, private = ...
 if private.UNLOAD or GetLocale() ~= "deDE" then return end
 
-local L = {}
-private.L = L
+local L = private.L
 
 L.Active = "Aktiv"
 L.Active_Desc = "Wähle die Farbe für den Namen deines Ziels während %s ist aktiv."
@@ -40,7 +40,7 @@ L.HideDead = "Tot"
 L.HideOOC = "Außerhalb eines Kampfes"
 L.HideResting = "Erholt"
 L.HideVehicle = "Fahrzeug"
-L.Hidden = "Hidden"
+--L.Hidden = "Hidden"
 L.LightningAbbrev = "B"
 L.Missing = "Inaktiv"
 L.Missing_Desc = "Wähe die Farbe für abgelaufene, entzauberte oder inaktive Schilde."
@@ -70,13 +70,8 @@ L.ShowRaid = "Schlachtzug"
 L.ShowSolo = "Solo"
 L.Thick = "Dick"
 L.Thin = "Dünn"
+--L.Top = "Top"
 L.Visibility = "Sichtbarkeit"
 L.Visibility_Desc = "Ändere diese Einstellungen um ShieldsUp unter bestimmten Voraussetzungen zu zeigen oder zu verstecken."
 L.WaterAbbrev = "W"
 L.YOU = "DIR"
-
---[[--------------------------------------------------------------------
-	Translations contributed by:
-	- Estadon @ CurseForge
-	- Søøm @ graninibanane at gmx de
-----------------------------------------------------------------------]]
