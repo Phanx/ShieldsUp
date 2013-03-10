@@ -328,8 +328,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 	EarthLabel:SetPoint("BOTTOMLEFT", EarthPanel, "TOPLEFT", 4, 0)
 	EarthLabel:SetText(L.EarthShield)
 
-	EarthPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -8, -12 - EarthLabel:GetHeight())
-	EarthPanel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -8, -12 - EarthLabel:GetHeight())
+	EarthPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -4, -12 - EarthLabel:GetHeight())
+	EarthPanel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -4, -12 - EarthLabel:GetHeight())
 
 	local EarthSound
 	do
@@ -373,10 +373,10 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 	local WaterLabel = WaterPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	WaterLabel:SetPoint("BOTTOMLEFT", WaterPanel, "TOPLEFT", 4, 0)
-	WaterLabel:SetText(L.WaterShield .. " & " .. L.LightningShield) -- TODO: Does "&" need localization?
+	WaterLabel:SetText(L.WaterShield)
 
-	WaterPanel:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -12 - WaterLabel:GetHeight())
-	WaterPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 8, -12 - WaterLabel:GetHeight())
+	WaterPanel:SetPoint("TOPLEFT", Notes, "BOTTOM", 4, -12 - WaterLabel:GetHeight())
+	WaterPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 4, -12 - WaterLabel:GetHeight())
 
 	local WaterSound
 	do
@@ -456,10 +456,10 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 			if SinkOptions.args.Sticky.disabled then
 				SinkSticky:Hide()
-				SinkPanel:SetHeight(12 + SinkOutput:GetHeight() + 12)
+				SinkPanel:SetHeight(16 + SinkOutput:GetHeight() + 16)
 			else
 				SinkSticky:Show()
-				SinkPanel:SetHeight(12 + SinkOutput:GetHeight() + 8 + SinkSticky:GetHeight() + 12)
+				SinkPanel:SetHeight(16 + SinkOutput:GetHeight() + 8 + SinkSticky:GetHeight() + 16)
 			end
 		end
 
@@ -492,8 +492,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 					end
 				end
 			end)
-			SinkOutput:SetPoint("TOPLEFT", SinkPanel, 12, -12)
-			SinkOutput:SetPoint("TOPRIGHT", SinkPanel, "TOP", -8, -12)
+			SinkOutput:SetPoint("TOPLEFT", SinkPanel, 16, -16)
+			SinkOutput:SetPoint("TOPRIGHT", SinkPanel, "TOP", -8, -16)
 		end
 
 		do
@@ -514,8 +514,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 					UIDropDownMenu_AddButton(info)
 				end
 			end)
-			SinkScrollArea:SetPoint("TOPLEFT", SinkPanel, "TOP", 8, -12)
-			SinkScrollArea:SetPoint("TOPRIGHT", SinkPanel, -12, -12)
+			SinkScrollArea:SetPoint("TOPLEFT", SinkPanel, "TOP", 8, -16)
+			SinkScrollArea:SetPoint("TOPRIGHT", SinkPanel, -16, -16)
 		end
 
 		SinkSticky = CreateCheckbox(self, SinkOptions.args.Sticky.name, SinkOptions.args.Sticky.desc)
