@@ -18,6 +18,8 @@ local EARTH_SHIELD = GetSpellInfo(974)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 local WATER_SHIELD = GetSpellInfo(52127)
 
+local DISPLAY_MULTIPLE, DISPLAY_SINGLE = 2, 1
+
 local L = private.L
 L.EarthShield = EARTH_SHIELD
 L.LightningShield = LIGHTNING_SHIELD
@@ -26,7 +28,7 @@ L.WaterShield = WATER_SHIELD
 ------------------------------------------------------------------------
 
 local SharedMedia, Sink
-local db, hasEarthShield, isInGroup
+local db, hasEarthShield, hasLightningCharges, isInGroup
 
 local playerGUID = ""
 local playerName = UnitName("player")
@@ -69,6 +71,7 @@ local defaults = {
 		shadow = true,
 	},
 	alert = {
+		alertWhenHidden = false,
 		earth = {
 			text = true,
 			sound = "Tribal Bell",
@@ -81,7 +84,6 @@ local defaults = {
 		output = {
 			sink20OutputSink = "RaidWarning",
 		},
-		alertWhenHidden = false,
 	},
 	show = {
 		group = {
@@ -122,12 +124,12 @@ local function Debug(lvl, str, ...)
 	if lvl > 0 then return end
 	if select("#", ...) > 0 then
 		if strfind(str, "%%[dfqsx%.%d]") then
-			return print("|cffff7f7f[DEBUG] ShieldsUp:|r %s", format(str, ...))
+			return print("|cffff7f7fShieldsUp:|r", format(str, ...))
 		else
-			return print("|cffff7f7f[DEBUG] ShieldsUp:|r %s", str, ...)
+			return print("|cffff7f7fShieldsUp:|r", str, ...)
 		end
 	end
-	print("|cffff7f7f[DEBUG] ShieldsUp:|r %s", str)
+	print("|cffff7f7fShieldsUp:|r", str)
 end
 
 ------------------------------------------------------------------------
@@ -220,7 +222,7 @@ function ShieldsUp:PLAYER_LOGIN()
 					self.fonts[i] = v
 				end
 				sort(self.fonts)
-				self:ApplySettings()
+				self:UpdateLayout()
 			elseif mediatype == "sound" then
 				wipe(self.sounds)
 				for i, v in pairs(SharedMedia:List("sound")) do
@@ -232,7 +234,7 @@ function ShieldsUp:PLAYER_LOGIN()
 
 		function ShieldsUp:SharedMedia_SetGlobal(callback, mediatype)
 			if mediatype == "font" then
-				self:ApplySettings()
+				self:UpdateLayout()
 			end
 		end
 
@@ -257,26 +259,33 @@ function ShieldsUp:PLAYER_LOGIN()
 
 	playerGUID = UnitGUID("player")
 
-	self:PLAYER_TALENT_UPDATE()
+	self:PLAYER_SPECIALIZATION_CHANGED()
 	self:GROUP_ROSTER_UPDATE()
 
-	self:RegisterEvent("PLAYER_TALENT_UPDATE")
+	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	self:RegisterEvent("GROUP_ROSTER_UPDATE")
 	self:RegisterEvent("UNIT_AURA")
 	self:RegisterEvent("UNIT_SPELLCAST_SENT")
 
 	-- TODO: Only register these events if they are needed?
-	self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-	self:RegisterEvent("PLAYER_DEAD")
-	self:RegisterEvent("PLAYER_ALIVE")
-	self:RegisterEvent("PLAYER_UNGHOST")
-	self:RegisterEvent("PLAYER_REGEN_DISABLED")
-	self:RegisterEvent("PLAYER_REGEN_ENABLED")
-	self:RegisterEvent("PLAYER_UPDATE_RESTING")
-	self:RegisterEvent("PET_BATTLE_OPENING_START")
-	self:RegisterEvent("PET_BATTLE_CLOSE")
-	self:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
-	self:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
+	local visEvents = {
+		"PET_BATTLE_OPENING_START",
+		"PET_BATTLE_CLOSE",
+		"PLAYER_DEAD",
+		"PLAYER_ALIVE",
+		"PLAYER_UNGHOST",
+		"PLAYER_REGEN_DISABLED",
+		"PLAYER_REGEN_ENABLED",
+		"PLAYER_UPDATE_RESTING",
+		"UNIT_ENTERED_VEHICLE",
+		"UNIT_EXITED_VEHICLE",
+		"ZONE_CHANGED_NEW_AREA",
+	}
+	for i = 1, #visEvents do
+		local event = visEvents[i]
+		self[event] = self.UpdateVisibility
+		self:RegisterEvent(event)
+	end
 
 	self:RegisterEvent("PLAYER_LOGOUT")
 
@@ -292,38 +301,20 @@ end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:CHARACTER_POINTS_CHANGED()
-	Debug(1, "CHARACTER_POINTS_CHANGED")
+function ShieldsUp:PLAYER_SPECIALIZATION_CHANGED()
+	Debug(1, "PLAYER_SPECIALIZATION_CHANGED")
 
-	if IsPlayerSpell(974) then
-		Debug(2, "I have the Earth Shield spell.")
-		hasEarthShield = true
-	else
-		Debug(2, "I don't have the Earth Shield spell.")
-		hasEarthShield = false
-	end
-
-	self:ApplySettings()
-	self:Update()
-end
-
-function ShieldsUp:PLAYER_TALENT_UPDATE()
-	Debug(1, "PLAYER_TALENT_UPDATE")
-
-	if IsPlayerSpell(974) then
-		Debug(2, "I have the Earth Shield spell.")
-		hasEarthShield = true
-	else
-		Debug(2, "I don't have the Earth Shield spell.")
-		hasEarthShield = false
-	end
+	local spec = GetSpecialization()
+	hasEarthShield = spec == 3 -- Restoration
+	hasLightningCharges = spec == 1 -- Elemental
+	Debug(2, "Earth Shield?", hasEarthShield and "YES" or "NO")
+	Debug(2, "Lightning Shield charges?", hasLightningCharges and "YES" or "NO")
 
 	if waterCount == 0 then
 		waterSpell = hasEarthShield and WATER_SHIELD or LIGHTNING_SHIELD
 	end
 
-	self:ApplySettings()
-	self:Update()
+	self:UpdateDisplayMode()
 end
 
 ------------------------------------------------------------------------
@@ -339,7 +330,7 @@ function ShieldsUp:UNIT_SPELLCAST_SENT(unit, spell, rank, target)
 	if spell == WATER_SHIELD or spell == LIGHTNING_SHIELD then
 		if spell ~= waterSpell then
 			waterSpell = spell
-			self:Update()
+			self:UpdateDisplay()
 		else
 			waterSpell = spell
 		end
@@ -462,7 +453,7 @@ do
 		end
 
 		if update then
-			self:Update()
+			self:UpdateDisplay()
 		end
 		if alert then
 			self:Alert(alert)
@@ -481,7 +472,7 @@ function ShieldsUp:GROUP_ROSTER_UPDATE()
 		if newGroup ~= isInGroup then
 			isInGroup = newGroup
 			Debug(1, "Joined a", newGroup, "group")
-			self:ApplySettings()
+			self:UpdateLayout()
 			self:UpdateVisibility()
 		end
 	else
@@ -489,22 +480,18 @@ function ShieldsUp:GROUP_ROSTER_UPDATE()
 		if isInGroup then
 			Debug(1, "Left a group")
 			isInGroup = false
-			self:ApplySettings()
+			self:UpdateLayout()
 			self:UpdateVisibility()
 		end
 	end
 
 	self:ScanForShields()
-	self:Update()
+	self:UpdateDisplay()
 end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:ScanForShields()
-	Debug(3, "ScanForShields")
-	earthCount, earthGUID, earthName, earthUnit, earthTime = 0, nil, nil, nil, 0
-	waterCount = 0
-
+local function UnitHasEarthShield(unit)
 	local name, _, _, charges, _, duration, expires, caster = UnitAura("player", EARTH_SHIELD)
 	if name and caster == "player" then
 		earthCount = charges
@@ -514,71 +501,47 @@ function ShieldsUp:ScanForShields()
 		earthTime = expires - duration
 		Debug(2, "Earth Shield found on player")
 	end
+	return charges
+end
 
-	if earthName ~= playerName then
-		charges = GetAuraCharges("player", WATER_SHIELD)
-		if charges > 0 then
-			waterCount = charges
+function ShieldsUp:ScanForShields()
+	Debug(3, "ScanForShields")
+	earthCount, earthGUID, earthName, earthUnit, earthTime = 0, nil, nil, nil, 0
+	waterCount = 0
+
+	if UnitHasEarthShield("player") then
+		Debug(2, "Earth Shield found on player")
+	else
+		waterCount = GetAuraCharges("player", WATER_SHIELD)
+		if waterCount > 0 then
 			waterSpell = WATER_SHIELD
 			Debug(2, "Water Shield found on player")
+		else
+			waterCount = GetAuraCharges("player", LIGHTNING_SHIELD)
+			if waterCount > 0 then
+				waterSpell = LIGHTNING_SHIELD
+				Debug(2, "Lightning Shield found on player")
+			end
 		end
 
-		charges = GetAuraCharges("player", LIGHTNING_SHIELD)
-		if charges > 0 then
-			waterCount = charges
-			waterSpell = LIGHTNING_SHIELD
-			Debug(2, "Lightning Shield found on player")
-		end
+		if IsInGroup() then
+			local groupMembers, unit
+			if IsInRaid() then
+				isInGroup, groupMembers = "raid", GetNumGroupMembers()
+			else
+				isInGroup, groupMembers = "party", GetNumGroupMembers() - 1
+			end
 
-		if IsInRaid() then
-			Debug(2, "isInGroup = raid")
-			isInGroup = "raid"
-			local unit, unitName
-			for i = 1, GetNumGroupMembers() do
-				unit = "raid"..i
-				unitName = UnitName(unit)
-				if unitName ~= playerName then
-					name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
-					if name and caster == "player" then
-						earthCount = charges
-						earthGUID = UnitGUID(unit)
-						earthName = unitName
-						earthUnit = "raid"..i
-						earthTime = expires - duration
-						Debug(2, "Earth Shield found on raid%d %s", i, earthName)
-						break
-					end
-				end
-				unit = "raidpet"..i
-				name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
-				if name and caster == "player" then
-					earthCount = charges
-					earthGUID = UnitGUID(unit)
-					earthName = UnitName(unit)
-					earthUnit = unit
-					earthTime = expires - duration
-					Debug(2, "Earth Shield found on %s %s", unit, earthName)
+			Debug(2, "isInGroup =", isInGroup)
+			for i = 1, groupMembers do
+				unit = isInGroup..i
+				if UnitHasEarthShield(unit) then
+					Debug(2, "Earth Shield found on %s: %s", unit, UnitName(unit))
 					break
 				end
-			end
-		elseif IsInGroup() then
-			Debug(2, "isInGroup = party")
-			isInGroup = "party"
-			local unit
-			for i = 1, GetNumGroupMembers() do
-				unit = "party"..i
-				name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
-				if not name or caster ~= "player" then
-					unit = "partypet"..i
-					name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
-				end
-				if name and caster == "player" then
-					earthCount = charges
-					earthGUID = UnitGUID(unit)
-					earthName = UnitName(unit)
-					earthUnit = unit
-					earthTime = expires - duration
-					Debug(2, "Earth Shield found on %s %s", unit, earthName)
+				unit = isInGroup.."pet"..i
+				if UnitHasEarthShield(unit) then
+					Debug(2, "Earth Shield found on %s: %s (%s)", unit, UnitName(unit), UnitName(isInGroup..i))
 					break
 				end
 			end
@@ -595,55 +558,66 @@ end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:Update()
-	Debug(3, "Update")
+function ShieldsUp:UpdateDisplayMode()
+	local displayMode = DISPLAY_MULTIPLE
+	if not isInGroup or not hasEarthShield or (db.hideInfinite and not hasLightningCharges) then
+		displayMode = DISPLAY_SINGLE
+	end
+	if displayMode ~= self.displayMode then
+		self.displayMode = displayMode
+		self:UpdateLayout()
+	end
+end
+
+function ShieldsUp:UpdateDisplay()
+	Debug(3, "UpdateDisplay")
 	if GetTime() - earthTime > 300 then
 		earthCount = 0
 		earthName = ""
 	end
 
-	if earthCount == 0 then
-		self.nameText:SetTextColor(unpack(db.color.alert))
-	elseif earthOverwritten then
-		self.nameText:SetTextColor(unpack(db.color.overwritten))
-	elseif db.color.useClassColor then
-		local _, class = UnitClass(earthUnit)
-		local color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
-		self.nameText:SetTextColor(color.r, color.g, color.b)
-	else
-		self.nameText:SetTextColor(unpack(db.color.normal))
-	end
+	local color = earthCount == 0 and db.color.alert
+		or earthOverwritten and db.color.overwritten
+		or db.color.useClassColor and (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[select(2, UnitClass(earthUnit))]
+		or color
+	self.nameText:SetTextColor(color.r or color[1], color.g or color[2], color.b or color[3])
+
 	if earthOverwritten and tonumber(ENABLE_COLORBLIND_MODE) > 0 then
 		self.nameText:SetFormattedText("* %s *", earthName)
 	else
 		self.nameText:SetText(earthName)
 	end
 
-	if earthCount > 0 then
-		self.earthText:SetTextColor(unpack(db.color.earth))
-	else
-		self.earthText:SetTextColor(unpack(db.color.alert))
-	end
+	color = earthCount > 0 and db.color.earth or db.color.alert
+	self.earthText:SetTextColor(color[1], color[2], color[3])
 	self.earthText:SetText(earthCount)
 
-	if not isInGroup and earthName == playerName and earthCount > 0 then
-		self.waterText:SetTextColor(unpack(db.color.earth))
-		self.waterText:SetText(earthCount)
-	else
-		if waterCount > 0 then
-			if waterSpell == LIGHTNING_SHIELD then
-				self.waterText:SetTextColor(unpack(db.color.lightning))
-			else
-				self.waterText:SetTextColor(unpack(db.color.water))
-			end
-		else
+	if self.displayMode == DISPLAY_SINGLE then
+		print("displayMode == DISPLAY_SINGLE")
+		if hasEarthShield then
+			print("hasEarthShield")
+			self.waterText:SetTextColor(unpack(db.color.earth))
+			self.waterText:SetText(earthCount)
+		elseif waterCount == 0 then
+			print("waterCount == 0")
 			self.waterText:SetTextColor(unpack(db.color.alert))
-		end
-		if waterCount > 1 then
-			self.waterText:SetText(waterCount)
-		else
 			self.waterText:SetText(waterSpell == WATER_SHIELD and L.WaterAbbrev or L.LightningAbbrev)
+		else
+			print("waterCount > 0")
+			self.waterText:SetText("")
 		end
+
+	elseif waterCount == 0 then
+		self.waterText:SetTextColor(unpack(db.color.alert))
+		self.waterText:SetText(waterSpell == WATER_SHIELD and L.WaterAbbrev or L.LightningAbbrev)
+
+	elseif waterSpell == LIGHTNING_SHIELD then
+		self.waterText:SetTextColor(unpack(db.color.lightning))
+		self.waterText:SetText(GetSpecialization() == 1 and waterCount or L.LightningAbbrev)
+
+	else
+		self.waterText:SetTextColor(unpack(db.color.water))
+		self.waterText:SetText(L.WaterAbbrev)
 	end
 end
 
@@ -689,40 +663,32 @@ end
 function ShieldsUp:UpdateVisibility()
 	Debug(2, "UpdateVisibility")
 
-	local _, zoneType = IsInInstance()
-
 	if C_PetBattles.IsInBattle()
-	or ( db.show.except.dead and UnitIsDeadOrGhost("player") )
+	or UnitIsDeadOrGhost("player")
+	or UnitInVehicle("player")
 	or ( db.show.except.nocombat and not UnitAffectingCombat("player") )
-	or ( db.show.except.resting and IsResting() )
-	or ( db.show.except.vehicle and UnitInVehicle("player") )
-	or ( not db.show.zone.arena and zoneType == "arena" )
-	or ( not db.show.zone.pvp and ( zoneType == "pvp" or (zoneType == "none" and GetZonePVPInfo() == "combat") ) )
-	or ( not db.show.group.raid and isInGroup == "raid" )
-	or ( not db.show.group.party and isInGroup == "party" )
-	or ( not db.show.group.solo and not isInGroup ) then
+	or ( db.show.except.resting  and IsResting() ) then
+		return self:Hide()
+	end
+
+	local _, zoneType = IsInInstance()
+	if zoneType == "none" and GetZonePVPInfo() == "combat" then zoneType = "pvp" end
+
+	if ( zoneType  == "arena" and not db.show.zone.arena  )
+	or ( zoneType  == "pvp"   and not db.show.zone.pvp    )
+	or ( isInGroup == "raid"  and not db.show.group.raid  )
+	or ( isInGroup == "party" and not db.show.group.party )
+	or ( not isIngroup        and not db.show.group.solo  ) then
 		return self:Hide()
 	end
 
 	self:Show()
 end
 
-ShieldsUp.PET_BATTLE_OPENING_START = ShieldsUp.UpdateVisibility
-ShieldsUp.PET_BATTLE_CLOSE = ShieldsUp.UpdateVisibility
-ShieldsUp.PLAYER_DEAD = ShieldsUp.UpdateVisibility
-ShieldsUp.PLAYER_ALIVE = ShieldsUp.UpdateVisibility
-ShieldsUp.PLAYER_UNGHOST = ShieldsUp.UpdateVisibility
-ShieldsUp.PLAYER_REGEN_DISABLED = ShieldsUp.UpdateVisibility
-ShieldsUp.PLAYER_REGEN_ENABLED = ShieldsUp.UpdateVisibility
-ShieldsUp.PLAYER_UPDATE_RESTING = ShieldsUp.UpdateVisibility
-ShieldsUp.UNIT_ENTERED_VEHICLE = ShieldsUp.UpdateVisibility
-ShieldsUp.UNIT_EXITED_VEHICLE = ShieldsUp.UpdateVisibility
-ShieldsUp.ZONE_CHANGED_NEW_AREA = ShieldsUp.UpdateVisibility
-
 ------------------------------------------------------------------------
 
-function ShieldsUp:ApplySettings()
-	Debug(1, "ApplySettings")
+function ShieldsUp:UpdateLayout()
+	Debug(1, "UpdateLayout")
 
 	self:SetPoint("CENTER", UIParent, "CENTER", db.posx, db.posy)
 	self:SetAlpha(db.alpha)
@@ -741,7 +707,7 @@ function ShieldsUp:ApplySettings()
 	self.waterText:SetShadowOffset(0, 0)
 	self.waterText:SetShadowOffset(shadow, -shadow)
 	self.waterText:ClearAllPoints()
-	if hasEarthShield and isInGroup then
+	if self.displayMode == DISPLAY_MULTIPLE then
 		if db.namePosition == "TOP" then
 			self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -floor(db.padh / 2 + 0.5), 0)
 		else
@@ -767,7 +733,7 @@ function ShieldsUp:ApplySettings()
 	else
 		self.earthText:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", floor(db.padh / 2 + 0.5), 0)
 	end
-	if hasEarthShield and isInGroup then
+	if hasEarthShield and isInGroup and not db.hideInfinite then
 		self.earthText:Show()
 	else
 		self.earthText:Hide()
@@ -790,4 +756,6 @@ function ShieldsUp:ApplySettings()
 	else
 		self.nameText:Hide()
 	end
+
+	self:UpdateDisplay()
 end
