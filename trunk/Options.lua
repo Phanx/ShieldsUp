@@ -525,7 +525,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	local Title, Notes = LibStub("PhanxConfig-Header").CreateHeader(self, self.name, L.Visibility_Desc)
 
 	--------------------------------------------------------------------
-	L.HideInfinite, L.HideInfinite_Desc = "Hide infinite shields", "Hide shields that don't have charges, like Water Shield."
+
 	local HideInfinite = CreateCheckbox(self, L.HideInfinite, L.HideInfinite_Desc)
 	HideInfinite:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", 0, -8)
 	HideInfinite.OnClick = function(this, checked)

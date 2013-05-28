@@ -593,17 +593,13 @@ function ShieldsUp:UpdateDisplay()
 	self.earthText:SetText(earthCount)
 
 	if self.displayMode == DISPLAY_SINGLE then
-		print("displayMode == DISPLAY_SINGLE")
 		if hasEarthShield then
-			print("hasEarthShield")
 			self.waterText:SetTextColor(unpack(db.color.earth))
 			self.waterText:SetText(earthCount)
 		elseif waterCount == 0 then
-			print("waterCount == 0")
 			self.waterText:SetTextColor(unpack(db.color.alert))
 			self.waterText:SetText(waterSpell == WATER_SHIELD and L.WaterAbbrev or L.LightningAbbrev)
 		else
-			print("waterCount > 0")
 			self.waterText:SetText("")
 		end
 
