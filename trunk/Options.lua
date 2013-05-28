@@ -529,7 +529,6 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	local HideInfinite = CreateCheckbox(self, L.HideInfinite, L.HideInfinite_Desc)
 	HideInfinite:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, -8)
 	HideInfinite.OnClick = function(this, checked)
-		print("HideInfinite?", checked and "Y" or "N", tostring(checked))
 		db.hideInfinite = checked
 		ShieldsUp:UpdateDisplayMode()
 	end
@@ -589,7 +588,6 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	--------------------------------------------------------------------
 
 	self.refresh = function()
-		print("refresh", self.name)
 		HideInfinite:SetValue(db.hideInfinite)
 
 		ShowSolo:SetValue(db.showSolo)

@@ -576,31 +576,32 @@ function ShieldsUp:UpdateDisplay()
 	local color, text
 
 	if hasEarthShield then
-		if earthCount == 0 then
-			color = db.color.alert
-		elseif earthOverwritten then
-			color = db.color.overwritten
-		elseif db.color.useClassColor then
-			local _, class = UnitClass(earthUnit)
-			color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
-		else
-			color = db.color.earth
-		end
-		self.nameText:SetTextColor(color.r or color[1], color.g or color[2], color.b or color[3])
-		if earthOverwritten and tonumber(ENABLE_COLORBLIND_MODE) > 0 then
-			self.nameText:SetFormattedText("* %s *", earthName)
-		else
-			self.nameText:SetText(earthName)
+		if isInGroup and db.namePosition ~= "NONE" then
+			if earthCount == 0 then
+				color = db.color.alert
+			elseif earthOverwritten then
+				color = db.color.overwritten
+			elseif db.color.useClassColor then
+				local _, class = UnitClass(earthUnit)
+				color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
+			else
+				color = db.color.earth
+			end
+			self.nameText:SetTextColor(color.r or color[1], color.g or color[2], color.b or color[3])
+			if earthOverwritten and tonumber(ENABLE_COLORBLIND_MODE) > 0 then
+				self.nameText:SetFormattedText("* %s *", earthName)
+			else
+				self.nameText:SetText(earthName)
+			end
 		end
 
 		color = earthCount > 0 and db.color.earth or db.color.alert
-		if self.displayMode == DISPLAY_SINGLE and waterCount > 0 then
+		if self.displayMode == DISPLAY_SINGLE and earthCount > 0 then
 			Debug(4, "SINGLE Earth Shield")
 			self.waterText:SetTextColor(color[1], color[2], color[3])
 			self.waterText:SetText(earthCount)
 			return
 		end
-
 		Debug(4, "MULTIPLE Earth Shield")
 		self.earthText:SetTextColor(color[1], color[2], color[3])
 		self.earthText:SetText(earthCount)
