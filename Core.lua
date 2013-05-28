@@ -52,8 +52,25 @@ local defaults = {
 	padh = 5,
 	padv = 0,
 	alpha = 1,
+
 	namePosition = "TOP",
 	hideInfinite = false,
+
+	showSolo = true,
+	showInParty = true,
+	showInRaid = true,
+	showInArena = true,
+	showInBG = true,
+	hideOOC = true,
+	hideResting = true,
+
+	font = {
+		face = "Friz Quadrata TT",
+		large = 24,
+		small = 16,
+		outline = "NONE",
+		shadow = true,
+	},
 	color = {
 		earth = { 0.65, 1, 0.25 },
 		lightning = { 0.25, 0.65, 1 },
@@ -62,13 +79,6 @@ local defaults = {
 		overwritten = { 1, 1, 0 },
 		alert = { 1, 0, 0 },
 		useClassColor = false,
-	},
-	font = {
-		face = "Friz Quadrata TT",
-		large = 24,
-		small = 16,
-		outline = "NONE",
-		shadow = true,
 	},
 	alert = {
 		alertWhenHidden = false,
@@ -83,26 +93,6 @@ local defaults = {
 		},
 		output = {
 			sink20OutputSink = "RaidWarning",
-		},
-	},
-	show = {
-		group = {
-			solo = true,
-			party = true,
-			raid = true,
-		},
-		zone = {
-			none = true,
-			party = true,
-			raid = true,
-			arena = true,
-			pvp = true,
-		},
-		except = {
-			dead = true,
-			nocombat = false,
-			resting = false,
-			vehicle = true,
 		},
 	},
 }
@@ -144,6 +134,19 @@ local function GetAuraCharges(unit, aura)
 	else
 		return 1, caster == "player", caster
 	end
+end
+
+local function UnitHasEarthShield(unit)
+	local name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
+	if name and caster == "player" then
+		earthCount = charges
+		earthGUID  = unit == "player" and playerGUID or UnitGUID(unit)
+		earthName  = unit == "player" and playerName or UnitName(unit)
+		earthUnit  = unit
+		earthTime  = expires - duration
+		Debug(2, "Earth Shield found on", unit)
+	end
+	return charges
 end
 
 ------------------------------------------------------------------------
@@ -259,9 +262,7 @@ function ShieldsUp:PLAYER_LOGIN()
 
 	playerGUID = UnitGUID("player")
 
-	self:PLAYER_SPECIALIZATION_CHANGED()
-	self:GROUP_ROSTER_UPDATE()
-
+	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	self:RegisterEvent("GROUP_ROSTER_UPDATE")
 	self:RegisterEvent("UNIT_AURA")
@@ -274,7 +275,6 @@ function ShieldsUp:PLAYER_LOGIN()
 		"PLAYER_DEAD",
 		"PLAYER_ALIVE",
 		"PLAYER_UNGHOST",
-		"PLAYER_REGEN_DISABLED",
 		"PLAYER_REGEN_ENABLED",
 		"PLAYER_UPDATE_RESTING",
 		"UNIT_ENTERED_VEHICLE",
@@ -291,6 +291,10 @@ function ShieldsUp:PLAYER_LOGIN()
 
 	self:UnregisterEvent("PLAYER_LOGIN")
 	self.PLAYER_LOGIN = nil
+
+	self:PLAYER_SPECIALIZATION_CHANGED()
+	self:GROUP_ROSTER_UPDATE()
+	self:UpdateVisibility()
 end
 
 ------------------------------------------------------------------------
@@ -491,18 +495,12 @@ end
 
 ------------------------------------------------------------------------
 
-local function UnitHasEarthShield(unit)
-	local name, _, _, charges, _, duration, expires, caster = UnitAura("player", EARTH_SHIELD)
-	if name and caster == "player" then
-		earthCount = charges
-		earthGUID = playerGUID
-		earthName = playerName
-		earthUnit = "player"
-		earthTime = expires - duration
-		Debug(2, "Earth Shield found on player")
-	end
-	return charges
+function ShieldsUp:PLAYER_REGEN_DISABLED()
+	self:UpdateVisibility()
+	-- TODO: Add missing shield alert on entering combat.
 end
+
+------------------------------------------------------------------------
 
 function ShieldsUp:ScanForShields()
 	Debug(3, "ScanForShields")
@@ -559,14 +557,13 @@ end
 ------------------------------------------------------------------------
 
 function ShieldsUp:UpdateDisplayMode()
-	local displayMode = DISPLAY_MULTIPLE
-	if not isInGroup or not hasEarthShield or (db.hideInfinite and not hasLightningCharges) then
-		displayMode = DISPLAY_SINGLE
+	local displayMode = DISPLAY_SINGLE
+	if hasEarthShield and isInGroup and not db.hideInfinite then
+		displayMode = DISPLAY_MULTIPLE
 	end
-	if displayMode ~= self.displayMode then
-		self.displayMode = displayMode
-		self:UpdateLayout()
-	end
+	Debug(3, "UpdateDisplayMode", displayMode == DISPLAY_MULTIPLE and "MULTIPLE" or "SINGLE")
+	self.displayMode = displayMode
+	self:UpdateLayout()
 end
 
 function ShieldsUp:UpdateDisplay()
@@ -576,53 +573,66 @@ function ShieldsUp:UpdateDisplay()
 		earthName = ""
 	end
 
-	local color = earthCount == 0 and db.color.alert
-		or earthOverwritten and db.color.overwritten
-		or db.color.useClassColor and (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[select(2, UnitClass(earthUnit))]
-		or color
-	self.nameText:SetTextColor(color.r or color[1], color.g or color[2], color.b or color[3])
+	local color, text
 
-	if earthOverwritten and tonumber(ENABLE_COLORBLIND_MODE) > 0 then
-		self.nameText:SetFormattedText("* %s *", earthName)
-	else
-		self.nameText:SetText(earthName)
-	end
-
-	color = earthCount > 0 and db.color.earth or db.color.alert
-	self.earthText:SetTextColor(color[1], color[2], color[3])
-	self.earthText:SetText(earthCount)
-
-	if self.displayMode == DISPLAY_SINGLE then
-		if hasEarthShield then
-			self.waterText:SetTextColor(unpack(db.color.earth))
-			self.waterText:SetText(earthCount)
-		elseif waterCount == 0 then
-			self.waterText:SetTextColor(unpack(db.color.alert))
-			self.waterText:SetText(waterSpell == WATER_SHIELD and L.WaterAbbrev or L.LightningAbbrev)
+	if hasEarthShield then
+		if earthCount == 0 then
+			color = db.color.alert
+		elseif earthOverwritten then
+			color = db.color.overwritten
+		elseif db.color.useClassColor then
+			local _, class = UnitClass(earthUnit)
+			color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
 		else
-			self.waterText:SetText("")
+			color = db.color.earth
+		end
+		self.nameText:SetTextColor(color.r or color[1], color.g or color[2], color.b or color[3])
+		if earthOverwritten and tonumber(ENABLE_COLORBLIND_MODE) > 0 then
+			self.nameText:SetFormattedText("* %s *", earthName)
+		else
+			self.nameText:SetText(earthName)
 		end
 
-	elseif waterCount == 0 then
-		self.waterText:SetTextColor(unpack(db.color.alert))
-		self.waterText:SetText(waterSpell == WATER_SHIELD and L.WaterAbbrev or L.LightningAbbrev)
+		color = earthCount > 0 and db.color.earth or db.color.alert
+		if self.displayMode == DISPLAY_SINGLE and waterCount > 0 then
+			Debug(4, "SINGLE Earth Shield")
+			self.waterText:SetTextColor(color[1], color[2], color[3])
+			self.waterText:SetText(earthCount)
+			return
+		end
 
-	elseif waterSpell == LIGHTNING_SHIELD then
-		self.waterText:SetTextColor(unpack(db.color.lightning))
-		self.waterText:SetText(GetSpecialization() == 1 and waterCount or L.LightningAbbrev)
-
-	else
-		self.waterText:SetTextColor(unpack(db.color.water))
-		self.waterText:SetText(L.WaterAbbrev)
+		Debug(4, "MULTIPLE Earth Shield")
+		self.earthText:SetTextColor(color[1], color[2], color[3])
+		self.earthText:SetText(earthCount)
 	end
+
+	if waterCount == 0 then
+		Debug(4, "MISSING", waterSpell)
+		color = db.color.alert
+		text  = waterSpell == WATER_SHIELD and L.WaterAbbrev or L.LightningAbbrev
+	elseif db.hideInfinite and not hasLightningCharges then
+		Debug(4, "INFINITE", waterSpell)
+		color = waterSpell == LIGHTNING_SHIELD and db.color.lightning or db.color.water
+		text  = ""
+	elseif waterSpell == LIGHTNING_SHIELD then
+		Debug(4, "ACTIVE", waterSpell, hasLightningCharges)
+		color = db.color.lightning
+		text  = hasLightningCharges and waterCount or L.LightningAbbrev
+	else
+		Debug(4, "ACTIVE", waterSpell)
+		color = db.color.water
+		text  = L.WaterAbbrev
+	end
+	self.waterText:SetTextColor(color[1], color[2], color[3])
+	self.waterText:SetText(text)
 end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:Alert(spell)
+function ShieldsUp:Alert(text, r, g, b, sound)
 	if not db.alert.alertWhenHidden and not self:IsShown() then return end
 
-	local r, g, b, text, sound
+	local spell = text
 	if spell == EARTH_SHIELD then
 		if db.alert.earth.text then
 			r, g, b = unpack(db.color.earth)
@@ -631,7 +641,7 @@ function ShieldsUp:Alert(spell)
 		if db.alert.earth.sound ~= "None" then
 			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
 		end
-	else
+	elseif spell == LIGHTNING_SHIELD or spell == WATER_SHIELD then
 		if db.alert.water.text then
 			r, g, b = unpack(spell == LIGHTNING_SHIELD and db.color.lightning or db.color.water)
 			text = format(L.ShieldFaded, spell)
@@ -640,6 +650,7 @@ function ShieldsUp:Alert(spell)
 			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.water.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
 		end
 	end
+
 	if r and g and b and text then
 		if self.Pour then
 			self:Pour(text, r, g, b)
@@ -647,9 +658,11 @@ function ShieldsUp:Alert(spell)
 			RaidNotice_AddMessage(RaidWarningFrame, text, { r = r, g = b, b = b })
 		end
 	end
+
 	if sound then
 		PlaySoundFile(sound, "Master")
 	end
+
 	Debug(1, "Alert, spell: %s, text: %s, sound: %s", tostring(spell), tostring(text), tostring(sound))
 end
 
@@ -662,23 +675,24 @@ function ShieldsUp:UpdateVisibility()
 	if C_PetBattles.IsInBattle()
 	or UnitIsDeadOrGhost("player")
 	or UnitInVehicle("player")
-	or ( db.show.except.nocombat and not UnitAffectingCombat("player") )
-	or ( db.show.except.resting  and IsResting() ) then
+	or ( db.hideOOC and not UnitAffectingCombat("player") )
+	or ( db.hideResting  and IsResting() ) then
 		return self:Hide()
 	end
 
 	local _, zoneType = IsInInstance()
 	if zoneType == "none" and GetZonePVPInfo() == "combat" then zoneType = "pvp" end
 
-	if ( zoneType  == "arena" and not db.show.zone.arena  )
-	or ( zoneType  == "pvp"   and not db.show.zone.pvp    )
-	or ( isInGroup == "raid"  and not db.show.group.raid  )
-	or ( isInGroup == "party" and not db.show.group.party )
-	or ( not isIngroup        and not db.show.group.solo  ) then
+	if ( zoneType  == "arena" and not db.showInArena )
+	or ( zoneType  == "pvp"   and not db.showInBG    )
+	or ( isInGroup == "raid"  and not db.showInRaid  )
+	or ( isInGroup == "party" and not db.showInParty )
+	or ( not isIngroup        and not db.showSolo    ) then
 		return self:Hide()
 	end
 
 	self:Show()
+	self:UpdateLayout()
 end
 
 ------------------------------------------------------------------------
