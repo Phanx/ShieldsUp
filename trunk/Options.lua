@@ -13,7 +13,7 @@ local ADDON_NAME, private = ...
 local ShieldsUp = ShieldsUp
 local L = private.L
 
-local floor, format, unpack = math.floor, string.format, unpack
+local floor, format = math.floor, string.format
 
 local optionsPanels = { }
 ShieldsUp.optionsPanels = optionsPanels
@@ -185,61 +185,79 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 
 	local ColorEarth = CreateColorPicker(self, L.EarthShield)
 	ColorEarth:SetPoint("TOPLEFT", ColorPanel, 8, -8)
-	ColorEarth.GetColor = function() return unpack(db.color.earth) end
+	ColorEarth.GetColor = function()
+		local color = db.color.earth
+		return color.r, color.g, color.b
+	end
 	ColorEarth.OnColorChanged = function(self, r, g, b)
-		db.color.earth[1] = r
-		db.color.earth[2] = g
-		db.color.earth[3] = b
+		db.color.earth.r = r
+		db.color.earth.g = g
+		db.color.earth.b = b
 		ShieldsUp:UpdateDisplay()
 	end
 
 	local ColorLightning = CreateColorPicker(self, L.LightningShield)
 	ColorLightning:SetPoint("TOPLEFT", ColorEarth, "BOTTOMLEFT", 0, -8)
-	ColorLightning.GetColor = function() return unpack(db.color.lightning) end
+	ColorLightning.GetColor = function()
+		local color = db.color.lightning
+		return color.r, color.g, color.b
+	end
 	ColorLightning.OnColorChanged = function(self, r, g, b)
-		db.color.lightning[1] = r
-		db.color.lightning[2] = g
-		db.color.lightning[3] = b
+		db.color.lightning.r = r
+		db.color.lightning.g = g
+		db.color.lightning.b = b
 		ShieldsUp:UpdateDisplay()
 	end
 
 	local ColorWater = CreateColorPicker(self, L.WaterShield)
 	ColorWater:SetPoint("TOPLEFT", ColorLightning, "BOTTOMLEFT", 0, -8)
-	ColorWater.GetColor = function() return unpack(db.color.water) end
+	ColorWater.GetColor = function()
+		local color = db.color.water
+		return color.r, color.g, color.b
+	end
 	ColorWater.OnColorChanged = function(self, r, g, b)
-		db.color.water[1] = r
-		db.color.water[2] = g
-		db.color.water[3] = b
+		db.color.water.r = r
+		db.color.water.g = g
+		db.color.water.b = b
 		ShieldsUp:UpdateDisplay()
 	end
 
 	local ColorActive = CreateColorPicker(self, L.Active, format(L.Active_Desc, L.EarthShield))
 	ColorActive:SetPoint("TOPLEFT", ColorPanel, "TOP", 8, -8)
-	ColorActive.GetColor = function() return unpack(db.color.normal) end
+	ColorActive.GetColor = function()
+		local color = db.color.normal
+		return color.r, color.g, color.b
+	end
 	ColorActive.OnColorChanged = function(self, r, g, b)
-		db.color.normal[1] = r
-		db.color.normal[2] = g
-		db.color.normal[3] = b
+		db.color.normal.r = r
+		db.color.normal.g = g
+		db.color.normal.b = b
 		ShieldsUp:UpdateDisplay()
 	end
 
 	local ColorOverwritten = CreateColorPicker(self, L.Overwritten, format(L.Overwritten_Desc, L.EarthShield))
 	ColorOverwritten:SetPoint("TOPLEFT", ColorActive, "BOTTOMLEFT", 0, -8)
-	ColorOverwritten.GetColor = function() return unpack(db.color.overwritten) end
+	ColorOverwritten.GetColor = function()
+		local color = db.color.overwritten
+		return color.r, color.g, color.b
+	end
 	ColorOverwritten.OnColorChanged = function(self, r, g, b)
-		db.color.overwritten[1] = r
-		db.color.overwritten[2] = g
-		db.color.overwritten[3] = b
+		db.color.overwritten.r = r
+		db.color.overwritten.g = g
+		db.color.overwritten.b = b
 		ShieldsUp:UpdateDisplay()
 	end
 
 	local ColorMissing = CreateColorPicker(self, L.Missing, L.Missing_Desc)
 	ColorMissing:SetPoint("TOPLEFT", ColorOverwritten, "BOTTOMLEFT", 0, -8)
-	ColorMissing.GetColor = function() return unpack(db.color.alert) end
+	ColorMissing.GetColor = function()
+		local color = db.color.alert
+		return color.r, color.g, color.b
+	end
 	ColorMissing.OnColorChanged = function(self, r, g, b)
-		db.color.alert[1] = r
-		db.color.alert[2] = g
-		db.color.alert[3] = b
+		db.color.alert.r = r
+		db.color.alert.g = g
+		db.color.alert.b = b
 		ShieldsUp:UpdateDisplay()
 	end
 
@@ -530,7 +548,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	HideInfinite:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, -8)
 	HideInfinite.OnClick = function(this, checked)
 		db.hideInfinite = checked
-		ShieldsUp:UpdateDisplayMode()
+		ShieldsUp:UpdateDisplay()
 	end
 
 	--------------------------------------------------------------------
@@ -603,14 +621,13 @@ end)
 
 ------------------------------------------------------------------------
 
-optionsPanels[#optionsPanels +1] = LibStub("LibAboutPanel").new(ADDON_NAME, ADDON_NAME)
+optionsPanels[#optionsPanels + 1] = LibStub("LibAboutPanel").new(ADDON_NAME, ADDON_NAME)
 
 ------------------------------------------------------------------------
 
 SLASH_SHIELDSUP1 = "/sup"
 SLASH_SHIELDSUP2 = "/shieldsup"
 SlashCmdList.SHIELDSUP = function()
-	InterfaceOptionsFrame_OpenToCategory(optionsPanels[#optionsPanels])
 	InterfaceOptionsFrame_OpenToCategory(optionsPanels[1])
 end
 

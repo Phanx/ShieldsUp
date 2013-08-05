@@ -18,7 +18,7 @@ local EARTH_SHIELD = GetSpellInfo(974)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 local WATER_SHIELD = GetSpellInfo(52127)
 
-local DISPLAY_MULTIPLE, DISPLAY_SINGLE = 2, 1
+local DISPLAY_SINGLE, DISPLAY_MULTIPLE = 1, 2
 
 local L = private.L
 L.EarthShield = EARTH_SHIELD
@@ -72,12 +72,12 @@ local defaults = {
 		shadow = true,
 	},
 	color = {
-		earth = { 0.65, 1, 0.25 },
-		lightning = { 0.25, 0.65, 1 },
-		water = { 0.25, 0.65, 1 },
-		normal = { 1, 1, 1 },
-		overwritten = { 1, 1, 0 },
-		alert = { 1, 0, 0 },
+		earth = { r = 0.65, g = 1, b = 0.25 },
+		lightning = { r = 0.25, g = 0.65, b = 1 },
+		water = { r = 0.25, g = 0.65, b = 1 },
+		normal = { r = 1, g = 1, b = 1 },
+		overwritten = { r = 1, g = 1, b = 0 },
+		alert = { r = 1, g = 0, b = 0 },
 		useClassColor = false,
 	},
 	alert = {
@@ -167,7 +167,6 @@ function ShieldsUp:ADDON_LOADED(addon)
 	local function CopyDefaults(src, dst)
 		if type(src) ~= "table" then return {} end
 		if type(dst) ~= "table" then dst = {} end
-
 		for k, v in pairs(src) do
 			if type(v) == "table" then
 				dst[k] = CopyDefaults(v, dst[k])
@@ -178,6 +177,14 @@ function ShieldsUp:ADDON_LOADED(addon)
 		return dst
 	end
 	db = CopyDefaults(defaults, ShieldsUpDB)
+
+	-- Upgrade from i/v to k/v
+	for k, v in pairs(db.color) do
+		if type(v) == "table" and v[1] then
+			v.r, v.g, v.b = v[1], v[2], v[3]
+			v[1], v[2], v[3] = nil, nil, nil
+		end
+	end
 
 	self:UnregisterEvent("ADDON_LOADED")
 	self.ADDON_LOADED = nil
@@ -226,6 +233,7 @@ function ShieldsUp:PLAYER_LOGIN()
 				end
 				sort(self.fonts)
 				self:UpdateLayout()
+				self:UpdateDisplay()
 			elseif mediatype == "sound" then
 				wipe(self.sounds)
 				for i, v in pairs(SharedMedia:List("sound")) do
@@ -238,6 +246,7 @@ function ShieldsUp:PLAYER_LOGIN()
 		function ShieldsUp:SharedMedia_SetGlobal(callback, mediatype)
 			if mediatype == "font" then
 				self:UpdateLayout()
+				self:UpdateDisplay()
 			end
 		end
 
@@ -292,6 +301,10 @@ function ShieldsUp:PLAYER_LOGIN()
 	self:UnregisterEvent("PLAYER_LOGIN")
 	self.PLAYER_LOGIN = nil
 
+	self.waterText = self:CreateFontString(nil, "OVERLAY")
+	self.earthText = self:CreateFontString(nil, "OVERLAY")
+	self.nameText  = self:CreateFontString(nil, "OVERLAY")
+
 	self:PLAYER_SPECIALIZATION_CHANGED()
 	self:GROUP_ROSTER_UPDATE()
 	self:UpdateVisibility()
@@ -318,7 +331,7 @@ function ShieldsUp:PLAYER_SPECIALIZATION_CHANGED()
 		waterSpell = hasEarthShield and WATER_SHIELD or LIGHTNING_SHIELD
 	end
 
-	self:UpdateDisplayMode()
+	self:UpdateDisplay()
 end
 
 ------------------------------------------------------------------------
@@ -363,7 +376,7 @@ do
 
 	function ShieldsUp:UNIT_AURA(unit)
 		if ignore[unit] then return end
-		Debug(4, "UNIT_AURA, "..unit)
+		Debug(5, "UNIT_AURA, "..unit)
 
 		local alert, update
 
@@ -476,7 +489,6 @@ function ShieldsUp:GROUP_ROSTER_UPDATE()
 		if newGroup ~= isInGroup then
 			isInGroup = newGroup
 			Debug(1, "Joined a", newGroup, "group")
-			self:UpdateLayout()
 			self:UpdateVisibility()
 		end
 	else
@@ -484,7 +496,6 @@ function ShieldsUp:GROUP_ROSTER_UPDATE()
 		if isInGroup then
 			Debug(1, "Left a group")
 			isInGroup = false
-			self:UpdateLayout()
 			self:UpdateVisibility()
 		end
 	end
@@ -556,16 +567,6 @@ end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:UpdateDisplayMode()
-	local displayMode = DISPLAY_SINGLE
-	if hasEarthShield and isInGroup and not db.hideInfinite then
-		displayMode = DISPLAY_MULTIPLE
-	end
-	Debug(3, "UpdateDisplayMode", displayMode == DISPLAY_MULTIPLE and "MULTIPLE" or "SINGLE")
-	self.displayMode = displayMode
-	self:UpdateLayout()
-end
-
 function ShieldsUp:UpdateDisplay()
 	Debug(3, "UpdateDisplay")
 	if GetTime() - earthTime > 300 then
@@ -573,70 +574,87 @@ function ShieldsUp:UpdateDisplay()
 		earthName = ""
 	end
 
+	local displayMode = DISPLAY_SINGLE
+	if hasEarthShield and isInGroup and (waterCount == 0 or not db.hideInfinite) and (earthCount == 0 or earthGUID ~= playerGUID) then
+		displayMode = DISPLAY_MULTIPLE
+	end
+	if displayMode ~= self.displayMode then
+		Debug(3, "UpdateDisplayMode", displayMode == DISPLAY_MULTIPLE and "MULTIPLE" or "SINGLE")
+		self.displayMode = displayMode
+		self:UpdateLayout()
+	end
+
 	local color, text
 
-	if hasEarthShield then
-		if isInGroup and db.namePosition ~= "NONE" then
-			if earthCount == 0 then
-				color = db.color.alert
-			elseif earthOverwritten then
-				color = db.color.overwritten
-			elseif db.color.useClassColor then
-				local _, class = UnitClass(earthUnit)
-				color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
-			else
-				color = db.color.earth
-			end
-			self.nameText:SetTextColor(color.r or color[1], color.g or color[2], color.b or color[3])
-			if earthOverwritten and tonumber(ENABLE_COLORBLIND_MODE) > 0 then
-				self.nameText:SetFormattedText("* %s *", earthName)
-			else
-				self.nameText:SetText(earthName)
-			end
+	if hasEarthShield and isInGroup and db.namePosition ~= "NONE" then
+		Debug(4, "name", db.namePosition)
+		if earthCount == 0 then
+			color = db.color.alert
+		elseif earthOverwritten then
+			color = db.color.overwritten
+		elseif db.color.useClassColor then
+			local _, class = UnitClass(earthUnit)
+			color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
+		else
+			color = db.color.normal
 		end
+		self.nameText:SetTextColor(color.r, color.g, color.b)
+		if earthOverwritten and tonumber(ENABLE_COLORBLIND_MODE) > 0 then
+			self.nameText:SetFormattedText("* %s *", earthName)
+		else
+			self.nameText:SetText(earthName)
+		end
+	else
+		Debug(4, "name", "HIDDEN")
+		self.nameText:SetText("")
+	end
 
+	if not hasEarthShield then -- or (displayMode == DISPLAY_SINGLE and earthCount == 0) then
+		Debug(4, EARTH_SHIELD, "HIDDEN", tostring(hasEarthShield), earthCount)
+		self.earthText:SetText("")
+	else
+		Debug(4, EARTH_SHIELD, earthCount > 0 and "ACTIVE" or "MISSING")
 		color = earthCount > 0 and db.color.earth or db.color.alert
-		if self.displayMode == DISPLAY_SINGLE and earthCount > 0 then
-			Debug(4, "SINGLE Earth Shield")
-			self.waterText:SetTextColor(color[1], color[2], color[3])
-			self.waterText:SetText(earthCount)
-			return
-		end
-		Debug(4, "MULTIPLE Earth Shield")
-		self.earthText:SetTextColor(color[1], color[2], color[3])
+		self.earthText:SetTextColor(color.r, color.g, color.b)
 		self.earthText:SetText(earthCount)
 	end
 
-	if waterCount == 0 then
-		Debug(4, "MISSING", waterSpell)
+	if displayMode == DISPLAY_SINGLE and earthCount > 0 then
+		Debug(4, waterSpell, "HIDDEN")
+		color = db.color.normal
+		text  = ""
+	elseif waterCount == 0 then
+		Debug(4, waterSpell, "MISSING")
 		color = db.color.alert
 		text  = waterSpell == WATER_SHIELD and L.WaterAbbrev or L.LightningAbbrev
 	elseif db.hideInfinite and not hasLightningCharges then
-		Debug(4, "INFINITE", waterSpell)
+		Debug(4, waterSpell, "INFINITE")
 		color = waterSpell == LIGHTNING_SHIELD and db.color.lightning or db.color.water
 		text  = ""
 	elseif waterSpell == LIGHTNING_SHIELD then
-		Debug(4, "ACTIVE", waterSpell, hasLightningCharges)
+		Debug(4, waterSpell, "ACTIVE", hasLightningCharges)
 		color = db.color.lightning
 		text  = hasLightningCharges and waterCount or L.LightningAbbrev
 	else
-		Debug(4, "ACTIVE", waterSpell)
+		Debug(4, waterSpell, "ACTIVE")
 		color = db.color.water
 		text  = L.WaterAbbrev
 	end
-	self.waterText:SetTextColor(color[1], color[2], color[3])
+	self.waterText:SetTextColor(color.r, color.g, color.b)
 	self.waterText:SetText(text)
 end
 
 ------------------------------------------------------------------------
 
+local color = {}
 function ShieldsUp:Alert(text, r, g, b, sound)
 	if not db.alert.alertWhenHidden and not self:IsShown() then return end
 
 	local spell = text
 	if spell == EARTH_SHIELD then
 		if db.alert.earth.text then
-			r, g, b = unpack(db.color.earth)
+			local t = db.color.earth
+			r, g, b = t.r, t.g, t.b
 			text = format(L.ShieldFadedFrom, spell, earthName == playerName and L.YOU or earthName)
 		end
 		if db.alert.earth.sound ~= "None" then
@@ -644,7 +662,8 @@ function ShieldsUp:Alert(text, r, g, b, sound)
 		end
 	elseif spell == LIGHTNING_SHIELD or spell == WATER_SHIELD then
 		if db.alert.water.text then
-			r, g, b = unpack(spell == LIGHTNING_SHIELD and db.color.lightning or db.color.water)
+			local t = spell == LIGHTNING_SHIELD and db.color.lightning or db.color.water
+			r, g, b = t.r, t.g, t.b
 			text = format(L.ShieldFaded, spell)
 		end
 		if db.alert.water.sound ~= "None" then
@@ -656,7 +675,8 @@ function ShieldsUp:Alert(text, r, g, b, sound)
 		if self.Pour then
 			self:Pour(text, r, g, b)
 		else
-			RaidNotice_AddMessage(RaidWarningFrame, text, { r = r, g = b, b = b })
+			color.r, color.g, color.b = r, g, b
+			RaidNotice_AddMessage(RaidWarningFrame, text, color)
 		end
 	end
 
@@ -682,7 +702,9 @@ function ShieldsUp:UpdateVisibility()
 	end
 
 	local _, zoneType = IsInInstance()
-	if zoneType == "none" and GetZonePVPInfo() == "combat" then zoneType = "pvp" end
+	if zoneType == "none" and GetZonePVPInfo() == "combat" then
+		zoneType = "pvp"
+	end
 
 	if ( zoneType  == "arena" and not db.showInArena )
 	or ( zoneType  == "pvp"   and not db.showInBG    )
@@ -694,6 +716,7 @@ function ShieldsUp:UpdateVisibility()
 
 	self:Show()
 	self:UpdateLayout()
+	self:UpdateDisplay()
 end
 
 ------------------------------------------------------------------------
@@ -703,70 +726,48 @@ function ShieldsUp:UpdateLayout()
 
 	self:SetPoint("CENTER", UIParent, "CENTER", db.posx, db.posy)
 	self:SetAlpha(db.alpha)
-	self:SetHeight(1)
-	self:SetWidth(1)
+	self:SetSize(1 + db.padh, 1 + db.padv)
 
 	local face = SharedMedia and SharedMedia:Fetch("font", db.font.face) or "Fonts\\FRIZQT__.ttf"
-
 	local outline = db.font.outline
 	local shadow = db.font.shadow and 1 or 0
 
-	if not self.waterText then
-		self.waterText = self:CreateFontString(nil, "OVERLAY")
-	end
 	self.waterText:SetFont(face, db.font.large, outline)
 	self.waterText:SetShadowOffset(0, 0)
 	self.waterText:SetShadowOffset(shadow, -shadow)
 	self.waterText:ClearAllPoints()
-	if self.displayMode == DISPLAY_MULTIPLE then
-		if db.namePosition == "TOP" then
-			self.waterText:SetPoint("TOPRIGHT", self, "TOPLEFT", -floor(db.padh / 2 + 0.5), 0)
-		else
-			self.waterText:SetPoint("BOTTOMRIGHT", self, "BOTTOMLEFT", -floor(db.padh / 2 + 0.5), 0)
-		end
-	else
-		if db.namePosition == "TOP" then
-			self.waterText:SetPoint("TOP", self, "TOP", 0, 0)
-		else
-			self.waterText:SetPoint("BOTTOM", self, "BOTTOM", 0, 0)
-		end
-	end
 
-	if not self.earthText then
-		self.earthText = self:CreateFontString(nil, "OVERLAY")
-	end
 	self.earthText:SetFont(face, db.font.large, outline)
 	self.earthText:SetShadowOffset(0, 0)
 	self.earthText:SetShadowOffset(shadow, -shadow)
 	self.earthText:ClearAllPoints()
-	if db.namePosition == "TOP" then
-		self.earthText:SetPoint("TOPLEFT", self, "TOPRIGHT", floor(db.padh / 2 + 0.5), 0)
-	else
-		self.earthText:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", floor(db.padh / 2 + 0.5), 0)
-	end
-	if hasEarthShield and isInGroup and not db.hideInfinite then
-		self.earthText:Show()
-	else
-		self.earthText:Hide()
-	end
 
-	if not self.nameText then
-		self.nameText = self:CreateFontString(nil, "OVERLAY")
-	end
 	self.nameText:SetFont(face, db.font.small, outline)
 	self.nameText:SetShadowOffset(0, 0)
 	self.nameText:SetShadowOffset(shadow, -shadow)
-	if hasEarthShield and isInGroup and db.namePosition ~= "NONE" then
-		self.nameText:Show()
-		self.nameText:ClearAllPoints()
+	self.nameText:ClearAllPoints()
+
+	if self.displayMode == DISPLAY_MULTIPLE then
+		Debug(1, "displayMode MULTIPLE", db.namePosition)
 		if db.namePosition == "TOP" then
-			self.nameText:SetPoint("BOTTOM", self, "TOP", 0, db.padv)
+			self.waterText:SetPoint("TOPRIGHT", self, "BOTTOMLEFT")
+			self.earthText:SetPoint("TOPLEFT", self, "BOTTOMRIGHT")
+			self.nameText:SetPoint("BOTTOM", self, "TOP")
 		else
-			self.nameText:SetPoint("TOP", self, "BOTTOM", 0, -db.padv)
+			self.waterText:SetPoint("BOTTOMRIGHT", self, "TOPLEFT")
+			self.earthText:SetPoint("BOTTOMLEFT", self, "TOPRIGHT")
+			self.nameText:SetPoint("TOP", self, "BOTTOM")
 		end
 	else
-		self.nameText:Hide()
+		Debug(1, "displayMode SINGLE", db.namePosition)
+		if db.namePosition == "TOP" then
+			self.waterText:SetPoint("TOP", self, "BOTTOM")
+			self.earthText:SetPoint("TOP", self, "BOTTOM")
+			self.nameText:SetPoint("BOTTOM", self, "TOP")
+		else
+			self.waterText:SetPoint("BOTTOM", self, "TOP")
+			self.earthText:SetPoint("BOTTOM", self, "TOP")
+			self.nameText:SetPoint("TOP", self, "BOTTOM")
+		end
 	end
-
-	self:UpdateDisplay()
 end
