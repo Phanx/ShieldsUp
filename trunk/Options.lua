@@ -42,7 +42,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	local PositionX = CreateSlider(self, L.PositionX, nil, floor(UIWIDTH / 10) / 2 * -10, floor(UIWIDTH / 10) / 2 * 10, 5)
 	PositionX:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -4, -12)
 	PositionX:SetPoint("TOPRIGHT", Notes, "BOTTOM", -8, 12)
-	function PositionX:OnValueChanged(value)
+	function PositionX:ApplyValue(value)
 		db.posx = value
 		ShieldsUp:UpdateLayout()
 	end
@@ -50,7 +50,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	local PositionY = CreateSlider(self, L.PositionY, nil, floor(UIHEIGHT / 10) / 2 * -10, floor(UIHEIGHT / 10) / 2 * 10, 5)
 	PositionY:SetPoint("TOPLEFT", PositionX, "BOTTOMLEFT", 0, -12)
 	PositionY:SetPoint("TOPRIGHT", PositionX, "BOTTOMRIGHT", 0, -12)
-	function PositionY:OnValueChanged(value)
+	function PositionY:ApplyValue(value)
 		db.posy = value
 		ShieldsUp:UpdateLayout()
 	end
@@ -58,7 +58,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	local PaddingH = CreateSlider(self, L.PaddingH, L.PaddingH_Desc, 0, floor(UIWIDTH / 10) / 2 * 10, 1)
 	PaddingH:SetPoint("TOPLEFT", PositionY, "BOTTOMLEFT", 0, -12)
 	PaddingH:SetPoint("TOPRIGHT", PositionY, "BOTTOMRIGHT", 0, -12)
-	function PaddingH:OnValueChanged(value)
+	function PaddingH:ApplyValue(value)
 		db.padh = value
 		ShieldsUp:UpdateLayout()
 	end
@@ -66,7 +66,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	local PaddingV = CreateSlider(self, L.PaddingV, L.PaddingV_Desc, 0, floor(UIWIDTH / 10) / 2 * 10, 1)
 	PaddingV:SetPoint("TOPLEFT", PaddingH, "BOTTOMLEFT", 0, -12)
 	PaddingV:SetPoint("TOPRIGHT", PaddingH, "BOTTOMRIGHT", 0, -12)
-	function PaddingV:OnValueChanged(value)
+	function PaddingV:ApplyValue(value)
 		db.padv = value
 		ShieldsUp:UpdateLayout()
 	end
@@ -74,7 +74,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	local Opacity = CreateSlider(self, L.Opacity, nil, 0, 1, 0.05, true)
 	Opacity:SetPoint("TOPLEFT", PaddingV, "BOTTOMLEFT", 0, -12)
 	Opacity:SetPoint("TOPRIGHT", PaddingV, "BOTTOMRIGHT", 0, -12)
-	function Opacity:OnValueChanged(value)
+	function Opacity:ApplyValue(value)
 		db.alpha = value
 		ShieldsUp:UpdateLayout()
 	end
@@ -88,7 +88,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 		local _, height, flags = Font.valueText:GetFont()
 		Font.valueText:SetFont(SharedMedia:Fetch("font", db.font.face or "Friz Quadrata TT"), height, flags)
 
-		function Font:OnValueChanged(value)
+		function Font:ApplyValue(value)
 			local _, height, flags = self.valueText:GetFont()
 			self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
 			db.font.face = value
@@ -144,7 +144,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	local CounterSize = CreateSlider(self, L.CounterSize, nil, 6, 32, 1)
 	CounterSize:SetPoint("TOPLEFT", Outline, "BOTTOMLEFT", 0, -12)
 	CounterSize:SetPoint("TOPRIGHT", Outline, "BOTTOMRIGHT", 0, -12)
-	function CounterSize:OnValueChanged(value)
+	function CounterSize:ApplyValue(value)
 		db.font.large = value
 		ShieldsUp:UpdateLayout()
 	end
@@ -152,21 +152,21 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 	local NameSize = CreateSlider(self, L.NameSize, nil, 6, 32, 1)
 	NameSize:SetPoint("TOPLEFT", CounterSize, "BOTTOMLEFT", 0, -12)
 	NameSize:SetPoint("TOPRIGHT", CounterSize, "BOTTOMRIGHT", 0, -12)
-	function NameSize:OnValueChanged(value)
+	function NameSize:ApplyValue(value)
 		db.font.small = value
 		ShieldsUp:UpdateLayout()
 	end
 
 	local Shadow = CreateCheckbox(self, L.Shadow)
 	Shadow:SetPoint("TOPLEFT", NameSize, "BOTTOMLEFT", 0, -12)
-	function Shadow:OnValueChanged(value)
+	function Shadow:ApplyValue(value)
 		db.font.shadow = value
 		ShieldsUp:UpdateLayout()
 	end
 
 	local ClassColor = CreateCheckbox(self, L.ClassColor, format(L.ClassColor_Desc, L.EarthShield))
 	ClassColor:SetPoint("TOPLEFT", Shadow, "BOTTOMLEFT", 0, -8)
-	function ClassColor:OnValueChanged(value)
+	function ClassColor:ApplyValue(value)
 		db.color.useClassColor = value
 		ShieldsUp:UpdateDisplay()
 	end
@@ -336,13 +336,13 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 	local EarthText = CreateCheckbox(self, L.AlertText, format(L.AlertText_Desc, L.EarthShield))
 	EarthText:SetPoint("TOPLEFT", EarthSound, "BOTTOMLEFT", 0, -8)
-	EarthText.OnValueChanged = function(self, checked)
+	EarthText.ApplyValue = function(self, checked)
 		db.alert.earth.text = checked
 	end
 
 	local AlertOverwritten = CreateCheckbox(self, L.AlertOverwritten, format(L.AlertOverwritten_Desc, L.EarthShield))
 	AlertOverwritten:SetPoint("TOPLEFT", EarthText, "BOTTOMLEFT", 0, -8)
-	AlertOverwritten.OnValueChanged = function(self, checked)
+	AlertOverwritten.ApplyValue = function(self, checked)
 		db.alert.earth.overwritten = checked
 	end
 
@@ -383,7 +383,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 	local WaterText = CreateCheckbox(self, L.AlertText, format(L.AlertText_Desc, L.WaterShield))
 	WaterText:SetPoint("TOPLEFT", WaterSound, "BOTTOMLEFT", 0, -8)
-	WaterText.OnValueChanged = function(self, checked)
+	WaterText.ApplyValue = function(self, checked)
 		db.alert.water.text = checked
 	end
 
@@ -501,7 +501,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 		SinkSticky = CreateCheckbox(self, SinkOptions.args.Sticky.name, SinkOptions.args.Sticky.desc)
 		SinkSticky:SetPoint("TOPLEFT", SinkOutput, "BOTTOMLEFT", 0, -8)
-		SinkSticky.OnValueChanged = function(self, checked)
+		SinkSticky.ApplyValue = function(self, checked)
 			SinkOptions.set("Sticky", checked)
 			SinkPanel_Update()
 		end
@@ -546,7 +546,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 
 	local HideInfinite = CreateCheckbox(self, L.HideInfinite, L.HideInfinite_Desc)
 	HideInfinite:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, -8)
-	HideInfinite.OnClick = function(this, checked)
+	HideInfinite.ApplyValue = function(this, checked)
 		db.hideInfinite = checked
 		ShieldsUp:UpdateDisplay()
 	end
@@ -562,26 +562,27 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 
 	local ShowSolo = CreateCheckbox(self, L.ShowSolo)
 	ShowSolo:SetPoint("TOPLEFT", ShowLabel, "BOTTOMLEFT", -2, -8)
+	ShowSolo.ApplyValue = OnClick
 	ShowSolo.key = "showSolo"
 
 	local ShowParty = CreateCheckbox(self, L.ShowParty)
 	ShowParty:SetPoint("TOPLEFT", ShowSolo, "BOTTOMLEFT", 0, -8)
-	ShowParty.OnClick = OnClick
+	ShowParty.ApplyValue = OnClick
 	ShowParty.key = "showInParty"
 
 	local ShowRaid = CreateCheckbox(self, L.ShowRaid)
 	ShowRaid:SetPoint("TOPLEFT", ShowParty, "BOTTOMLEFT", 0, -8)
-	ShowRaid.OnClick = OnClick
+	ShowRaid.ApplyValue = OnClick
 	ShowRaid.key = "showInRaid"
 
 	local ShowArena = CreateCheckbox(self, L.ShowArena)
 	ShowArena:SetPoint("TOPLEFT", ShowRaid, "BOTTOMLEFT", 0, -8)
-	ShowArena.OnClick = OnClick
+	ShowArena.ApplyValue = OnClick
 	ShowArena.key = "showInArena"
 
 	local ShowBattleground = CreateCheckbox(self, L.ShowBattleground)
 	ShowBattleground:SetPoint("TOPLEFT", ShowArena, "BOTTOMLEFT", 0, -8)
-	ShowBattleground.OnClick = OnClick
+	ShowBattleground.ApplyValue = OnClick
 	ShowBattleground.key = "showInBG"
 
 	--------------------------------------------------------------------
@@ -595,12 +596,12 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 
 	local HideOOC = CreateCheckbox(self, L.HideOOC)
 	HideOOC:SetPoint("TOPLEFT", HideLabel, "BOTTOMLEFT", -2, -8)
-	HideOOC.OnClick = OnClick
+	HideOOC.ApplyValue = OnClick
 	HideOOC.key = "hideOOC"
 
 	local HideResting = CreateCheckbox(self, L.HideResting)
 	HideResting:SetPoint("TOPLEFT", HideOOC, "BOTTOMLEFT", 0, -8)
-	HideResting.OnClick = OnClick
+	HideResting.ApplyValue = OnClick
 	HideResting.key = "hideResting"
 
 	--------------------------------------------------------------------

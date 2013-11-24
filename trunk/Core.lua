@@ -25,6 +25,8 @@ L.EarthShield = EARTH_SHIELD
 L.LightningShield = LIGHTNING_SHIELD
 L.WaterShield = WATER_SHIELD
 
+local DEBUG_LEVEL = 0
+
 ------------------------------------------------------------------------
 
 local SharedMedia, Sink
@@ -111,7 +113,7 @@ local function Print(str, ...)
 end
 
 local function Debug(lvl, str, ...)
-	if lvl > 0 then return end
+	if lvl > DEBUG_LEVEL then return end
 	if select("#", ...) > 0 then
 		if strfind(str, "%%[dfqsx%.%d]") then
 			return print("|cffff7f7fShieldsUp:|r", format(str, ...))
@@ -127,12 +129,10 @@ end
 local function GetAuraCharges(unit, aura)
 	local name, _, _, charges, _, _, _, caster = UnitAura(unit, aura)
 	Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
-	if not name then
-		return 0
-	elseif charges > 1 then
-		return charges, caster == "player", caster
+	if name then
+		return charges > 1 and charges or 1, caster == "player", caster
 	else
-		return 1, caster == "player", caster
+		return 0
 	end
 end
 
@@ -146,7 +146,7 @@ local function UnitHasEarthShield(unit)
 		earthTime  = expires - duration
 		Debug(2, "Earth Shield found on", unit)
 	end
-	return charges
+	return not not name
 end
 
 ------------------------------------------------------------------------
@@ -233,7 +233,6 @@ function ShieldsUp:PLAYER_LOGIN()
 				end
 				sort(self.fonts)
 				self:UpdateLayout()
-				self:UpdateDisplay()
 			elseif mediatype == "sound" then
 				wipe(self.sounds)
 				for i, v in pairs(SharedMedia:List("sound")) do
@@ -246,7 +245,6 @@ function ShieldsUp:PLAYER_LOGIN()
 		function ShieldsUp:SharedMedia_SetGlobal(callback, mediatype)
 			if mediatype == "font" then
 				self:UpdateLayout()
-				self:UpdateDisplay()
 			end
 		end
 
@@ -715,13 +713,12 @@ function ShieldsUp:UpdateVisibility()
 	end
 
 	self:Show()
-	self:UpdateLayout()
-	self:UpdateDisplay()
+	self:UpdateLayout(true)
 end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:UpdateLayout()
+function ShieldsUp:UpdateLayout(updateDisplay)
 	Debug(1, "UpdateLayout")
 
 	self:SetPoint("CENTER", UIParent, "CENTER", db.posx, db.posy)
@@ -769,5 +766,9 @@ function ShieldsUp:UpdateLayout()
 			self.earthText:SetPoint("BOTTOM", self, "TOP")
 			self.nameText:SetPoint("TOP", self, "BOTTOM")
 		end
+	end
+
+	if updateDisplay then
+		self:UpdateDisplay()
 	end
 end
