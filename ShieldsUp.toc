@@ -1,13 +1,13 @@
 ## Interface: 50400
-## Version: 5.4.1.wowi:revision
+## Version: 5.4.2.wowi:revision
 
 ## Title: ShieldsUp
 ## Notes: Text-based shaman shield monitor.
-## Notes-deDE: Folgen deinem Elementarschild.
-## Notes-esES: Seguir a sus Escudos elementales.
-## Notes-esMX: Seguir a sus Escudos elementales.
-## Notes-frFR: Suivez vos Boucliers élémentaires.
-## Notes-ptBR: Siga os seus Escudos Elementares.
+## Notes-deDE: Textbasierte Verfolgung der Elementarschilde.
+## Notes-esES: Rastreador textual de sus escudos elementales.
+## Notes-esMX: Rastreador textual de sus escudos elementales.
+## Notes-frFR: Suivi textuel des vous boucliers élémentaires.
+## Notes-ptBR: Rastreador textual de seus escudos elementais.
 
 ## Author: Phanx
 ## X-Credits: Inspired by Infineon's beSch.
