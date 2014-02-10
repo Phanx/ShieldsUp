@@ -1,7 +1,7 @@
 --[[--------------------------------------------------------------------
 	ShieldsUp
 	Text-based shaman shield monitor.
-	Copyright (c) 2008-2013 Phanx <addons@phanx.net>. All rights reserved.
+	Copyright (c) 2008-2014 Phanx <addons@phanx.net>. All rights reserved.
 	See the accompanying README and LICENSE files for more information.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/addons/wow/shieldsup
@@ -656,7 +656,7 @@ function ShieldsUp:Alert(text, r, g, b, sound)
 			text = format(L.ShieldFadedFrom, spell, earthName == playerName and L.YOU or earthName)
 		end
 		if db.alert.earth.sound ~= "None" then
-			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
+			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.earth.sound)) or "Sound\\Doodad\\BellTollHorde.ogg"
 		end
 	elseif spell == LIGHTNING_SHIELD or spell == WATER_SHIELD then
 		if db.alert.water.text then
@@ -665,7 +665,7 @@ function ShieldsUp:Alert(text, r, g, b, sound)
 			text = format(L.ShieldFaded, spell)
 		end
 		if db.alert.water.sound ~= "None" then
-			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.water.soundFile)) or "Sound\\Doodad\\BellTollHorde.ogg"
+			sound = (SharedMedia and SharedMedia:Fetch("sound", db.alert.water.sound)) or "Sound\\Doodad\\BellTollHorde.ogg"
 		end
 	end
 

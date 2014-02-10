@@ -2,7 +2,7 @@
 =============
 
 	A World of Warcraft user interface addon
-	Copyright (c) 2008-2013 Phanx <addons@phanx.net>. All rights reserved.
+	Copyright (c) 2008-2014 Phanx <addons@phanx.net>. All rights reserved.
 	See the accompanying README and LICENSE files for more information.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp
 	http://www.curse.com/addons/wow/shieldsup

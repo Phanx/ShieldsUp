@@ -3,16 +3,16 @@
 
 ## Title: ShieldsUp
 ## Notes: Text-based shaman shield monitor.
-## Notes-deDE: Textbasierte Verfolgung der Elementarschilde.
-## Notes-esES: Rastreador textual de sus escudos elementales.
-## Notes-esMX: Rastreador textual de sus escudos elementales.
-## Notes-frFR: Suivi textuel des vous boucliers élémentaires.
-## Notes-ptBR: Rastreador textual de seus escudos elementais.
+## Notes-deDE: Textbasierter Überwacher für deinen Elementarschilde.
+## Notes-esES: Rastreador textual para tus escudos elementales.
+## Notes-esMX: Rastreador textual para tus escudos elementales.
+## Notes-frFR: Traqueur textuel pour vos boucliers élémentaires.
+## Notes-ptBR: Rastreador textual para seus escudos elementares.
 
 ## Author: Phanx
 ## X-Credits: Inspired by Infineon's beSch.
 ## X-Email: addons@phanx.net
-## X-Copyright: Copyright (c) 2008-2013 Phanx. All rights reserved.
+## X-Copyright: Copyright (c) 2008-2014 Phanx. All rights reserved.
 ## X-License: See the accompanying LICENSE file for details.
 ## X-CompatibleLocales: enUS, deDE, esES, esMX, frFR, itIT, ptBR, ruRU, koKR, zhCN, zhTW
 ## X-Localizations: enUS, deDE, esES, esMX, frFR, itIT, ptBR, ruRU, koKR, zhCN, zhTW
