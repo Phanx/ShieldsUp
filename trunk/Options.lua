@@ -285,9 +285,6 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 	local Title, Notes = self:CreateHeader(self.name, L.Alerts_Desc)
 
-L.AlertWhileHidden = "Alert while hidden"
-L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
-
 	local AlertWhileHidden = self:CreateCheckbox(L.AlertWhileHidden, L.AlertWhileHidden_Desc)
 	AlertWhileHidden:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, -12)
 	AlertWhileHidden.ApplyValue = function(this, checked)
