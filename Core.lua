@@ -646,6 +646,7 @@ end
 
 local color = {}
 function ShieldsUp:Alert(text, r, g, b, sound)
+	Debug(2, "Alert", text, sound)
 	if not db.alert.alertWhenHidden and not self:IsShown() then return end
 
 	local spell = text

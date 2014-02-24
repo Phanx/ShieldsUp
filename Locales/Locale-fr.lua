@@ -9,7 +9,6 @@
 	French localization
 	Last updated 2009-11-15 by krukniak
 	***
-	***
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -28,6 +27,8 @@ L.AlertSound_Desc = "Selectionnez le fichier son à jouer quand %s expire."
 L.AlertText = "Texte d'alerte"
 L.AlertText_Desc = "Affiche un message texte quand le %s expire."
 L.AlertTextSink = "Affichage du texte"
+--L.AlertWhileHidden = "Alert while hidden"
+--L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
 L.Bottom = "Bas"
 L.ClassColor = "Couleur de classe"
 L.ClassColor_Desc = "Colore le nom de la cible avec la couleur de classe appropriée."

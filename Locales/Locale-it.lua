@@ -9,7 +9,6 @@
 	Italian localization
 	Last updated 2012-07-29 by Phanx
 	***
-	***
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -28,6 +27,8 @@ L.AlertSound = "Riprodurre l'audio"
 L.AlertText = "Visualizzare il testo"
 --L.AlertText_Desc = "Show a message when your %s expires."
 --L.AlertTextSink = "Message location"
+--L.AlertWhileHidden = "Alert while hidden"
+--L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
 L.Bottom = "Basso"
 L.ClassColor = "Colore di classe"
 L.ClassColor_Desc = "Colora il nome del bersaglio con l'appropriato colore di classe."

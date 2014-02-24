@@ -9,7 +9,6 @@
 	Korean localization
 	Last updated 2012-02-18 by moom21
 	***
-	***
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -28,6 +27,8 @@ L.AlertSound_Desc = "%s 은이 만료되면 재생할 사운드를 선택합니�
 L.AlertText = "텍스트 경고"
 L.AlertText_Desc = "%s 은이 만료되면 문자 메시지를 표시합니다."
 L.AlertTextSink = "텍스트 출력"
+--L.AlertWhileHidden = "Alert while hidden"
+--L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
 --L.Bottom = "Bottom"
 --L.ClassColor = "Use class color"
 --L.ClassColor_Desc = "Color the target name by class when your %s is active."

@@ -8,8 +8,7 @@
 ------------------------------------------------------------------------
 	Traditional Chinese localization
 	Last updated 2012-08-30 by awaited @ CurseForge
-	Previous contributors
-	- wowuicn
+	Previous contributors: wowuicn
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -28,6 +27,8 @@ L.AlertSound_Desc = "選擇當 %s 到期時音效警報的檔案。"
 L.AlertText = "文字警報"
 L.AlertText_Desc = "當 %s 到期時顯示一個文本訊息。"
 L.AlertTextSink = "文字輸出"
+--L.AlertWhileHidden = "Alert while hidden"
+--L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
 L.Bottom = "下"
 L.ClassColor = "啟用職業顏色"
 L.ClassColor_Desc = "當 %s 作用時以職業顏色顯示目標名稱。"

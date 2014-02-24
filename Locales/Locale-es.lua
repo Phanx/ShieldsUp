@@ -7,8 +7,7 @@
 	http://www.curse.com/addons/wow/shieldsup
 ------------------------------------------------------------------------
 	Spanish localization
-	Last updated 2012-03-10 by Phanx
-	***
+	Last updated 2014-02-23 by Phanx
 	***
 ----------------------------------------------------------------------]]
 
@@ -28,6 +27,8 @@ L.AlertSound_Desc = "Seleccionar el sonido para reproducir cuando tu %s expira o
 L.AlertText = "Alertas de texto"
 L.AlertText_Desc = "Mostrar un mensaje cuando tu %s expira o se disipa."
 L.AlertTextSink = "Salida de texto"
+L.AlertWhileHidden = "Alertas cuando oculto"
+L.AlertWhileHidden_Desc = "Mostrar los mensajes y reproducir los sonidos de alerta incluso cuando ShieldsUp está oculta debido a tus configuración de visibilidad."
 L.Bottom = "Abajo"
 L.ClassColor = "Usar color de clase"
 L.ClassColor_Desc = "Colorar el nombre de objetivo por el color de clase, mientras que tu %s está activo."
