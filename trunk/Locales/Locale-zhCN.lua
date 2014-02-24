@@ -9,7 +9,6 @@
 	Simplified Chinese localization
 	Last updated 2009-07-15 by wowuicn
 	***
-	***
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -28,6 +27,8 @@ L.AlertSound_Desc = "选择当 %s 到期时音效警报的文件。"
 L.AlertText = "文字警报"
 L.AlertText_Desc = "当 %s 到期时显示一个文本讯息。"
 L.AlertTextSink = "文字输出"
+--L.AlertWhileHidden = "Alert while hidden"
+--L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
 L.Bottom = "底部"
 --L.ClassColor = "Use class color"
 --L.ClassColor_Desc = "Color the target name by class when your %s is active."

@@ -9,7 +9,6 @@
 	Russian localization
 	Last updated 2008-11-08 by XisRaa
 	***
-	***
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -28,6 +27,8 @@ L.AlertSound_Desc = "Выберите, какой звук играть, ког�
 L.AlertText = "Текст"
 L.AlertText_Desc = "Показывать предупреждение, когда спадает %s."
 L.AlertTextSink = "Вывода текста"
+--L.AlertWhileHidden = "Alert while hidden"
+--L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
 L.Bottom = "Внизу"
 L.ClassColor = "Цвет класса"
 L.ClassColor_Desc = "Окрашивать имя цели цветам, соответствующего класса, в то время как %s активен."

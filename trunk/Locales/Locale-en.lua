@@ -14,7 +14,6 @@ local _, private = ...
 if select(2, UnitClass("player")) ~= "SHAMAN" then private.UNLOAD = true return end
 
 local L = {}
-
 private.L = L
 
 L.Active = "Active"
@@ -28,6 +27,8 @@ L.AlertSound_Desc = "Choose a sound to play when your %s expires."
 L.AlertText = "Show message"
 L.AlertText_Desc = "Show a message when your %s expires."
 L.AlertTextSink = "Message location"
+L.AlertWhileHidden = "Alert while hidden"
+L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
 L.Bottom = "Bottom"
 L.ClassColor = "Use class color"
 L.ClassColor_Desc = "Color the target name by class when your %s is active."

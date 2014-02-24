@@ -9,7 +9,6 @@
 	Brazilian Portuguese localization
 	Last updated 2013-11-20 by Phanx
 	***
-	***
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -28,6 +27,8 @@ L.AlertSound_Desc = "Selecionar o som a reproduzir quando o %s expirar ou for re
 L.AlertText = "Alertas textuais"
 L.AlertText_Desc = "Mostrar uma mensagem quando o %s expirar ou for removido."
 L.AlertTextSink = "Saída de texto"
+--L.AlertWhileHidden = "Alert while hidden"
+--L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
 L.Bottom = "Fundo"
 L.ClassColor = "Cor da classe"
 L.ClassColor_Desc = "Mostrar a nom do alvo com a cor da classe relevante."
