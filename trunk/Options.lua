@@ -31,7 +31,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 
 	local Title, Notes = LibStub("PhanxConfig-Header").CreateHeader(self, ADDON_NAME, L.OptionsDesc)
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local PositionX = self:CreateSlider(L.PositionX, nil, floor(UIWIDTH / 10) / 2 * -10, floor(UIWIDTH / 10) / 2 * 10, 5)
 	PositionX:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -4, -12)
@@ -73,48 +73,50 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 		ShieldsUp:UpdateLayout()
 	end
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local Font = self:CreateScrollingDropdown(L.Font, nil, SharedMedia:List("font"))
 	Font:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -12)
 	Font:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, -12)
+	do
+		function Font:Callback(value)
+			local _, height, flags = self.valueText:GetFont()
+			self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
 
-	function Font:Callback(value)
-		local _, height, flags = self.valueText:GetFont()
-		self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
+			db.font.face = value
+			ShieldsUp:UpdateLayout()
+		end
 
-		db.font.face = value
-		ShieldsUp:UpdateLayout()
-	end
+		function Font:ListButtonCallback(button, value, selected)
+			if button:IsShown() then
+				button.label:SetFont(SharedMedia:Fetch("font", value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
+			end
+		end
 
-	function Font:ListButtonCallback(button, value, selected)
-		if button:IsShown() then
-			button.label:SetFont(SharedMedia:Fetch("font", value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
+		Font.__SetValue = Font.SetValue
+		function Font:SetValue(value)
+			local _, height, flags = self.valueText:GetFont()
+			self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
+			self:__SetValue(value)
 		end
 	end
-
-	Font.__SetValue = Font.SetValue
-	function Font:SetValue(value)
-		local _, height, flags = self.valueText:GetFont()
-		self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
-		self:__SetValue(value)
-	end
-
-	--------------------------------------------------------------------
 
 	local outlineValues = {
 		NONE = L.None,
 		OUTLINE = L.Thin,
 		THICKOUTLINE = L.Thick,
 	}
-	local Outline
+	local Outline = self:CreateDropdown(L.Outline)
+	Outline:SetPoint("TOPLEFT", Font, "BOTTOMLEFT", 0, -12)
+	Outline:SetPoint("TOPRIGHT", Font, "BOTTOMRIGHT", 0, -12)
 	do
 		local function OnClick(self)
+			local value = value
+			Outline:SetValue(value, outlineValues[value])
 			db.font.outline = self.value
 			ShieldsUp:UpdateLayout()
-			Outline:SetValue(self.value, self.text or outlineValues[self.text])
 		end
-		Outline = self:CreateDropdown(L.Outline, nil, function()
+		function Outline:Initialize()
 			local selected = db.font.outline
 
 			local info = UIDropDownMenu_CreateInfo()
@@ -134,9 +136,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 			info.value = "THICKOUTLINE"
 			info.checked = "THICKOUTLINE" == selected
 			UIDropDownMenu_AddButton(info)
-		end)
-		Outline:SetPoint("TOPLEFT", Font, "BOTTOMLEFT", 0, -12)
-		Outline:SetPoint("TOPRIGHT", Font, "BOTTOMRIGHT", 0, -12)
+		end
 	end
 
 	local CounterSize = self:CreateSlider(L.CounterSize, nil, 6, 32, 1)
@@ -169,7 +169,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 		ShieldsUp:UpdateDisplay()
 	end
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local ColorPanel = self:CreatePanel(L.Colors)
 	local py = 5 * (Opacity:GetHeight() + 12)
@@ -256,7 +256,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 
 	ColorPanel:SetHeight(ColorEarth:GetHeight() * 3 + 32)
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	self.refresh = function()
 		PositionX:SetValue(db.posx)
@@ -295,33 +295,42 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 		db.alert.alertWhileHidden = checked
 	end
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local EarthPanel = self:CreatePanel(L.EarthShield)
 	EarthPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -4, -24 - AlertWhileHidden:GetHeight())
 	EarthPanel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -4, -24 - AlertWhileHidden:GetHeight())
 
-	local EarthSound
+	local EarthSound = self.CreateScrollingDropdown(EarthPanel, L.AlertSound, format(L.AlertSound_Desc, L.EarthShield), SharedMedia:List("sound"))
+	EarthSound:SetPoint("TOPLEFT", EarthPanel, 16, -16)
+	EarthSound:SetPoint("TOPRIGHT", EarthPanel, -16, -16)
+	function EarthSound:Callback(value)
+		db.alert.earth.sound = value
+	end
 	do
-		local function OnClick(self)
-			PlaySoundFile(SharedMedia:Fetch("sound", self.value), "Master")
-			db.alert.earth.sound = self.value
-			EarthSound:SetValue(self.value, self.text)
+		local function PlayButton_OnClick(self)
+			PlaySoundFile(self.sound, "Master")
 		end
-		EarthSound = self.CreateDropdown(EarthPanel, L.AlertSound, format(L.AlertSound_Desc, L.EarthShield), function(self)
-			local info = UIDropDownMenu_CreateInfo()
-			local selected = db.alert.earth.sound
-			for i = 1, #ShieldsUp.sounds do
-				local sound = ShieldsUp.sounds[i]
-				info.text = sound
-				info.value = sound
-				info.func = OnClick
-				info.checked = sound == selected
-				UIDropDownMenu_AddButton(info)
+		function EarthSound:ListButtonCallback(button, value, selected)
+			if not button.playButton then
+				local play = CreateFrame("Button", nil, button)
+				play:SetPoint("RIGHT", button, -1, 0)
+				play:SetSize(16, 16)
+				play:SetScript("OnClick", PlayButton_OnClick)
+				button.playButton = play
+
+				local bg = play:CreateTexture(nil, "BACKGROUND")
+				bg:SetTexture("Interface\\Common\\VoiceChat-Speaker")
+				bg:SetAllPoints(true)
+				play.bg = bg
+
+				local hl = play:CreateTexture(nil, "HIGHLIGHT")
+				hl:SetTexture("Interface\\Common\\VoiceChat-On")
+				hl:SetAllPoints(true)
+				play.highlight = hl
 			end
-		end)
-		EarthSound:SetPoint("TOPLEFT", EarthPanel, 16, -16)
-		EarthSound:SetPoint("TOPRIGHT", EarthPanel, -16, -16)
+			button.playButton.sound = SharedMedia:Fetch("sound", value)
+		end
 	end
 
 	local EarthText = self.CreateCheckbox(EarthPanel, L.AlertText, format(L.AlertText_Desc, L.EarthShield))
@@ -338,33 +347,42 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 	EarthPanel:SetHeight(16 + EarthSound:GetHeight() + 8 + EarthText:GetHeight() + 8 + AlertOverwritten:GetHeight() + 16)
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local WaterPanel = self:CreatePanel(L.WaterShield)
 	WaterPanel:SetPoint("TOPLEFT", Notes, "BOTTOM", 4, -24 - AlertWhileHidden:GetHeight())
 	WaterPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 4, -24 - AlertWhileHidden:GetHeight())
 
-	local WaterSound
+	local WaterSound = self.CreateScrollingDropdown(WaterPanel, L.AlertSound, format(L.AlertSound_Desc, L.WaterShield), SharedMedia:List("sound"))
+	WaterSound:SetPoint("TOPLEFT", WaterPanel, 16, -16)
+	WaterSound:SetPoint("TOPRIGHT", WaterPanel, -16, -16)
+	function WaterSound:Callback(value)
+		db.alert.water.sound = value
+	end
 	do
-		local function OnClick(self)
-			PlaySoundFile(SharedMedia:Fetch("sound", self.value), "Master")
-			db.alert.water.sound = self.value
-			WaterSound:SetValue(self.value, self.text)
+		local function PlayButton_OnClick(self)
+			PlaySoundFile(self.sound, "Master")
 		end
-		WaterSound = self.CreateDropdown(WaterPanel, L.AlertSound, format(L.AlertSound_Desc, L.WaterShield), function(self)
-			local info = UIDropDownMenu_CreateInfo()
-			local selected = db.alert.water.sound
-			for i = 1, #ShieldsUp.sounds do
-				local sound = ShieldsUp.sounds[i]
-				info.text = sound
-				info.value = sound
-				info.func = OnClick
-				info.checked = sound == selected
-				UIDropDownMenu_AddButton(info)
+		function WaterSound:ListButtonCallback(button, value, selected)
+			if not button.playButton then
+				local play = CreateFrame("Button", nil, button)
+				play:SetPoint("RIGHT", button, -1, 0)
+				play:SetSize(16, 16)
+				play:SetScript("OnClick", PlayButton_OnClick)
+				button.playButton = play
+
+				local bg = play:CreateTexture(nil, "BACKGROUND")
+				bg:SetTexture("Interface\\Common\\VoiceChat-Speaker")
+				bg:SetAllPoints(true)
+				play.bg = bg
+
+				local hl = play:CreateTexture(nil, "HIGHLIGHT")
+				hl:SetTexture("Interface\\Common\\VoiceChat-On")
+				hl:SetAllPoints(true)
+				play.highlight = hl
 			end
-		end)
-		WaterSound:SetPoint("TOPLEFT", WaterPanel, 16, -16)
-		WaterSound:SetPoint("TOPRIGHT", WaterPanel, -16, -16)
+			button.playButton.sound = SharedMedia:Fetch("sound", value)
+		end
 	end
 
 	local WaterText = self.CreateCheckbox(WaterPanel, L.AlertText, format(L.AlertText_Desc, L.WaterShield))
@@ -375,7 +393,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 	WaterPanel:SetHeight(EarthPanel:GetHeight())
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local SinkOptions, SinkList, SinkLabel, SinkPanel, SinkOutput, SinkScrollArea, SinkSticky, SinkPanel_Update
 	if ShieldsUp.Pour then
@@ -490,7 +508,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 		SinkPanel_Update()
 	end
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	self.refresh = function()
 		AlertWhileHidden:SetChecked(db.alert.alertWhileHidden)
@@ -515,7 +533,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 
 	local Title, Notes = self:CreateHeader(self.name, L.Visibility_Desc)
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local HideInfinite = self:CreateCheckbox(L.HideInfinite, L.HideInfinite_Desc)
 	HideInfinite:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -2, -8)
@@ -524,7 +542,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 		ShieldsUp:UpdateDisplay()
 	end
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local function OnClick(self, checked)
 		db[self.key] = checked
@@ -563,7 +581,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	ShowBattleground.Callback = OnClick
 	ShowBattleground.key = "showInBG"
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local HideLabel = self:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
 	HideLabel:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -24 - HideInfinite:GetHeight())
@@ -582,7 +600,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	HideResting.Callback = OnClick
 	HideResting.key = "hideResting"
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	local LowLevelNote = self:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	LowLevelNote:SetPoint("BOTTOMLEFT", 16, 16)
@@ -592,7 +610,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 	LowLevelNote:SetJustifyV("BOTTOM")
 	LowLevelNote:SetText(L.HiddenLowLevel)
 
-	--------------------------------------------------------------------
+	---------------------------------------------------------------------
 
 	self.refresh = function()
 		HideInfinite:SetValue(db.hideInfinite)
@@ -620,6 +638,11 @@ SLASH_SHIELDSUP1 = "/sup"
 SLASH_SHIELDSUP2 = "/shieldsup"
 SlashCmdList.SHIELDSUP = function()
 	InterfaceOptionsFrame_OpenToCategory(optionsPanels[1])
+	InterfaceOptionsFrame_OpenToCategory(optionsPanels[1])
+	-- Doing it twice works around the longstanding Blizzard bug
+	-- that fails to actually open the requested panel if it's
+	-- not currently visible in the lefthand list, and scrolling
+	-- is required to bring it into view.
 end
 
 ------------------------------------------------------------------------
