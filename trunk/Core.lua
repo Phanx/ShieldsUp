@@ -282,6 +282,7 @@ function ShieldsUp:PLAYER_LOGIN()
 		"PLAYER_DEAD",
 		"PLAYER_ALIVE",
 		"PLAYER_UNGHOST",
+		"PLAYER_LEVEL_UP",
 		"PLAYER_REGEN_ENABLED",
 		"PLAYER_UPDATE_RESTING",
 		"UNIT_ENTERED_VEHICLE",
@@ -695,6 +696,7 @@ function ShieldsUp:UpdateVisibility()
 	if C_PetBattles.IsInBattle()
 	or UnitIsDeadOrGhost("player")
 	or UnitInVehicle("player")
+	or UnitLevel("player") < 8
 	or ( db.hideOOC and not UnitAffectingCombat("player") )
 	or ( db.hideResting  and IsResting() ) then
 		return self:Hide()
