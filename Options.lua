@@ -75,25 +75,29 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 
 	--------------------------------------------------------------------
 
-	local Font = self:CreateScrollingDropdown(L.Font, nil, ShieldsUp.fonts)
+	local Font = self:CreateScrollingDropdown(L.Font, nil, SharedMedia:List("font"))
 	Font:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -12)
 	Font:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, -12)
-	do
-		local _, height, flags = Font.valueText:GetFont()
-		Font.valueText:SetFont(SharedMedia:Fetch("font", db.font.face or "Friz Quadrata TT"), height, flags)
 
-		function Font:Callback(value)
-			local _, height, flags = self.valueText:GetFont()
-			self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
-			db.font.face = value
-			ShieldsUp:UpdateLayout()
-		end
+	function Font:Callback(value)
+		local _, height, flags = self.valueText:GetFont()
+		self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
 
-		function Font.dropdown:OnListButtonChanged(button, item, selected)
-			if button.value and button:IsShown() then
-				button.label:SetFont(SharedMedia:Fetch("font", button.value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
-			end
+		db.font.face = value
+		ShieldsUp:UpdateLayout()
+	end
+
+	function Font:ListButtonCallback(button, value, selected)
+		if button:IsShown() then
+			button.label:SetFont(SharedMedia:Fetch("font", value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
 		end
+	end
+
+	Font.__SetValue = Font.SetValue
+	function Font:SetValue(value)
+		local _, height, flags = self.valueText:GetFont()
+		self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
+		self:__SetValue(value)
 	end
 
 	--------------------------------------------------------------------
@@ -509,7 +513,7 @@ end)
 optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, function(self)
 	local db = ShieldsUpDB
 
-	local Title, Notes = self:CreateHeader(self, self.name, L.Visibility_Desc)
+	local Title, Notes = self:CreateHeader(self.name, L.Visibility_Desc)
 
 	--------------------------------------------------------------------
 
@@ -580,6 +584,16 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 
 	--------------------------------------------------------------------
 
+	local LowLevelNote = self:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	LowLevelNote:SetPoint("BOTTOMLEFT", 16, 16)
+	LowLevelNote:SetPoint("BOTTOMRIGHT", -16, -16)
+	LowLevelNote:SetHeight(64)
+	LowLevelNote:SetJustifyH("LEFT")
+	LowLevelNote:SetJustifyV("BOTTOM")
+	LowLevelNote:SetText(L.HiddenLowLevel)
+
+	--------------------------------------------------------------------
+
 	self.refresh = function()
 		HideInfinite:SetValue(db.hideInfinite)
 
@@ -591,6 +605,8 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Visibility, ADDON_NAME, 
 
 		HideOOC:SetValue(db.hideOOC)
 		HideResting:SetValue(db.hideResting)
+
+		LowLevelNote:SetShown(UnitLevel("player") < 8)
 	end
 end)
 
