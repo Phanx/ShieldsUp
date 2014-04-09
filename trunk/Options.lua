@@ -452,13 +452,18 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 		SinkPanel:SetPoint("TOPLEFT", EarthPanel, "BOTTOMLEFT", 0, -16)
 		SinkPanel:SetPoint("TOPRIGHT", WaterPanel, "BOTTOMRIGHT", 0, -16)
 
+		SinkOutput = self.CreateDropdown(SinkPanel, SinkOptions.name, SinkOptions.desc) _G.SINKOUT = SinkOutput
+		SinkOutput:SetPoint("TOPLEFT", SinkPanel, 16, -16)
+		SinkOutput:SetPoint("TOPRIGHT", SinkPanel, "TOP", -8, -16)
 		do
 			local function OnClick(self)
-				SinkOptions.set(self.value, true)
+				local value = self.value
+				SinkOptions.set(value, true)
 				SinkPanel_Update()
-				SinkOutput:SetValue(self.value, self.text or SinkList[self.value])
+				SinkOutput:SetValue(value, SinkList[value])
 			end
-			SinkOutput = self.CreateDropdown(SinkPanel, SinkOptions.name, SinkOptions.desc, function()
+
+			function SinkOutput:Initialize(level)
 				local info = UIDropDownMenu_CreateInfo()
 				info.func = OnClick
 
@@ -471,18 +476,21 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 						UIDropDownMenu_AddButton(info)
 					end
 				end
-			end)
-			SinkOutput:SetPoint("TOPLEFT", SinkPanel, 16, -16)
-			SinkOutput:SetPoint("TOPRIGHT", SinkPanel, "TOP", -8, -16)
+			end
 		end
 
+		SinkScrollArea = self.CreateDropdown(SinkPanel, SinkOptions.args.ScrollArea.name, SinkOptions.args.ScrollArea.desc)
+		SinkScrollArea:SetPoint("TOPLEFT", SinkPanel, "TOP", 8, -16) _G.SINKAREA = SinkScrollArea
+		SinkScrollArea:SetPoint("TOPRIGHT", SinkPanel, -16, -16)
 		do
 			local function OnClick(self)
-				SinkOptions.set("ScrollArea", self.value)
+				local value = self.value
+				SinkOptions.set("ScrollArea", value)
 				SinkPanel_Update()
-				SinkScrollArea:SetValue(self.value, self.text)
+				SinkScrollArea:SetValue(value, self:GetText())
 			end
-			SinkScrollArea = self.CreateDropdown(SinkPanel, SinkOptions.args.ScrollArea.name, SinkOptions.args.ScrollArea.desc, function()
+
+			function SinkScrollArea:Initialize(level)
 				local info = UIDropDownMenu_CreateInfo()
 				info.func = OnClick
 
@@ -493,13 +501,12 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 					info.checked = v == selected
 					UIDropDownMenu_AddButton(info)
 				end
-			end)
-			SinkScrollArea:SetPoint("TOPLEFT", SinkPanel, "TOP", 8, -16)
-			SinkScrollArea:SetPoint("TOPRIGHT", SinkPanel, -16, -16)
+			end
 		end
 
 		SinkSticky = self.CreateCheckbox(SinkPanel, SinkOptions.args.Sticky.name, SinkOptions.args.Sticky.desc)
 		SinkSticky:SetPoint("TOPLEFT", SinkOutput, "BOTTOMLEFT", 0, -8)
+
 		function SinkSticky:Callback(checked)
 			SinkOptions.set("Sticky", checked)
 			SinkPanel_Update()
