@@ -15,7 +15,7 @@ local L = private.L
 
 local floor, format = math.floor, string.format
 
-local optionsPanels = { }
+local optionsPanels = {}
 ShieldsUp.optionsPanels = optionsPanels
 
 local CreateOptionsPanel = LibStub("PhanxConfig-OptionsPanel").CreateOptionsPanel
@@ -89,7 +89,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 
 		function Font:ListButtonCallback(button, value, selected)
 			if button:IsShown() then
-				button.label:SetFont(SharedMedia:Fetch("font", value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
+				button:GetFontString():SetFont(SharedMedia:Fetch("font", value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
 			end
 		end
 
@@ -116,7 +116,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 			db.font.outline = self.value
 			ShieldsUp:UpdateLayout()
 		end
-		function Outline:Initialize()
+		function Outline:Initialize(dropdown, level)
 			local selected = db.font.outline
 
 			local info = UIDropDownMenu_CreateInfo()
@@ -314,7 +314,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 		function EarthSound:ListButtonCallback(button, value, selected)
 			if not button.playButton then
 				local play = CreateFrame("Button", nil, button)
-				play:SetPoint("RIGHT", button, -1, 0)
+				play:SetPoint("RIGHT", button, -2, 0)
 				play:SetSize(16, 16)
 				play:SetScript("OnClick", PlayButton_OnClick)
 				button.playButton = play
@@ -366,7 +366,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 		function WaterSound:ListButtonCallback(button, value, selected)
 			if not button.playButton then
 				local play = CreateFrame("Button", nil, button)
-				play:SetPoint("RIGHT", button, -1, 0)
+				play:SetPoint("RIGHT", button, -2, 0)
 				play:SetSize(16, 16)
 				play:SetScript("OnClick", PlayButton_OnClick)
 				button.playButton = play
@@ -463,7 +463,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 				SinkOutput:SetValue(value, SinkList[value])
 			end
 
-			function SinkOutput:Initialize(level)
+			function SinkOutput:Initialize(dropdown, level)
 				local info = UIDropDownMenu_CreateInfo()
 				info.func = OnClick
 
@@ -490,7 +490,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 				SinkScrollArea:SetValue(value, self:GetText())
 			end
 
-			function SinkScrollArea:Initialize(level)
+			function SinkScrollArea:Initialize(dropdown, level)
 				local info = UIDropDownMenu_CreateInfo()
 				info.func = OnClick
 
