@@ -3,7 +3,7 @@
 
 ## Title: ShieldsUp
 ## Notes: Text-based shaman shield monitor.
-## Notes-deDE: Textbasierter Überwacher deiner Elementarschilde.
+## Notes-deDE: Textbasierter Überwacher für deinen Elementarschilde.
 ## Notes-esES: Rastreador textual para tus escudos elementales.
 ## Notes-esMX: Rastreador textual para tus escudos elementales.
 ## Notes-frFR: Traqueur textuel pour vos boucliers élémentaires.
