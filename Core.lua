@@ -152,12 +152,12 @@ end
 ------------------------------------------------------------------------
 
 local ShieldsUp = CreateFrame("Frame", "ShieldsUp", UIParent)
-ShieldsUp:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, ...) end)
+ShieldsUp:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, event, ...) end)
 ShieldsUp:RegisterEvent("ADDON_LOADED")
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:ADDON_LOADED(addon)
+function ShieldsUp:ADDON_LOADED(event, addon)
 	if addon ~= "ShieldsUp" then return end
 	-- Debug(1, "ADDON_LOADED", addon)
 
@@ -198,7 +198,7 @@ end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:PLAYER_LOGIN()
+function ShieldsUp:PLAYER_LOGIN(event)
 	-- Debug(1, "PLAYER_LOGIN")
 
 	SharedMedia = LibStub("LibSharedMedia-3.0", true)
@@ -311,18 +311,18 @@ end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:PLAYER_LOGOUT()
+function ShieldsUp:PLAYER_LOGOUT(event)
 	self:UnregisterAllEvents()
 end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:PLAYER_SPECIALIZATION_CHANGED()
+function ShieldsUp:PLAYER_SPECIALIZATION_CHANGED(event)
 	-- Debug(1, "PLAYER_SPECIALIZATION_CHANGED")
 
 	local spec = GetSpecialization()
 	hasEarthShield = spec == 3 -- Restoration
-	hasLightningCharges = spec == 1 -- Elemental
+	hasLightningCharges = spec == 1 and UnitLevel("player") >= 20 -- Elemental
 	-- Debug(2, "Earth Shield?", hasEarthShield and "YES" or "NO")
 	-- Debug(2, "Lightning Shield charges?", hasLightningCharges and "YES" or "NO")
 
@@ -335,7 +335,7 @@ end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:UNIT_SPELLCAST_SENT(unit, spell, rank, target)
+function ShieldsUp:UNIT_SPELLCAST_SENT(event, unit, spell, rank, target)
 	if unit ~= "player" then return end
 	-- Debug(3, "UNIT_SPELLCAST_SENT, "..spell..", "..target)
 
@@ -373,7 +373,7 @@ do
 		end
 	end })
 
-	function ShieldsUp:UNIT_AURA(unit)
+	function ShieldsUp:UNIT_AURA(event, unit)
 		if ignore[unit] then return end
 		-- Debug(5, "UNIT_AURA, "..unit)
 
@@ -479,7 +479,7 @@ end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:GROUP_ROSTER_UPDATE()
+function ShieldsUp:GROUP_ROSTER_UPDATE(event)
 	-- Debug(4, "GROUP_ROSTER_UPDATE")
 	local newGroup = IsInRaid() and "raid" or IsInGroup() and "party" or false
 
@@ -505,7 +505,7 @@ end
 
 ------------------------------------------------------------------------
 
-function ShieldsUp:PLAYER_REGEN_DISABLED()
+function ShieldsUp:PLAYER_REGEN_DISABLED(event)
 	self:UpdateVisibility()
 	-- TODO: Add missing shield alert on entering combat.
 end
@@ -690,13 +690,11 @@ end
 ------------------------------------------------------------------------
 -- TODO: Split this out into the relevant event handlers?
 
-function ShieldsUp:UpdateVisibility()
-	-- Debug(2, "UpdateVisibility")
-
+function ShieldsUp:UpdateVisibility(event, arg)
 	if C_PetBattles.IsInBattle()
 	or UnitIsDeadOrGhost("player")
 	or UnitInVehicle("player")
-	or UnitLevel("player") < 8
+	or ( event == "PLAYER_LEVEL_UP" and arg or UnitLevel("player") ) < 8
 	or ( db.hideOOC and not UnitAffectingCombat("player") )
 	or ( db.hideResting  and IsResting() ) then
 		return self:Hide()
@@ -711,7 +709,7 @@ function ShieldsUp:UpdateVisibility()
 	or ( zoneType  == "pvp"   and not db.showInBG    )
 	or ( isInGroup == "raid"  and not db.showInRaid  )
 	or ( isInGroup == "party" and not db.showInParty )
-	or ( not isIngroup        and not db.showSolo    ) then
+	or ( not isInGroup        and not db.showSolo    ) then
 		return self:Hide()
 	end
 
