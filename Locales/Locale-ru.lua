@@ -7,8 +7,8 @@
 	http://www.curse.com/addons/wow/shieldsup
 ------------------------------------------------------------------------
 	Russian localization
-	Last updated 2008-11-08 by XisRaa
-	***
+	Last updated 2014-08-18 by Yafis
+	Previous contributors: XisRaa
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -27,8 +27,8 @@ L.AlertSound_Desc = "Выберите, какой звук играть, ког�
 L.AlertText = "Текст"
 L.AlertText_Desc = "Показывать предупреждение, когда спадает %s."
 L.AlertTextSink = "Вывода текста"
---L.AlertWhileHidden = "Alert while hidden"
---L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
+L.AlertWhileHidden = "Предупреждение пока скрыты"
+L.AlertWhileHidden_Desc = "Показывать предупредительные сообщения и проигрывать звуки при скрытом ShieldsUp  в ваших настройках видимости."
 L.Bottom = "Внизу"
 L.ClassColor = "Цвет класса"
 L.ClassColor_Desc = "Окрашивать имя цели цветам, соответствующего класса, в то время как %s активен."
@@ -36,19 +36,19 @@ L.ClickForOptions = "Клик, открывает окно настроек."
 L.Colors = "Цвета"
 L.CounterSize = "Размер числа"
 L.Font = "Шрифт"
---L.HiddenLowLevel = "|cffffd100ATTENTION:|r Regardless of your settings above, ShieldsUp is currently hidden because your character's level is too low. Once you reach Level 8 and learn Lightning Shield, ShieldsUp will show and hide normally."
+L.HiddenLowLevel = "|cffffd100ВНИМАНИЕ:|r в независимости от ваших настроек, ShieldsUp скрывается из за вашего низкого уровня. После того как вы достигните 8-го уровня все будет работать как обычно! "
 L.Hide = "Скрыть, когда:"
 L.HideDead = "Мертвы"
---L.HideInfinite = "Hide infinite shields"
---L.HideInfinite_Desc = "Hide the letter indicator for active shields that don't have a limited number of charges. Missing shields will still be shown."
+L.HideInfinite = "Скрыть бесконечные щиты"
+L.HideInfinite_Desc = "Спрятать индикатор для активных щитов, которые не имеют ограниченное количество зарядов. Недостающие щиты будут по-прежнему отображаться."
 L.HideOOC = "Вне боя"
 L.HideResting = "Набирали силу"
 L.HideVehicle = "В машине"
---L.Hidden = "Hidden"
+L.Hidden = "Скрытый"
 L.LightningAbbrev = "М"
 L.Missing = "Предупреждение"
 L.Missing_Desc = "Использовать этот цвет, когда счечик зарядов на нуле."
---L.NamePosition = "Target name position"
+L.NamePosition = "Позиция имени цели"
 L.NameSize = "Размер имени"
 L.None = "Нету"
 L.Opacity = "Opacity"
@@ -56,7 +56,7 @@ L.OptionsDesc = "ShieldsUp отслеживает щитов шамана. Эт�
 L.Outline = "Контур"
 L.Overwritten = "Перебит"
 L.Overwritten_Desc = "Использовать этот цвет для цели, на которой %s, в случае если чужой щит перебил ваш на этой цели."
---L.OverwrittenBy = "Your %1$s has been overwritten by %2$s!"
+L.OverwrittenBy = "Ваш %1$s быз изменен на %2$s!"
 L.PaddingH = "Горизонтальный отступ"
 L.PaddingH_Desc = "Установить горизонтальный отступ между элементами текста."
 L.PaddingV = "Вертикальный отступ"
@@ -66,7 +66,7 @@ L.PositionY = "Вертикальная позиция"
 L.Shadow = "Тень"
 L.ShieldFaded = "%s спал!"
 L.ShieldFadedFrom = "%1$s спал с %2$s!"
---L.Show = "Show in:"
+L.Show = "Показать в:"
 L.ShowArena = "Арена"
 L.ShowBattleground = "Поле боя"
 L.ShowParty = "Группа"
