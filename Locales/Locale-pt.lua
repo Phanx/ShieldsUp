@@ -7,8 +7,8 @@
 	http://www.curse.com/addons/wow/shieldsup
 ------------------------------------------------------------------------
 	Brazilian Portuguese localization
-	Last updated 2013-11-20 by Phanx
-	***
+	Last updated 2014-08-27 by Tercioo
+	Previous contributors: Phanx
 ----------------------------------------------------------------------]]
 
 local _, private = ...
@@ -27,8 +27,8 @@ L.AlertSound_Desc = "Selecionar o som a reproduzir quando o %s expirar ou for re
 L.AlertText = "Alertas textuais"
 L.AlertText_Desc = "Mostrar uma mensagem quando o %s expirar ou for removido."
 L.AlertTextSink = "Saída de texto"
---L.AlertWhileHidden = "Alert while hidden"
---L.AlertWhileHidden_Desc = "Show alert messages and play alert sounds while ShieldsUp is hidden due to your visibility settings."
+L.AlertWhileHidden = "Alertar mesmo escondido"
+L.AlertWhileHidden_Desc = "Mostrar um alerta e tocar um som quando ShieldsUp não estiver visível devido as suas configurações de visibilidade."
 L.Bottom = "Fundo"
 L.ClassColor = "Cor da classe"
 L.ClassColor_Desc = "Mostrar a nom do alvo com a cor da classe relevante."
@@ -36,7 +36,7 @@ L.ClickForOptions = "Clique para abrir as opções."
 L.Colors = "Cores"
 L.CounterSize = "Tamanho dos números"
 L.Font = "Tipo de letra"
---L.HiddenLowLevel = "|cffffd100ATTENTION:|r Regardless of your settings above, ShieldsUp is currently hidden because your character's level is too low. Once you reach Level 8 and learn Lightning Shield, ShieldsUp will show and hide normally."
+L.HiddenLowLevel = "|cffffd100ATENÇÃO:|r Independentemente das suas definições acima, ShieldsUp está escondido devido ao level do seu personagem ser muito baixo. Uma vez que atinja o level 8 e aprenda Escudo de Raios, ShieldsUp será mostrado ou escondido normalmente."
 L.Hide = "Ocultar enquanto:"
 L.HideDead = "Morto"
 L.HideInfinite = "Ocultar escudos sem cargas"
