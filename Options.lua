@@ -75,7 +75,7 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 
 	---------------------------------------------------------------------
 
-	local Font = self:CreateScrollingDropdown(L.Font, nil, SharedMedia:List("font"))
+	local Font = self:CreateDropdown(L.Font, nil, SharedMedia:List("font"))
 	Font:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -12)
 	Font:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, -12)
 	do
@@ -101,43 +101,20 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 		end
 	end
 
-	local outlineValues = {
-		NONE = L.None,
-		OUTLINE = L.Thin,
-		THICKOUTLINE = L.Thick,
-	}
 	local Outline = self:CreateDropdown(L.Outline)
 	Outline:SetPoint("TOPLEFT", Font, "BOTTOMLEFT", 0, -12)
 	Outline:SetPoint("TOPRIGHT", Font, "BOTTOMRIGHT", 0, -12)
-	do
-		local function OnClick(self)
-			local value = value
-			Outline:SetValue(value, outlineValues[value])
-			db.font.outline = self.value
-			ShieldsUp:UpdateLayout()
-		end
-		function Outline:Initialize(dropdown, level)
-			local selected = db.font.outline
 
-			local info = UIDropDownMenu_CreateInfo()
-			info.func = OnClick
-
-			info.text = L.None
-			info.value = "NONE"
-			info.checked = "NONE" == selected
-			UIDropDownMenu_AddButton(info)
-
-			info.text = L.Thin
-			info.value = "OUTLINE"
-			info.checked = "OUTLINE" == selected
-			UIDropDownMenu_AddButton(info)
-
-			info.text = L.Thick
-			info.value = "THICKOUTLINE"
-			info.checked = "THICKOUTLINE" == selected
-			UIDropDownMenu_AddButton(info)
-		end
+	function Outline:OnValueChanged(value)
+		db.font.outline = value
+		ShieldsUp:UpdateLayout()
 	end
+
+	Outline:SetList({
+		{ value = "NONE", text = L.None },
+		{ value = "OUTLINE", text = L.Thin },
+		{ value = "THICKOUTLINE", text = L.Thick },
+	})
 
 	local CounterSize = self:CreateSlider(L.CounterSize, nil, 6, 32, 1)
 	CounterSize:SetPoint("TOPLEFT", Outline, "BOTTOMLEFT", 0, -12)
@@ -258,6 +235,12 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 
 	---------------------------------------------------------------------
 
+	local outlineValues = {
+		NONE = L.None,
+		OUTLINE = L.Thin,
+		THICKOUTLINE = L.Thick,
+	}
+
 	self.refresh = function()
 		PositionX:SetValue(db.posx)
 		PositionY:SetValue(db.posy)
@@ -301,7 +284,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 	EarthPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -4, -24 - AlertWhileHidden:GetHeight())
 	EarthPanel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -4, -24 - AlertWhileHidden:GetHeight())
 
-	local EarthSound = self.CreateScrollingDropdown(EarthPanel, L.AlertSound, format(L.AlertSound_Desc, L.EarthShield), SharedMedia:List("sound"))
+	local EarthSound = self.CreateDropdown(EarthPanel, L.AlertSound, format(L.AlertSound_Desc, L.EarthShield), SharedMedia:List("sound"))
 	EarthSound:SetPoint("TOPLEFT", EarthPanel, 16, -16)
 	EarthSound:SetPoint("TOPRIGHT", EarthPanel, -16, -16)
 	function EarthSound:Callback(value)
@@ -353,7 +336,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 	WaterPanel:SetPoint("TOPLEFT", Notes, "BOTTOM", 4, -24 - AlertWhileHidden:GetHeight())
 	WaterPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 4, -24 - AlertWhileHidden:GetHeight())
 
-	local WaterSound = self.CreateScrollingDropdown(WaterPanel, L.AlertSound, format(L.AlertSound_Desc, L.WaterShield), SharedMedia:List("sound"))
+	local WaterSound = self.CreateDropdown(WaterPanel, L.AlertSound, format(L.AlertSound_Desc, L.WaterShield), SharedMedia:List("sound"))
 	WaterSound:SetPoint("TOPLEFT", WaterPanel, 16, -16)
 	WaterSound:SetPoint("TOPRIGHT", WaterPanel, -16, -16)
 	function WaterSound:Callback(value)
