@@ -1,5 +1,5 @@
 ## Interface: 60000
-## Version: 6.0.3.190
+## Version: 6.0.3.48
 
 ## Title: ShieldsUp
 ## Notes: Text-based shaman shield monitor.
@@ -22,12 +22,11 @@
 ## SavedVariables: ShieldsUpDB
 
 Libs\LibStub\LibStub.lua
-#@no-lib-strip@
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibAboutPanel\LibAboutPanel.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
 Libs\LibSink-2.0\LibSink-2.0.lua
-#@end-no-lib-strip@
 Libs\PhanxConfig-Checkbox\PhanxConfig-Checkbox.lua
 Libs\PhanxConfig-ColorPicker\PhanxConfig-ColorPicker.lua
 Libs\PhanxConfig-Dropdown\PhanxConfig-Dropdown.lua

@@ -615,19 +615,16 @@ end
 
 ------------------------------------------------------------------------
 
-local LibDataBroker = LibStub("LibDataBroker-1.1", true)
-if LibDataBroker then
-	LibDataBroker:NewDataObject(ADDON_NAME, {
-		type = "launcher",
-		icon = "Interface\\Icons\\Spell_Nature_SkinOfEarth",
-		label = ADDON_NAME,
-		OnClick = SlashCmdList.SHIELDSUP,
-		OnTooltipShow = function(tooltip)
-			tooltip:AddLine(ADDON_NAME, 1, 1, 1)
-			tooltip:AddLine(L.ClickForOptions)
-			tooltip:Show()
-		end,
-	})
-end
+LibStub("LibDataBroker-1.1"):NewDataObject(ADDON_NAME, {
+	type = "launcher",
+	icon = "Interface\\Icons\\Spell_Nature_SkinOfEarth",
+	label = ADDON_NAME,
+	OnClick = SlashCmdList.SHIELDSUP,
+	OnTooltipShow = function(tooltip)
+		tooltip:AddLine(ADDON_NAME, 1, 1, 1)
+		tooltip:AddLine(L.ClickForOptions)
+		tooltip:Show()
+	end,
+})
 
 ------------------------------------------------------------------------
