@@ -4,13 +4,6 @@
 	Copyright (c) 2008-2014 Phanx <addons@phanx.net>. All rights reserved.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/addons/wow/shieldsup
-
-	Please DO NOT upload this addon to other websites, or post modified
-	versions of it. However, you are welcome to include a copy of it
-	WITHOUT CHANGES in compilations posted on Curse and/or WoWInterface.
-	You are also welcome to use any/all of its code in your own addon, as
-	long as you do not use my name or the name of this addon ANYWHERE in
-	your addon, including its name, outside of an optional attribution.
 ----------------------------------------------------------------------]]
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
@@ -22,8 +15,6 @@ private.L = L
 
 L.Active = "Active"
 L.Active_Desc = "Set the color for the target name when your %s is active."
-L.AlertOverwritten = "Alert on overwrites"
-L.AlertOverwritten_Desc = "Also alert when someone overwrites your %s."
 L.Alerts = "Alerts"
 L.Alerts_Desc = "Use these options to control how ShieldsUp alerts you when your shields are removed or expire."
 L.AlertSound = "Play sound"
@@ -58,9 +49,6 @@ L.None = "None"
 L.Opacity = "Opacity"
 L.OptionsDesc = "Use these options to control the appearance of the ShieldsUp display."
 L.Outline = "Outline"
-L.Overwritten = "Overwritten"
-L.Overwritten_Desc = "Set the color for the target name when your %s has been overwritten."
-L.OverwrittenBy = "Your %1$s has been overwritten by %2$s!"
 L.PaddingH = "Horizontal padding"
 L.PaddingH_Desc = "Change the padding between the two shield counters."
 L.PaddingV = "Vertical padding"
@@ -92,8 +80,6 @@ if LOCALE == "deDE" then
 
 L.Active = "Aktiv"
 L.Active_Desc = "Einstellt die Farbe für den Namen Eures Ziels, während %s aktiv ist."
-L.AlertOverwritten = "Überschreib-Alarm"
-L.AlertOverwritten_Desc = "ShieldsUp wird Euch auch informieren, wenn Euer %s von einem anderen Schamanen überzaubert wurde."
 L.Alerts = "Warnungen"
 L.Alerts_Desc = "Mit diesen Einstellungen könnt Ihr konfigurieren, wie ShieldsUp Euch über die abgelaufenen oder entzauberten Schilden informieren wird."
 L.AlertSound = "Sound-Warnungen"
@@ -128,9 +114,6 @@ L.None = "Keine"
 L.Opacity = "Durschsichtigkeit"
 L.OptionsDesc = "ShieldsUp ist eine einfache Anzeige für die verschiedenen Schilde des Schamanen. Mit diesen Einstellungen könnt Ihr das Aussehen und Verhalten von ShieldsUp konfigurieren."
 L.Outline = "Umrandung"
-L.Overwritten = "Überschrieben"
-L.Overwritten_Desc = "Stellt die Farbe für den Zielnamen ein, falls dein %s von einem anderen Schamanen überzaubert wurde."
-L.OverwrittenBy = "Dein %1$s wurde von %2$s überschrieben!"
 L.PaddingH = "Horizontale Abstimmung"
 L.PaddingH_Desc = "Stellt den Abstand zwischen den Aufladungen der Schilde ein."
 L.PaddingV = "Vertikale Abstimmung"
@@ -156,15 +139,13 @@ L.YOU = "EUCH"
 
 return end
 ------------------------------------------------------------------------
--- Spanish 
+-- Spanish
 -- Contributors: Phanx
 ------------------------------------------------------------------------
 if LOCALE == "esES" or LOCALE == "esMX" then
 
 L.Active = "Activo"
 L.Active_Desc = "Establecer el color para el nombre de objetivo, mientras que tu %s está activo."
-L.AlertOverwritten = "Alerta cuando reemplazado"
-L.AlertOverwritten_Desc = "Altertar también cuando un otro chamán reemplaza tu %s."
 L.Alerts = "Alertas"
 L.Alerts_Desc = "Estes opciones te permiten cambiar como ShieldsUp te avisa cuando tu Escudos expira o se disipa."
 L.AlertSound = "Alertas de sonido"
@@ -199,9 +180,6 @@ L.None = "Ninguno"
 L.Opacity = "Opacidad"
 L.OptionsDesc = "Estes opciones te permiten personalizar como ShieldsUp sigue tus Escudos elementales."
 L.Outline = "Contorno"
-L.Overwritten = "Reemplazado"
-L.Overwritten_Desc = "Establecer el color para el nombre de objetivo, cuando tu %s ha sido reemplazado por otro chamán."
-L.OverwrittenBy = "Tu %1$s ha sido reemplazado por %2$s!"
 L.PaddingH = "Espaciado horizontal"
 L.PaddingH_Desc = "Ajusta el espacio horizontal entre los dos contadores de cargas."
 L.PaddingV = "Espaciado vertical"
@@ -234,8 +212,6 @@ if LOCALE == "frFR" then
 
 L.Active = "Actif"
 L.Active_Desc = "Défini la couleur du nom de la cible quand %s est actif."
-L.AlertOverwritten = "Alerter quand recouvert"
-L.AlertOverwritten_Desc = "En outre alerter quand un autre chaman recouvre votre %s."
 L.Alerts = "Alertes"
 L.Alerts_Desc = "Utilisez ces paramètres pour configurer comment ShieldsUp vous alertera quand vos boucliers expirent ou sont écrasés."
 L.AlertSound = "Alerte sonore"
@@ -270,9 +246,6 @@ L.None = "Aucun"
 L.Opacity = "Opacité"
 L.OptionsDesc = "ShieldsUp est un addon permettant de surperviser vos boucliers de chamans. Utilisez ces paramètres pour configurer l'apparence et le comportement de cet addon."
 L.Outline = "Contour"
-L.Overwritten = "Ecrasé"
-L.Overwritten_Desc = "Défini la couleur du nom de la cible quand votre %s a été écrasé par un autre chaman."
-L.OverwrittenBy = "Votre %1$s a été écrasé par %2$s!"
 L.PaddingH = "Espacement horizontal"
 L.PaddingH_Desc = "Défini l'espacement horizontal entre les compteurs de charges."
 L.PaddingV = "Espacement vertical"
@@ -305,8 +278,7 @@ if LOCALE == "itIT" then
 
 L.Attivo = "Active"
 --L.Active_Desc = "Set the color for the target name when your %s is active."
-L.AlertOverwritten = "Avvisa quando sovrascritto"
---L.AlertOverwritten_Desc = "Also alert when someone overwrites your %s."
+--BLANK
 L.Alerts = "Avvisi"
 --L.Alerts_Desc = "Use these options to control how ShieldsUp alerts you when your shields are removed or expire."
 L.AlertSound = "Riprodurre l'audio"
@@ -341,9 +313,8 @@ L.None = "Non"
 L.Opacity = "Opacità"
 --L.OptionsDesc = "Use these options to control the appearance of the ShieldsUp display."
 L.Outline = "Contorno"
-L.Overwritten = "Sovrascritto"
---L.Overwritten_Desc = "Set the color for the target name when your %s has been overwritten."
---L.OverwrittenBy = "Your %1$s has been overwritten by %2$s!"
+--BLANK
+--BLANK
 L.PaddingH = "Spaziatura orizzontale"
 --L.PaddingH_Desc = "Change the padding between the two shield counters."
 L.PaddingV = "Spaziatura verticale"
@@ -376,8 +347,6 @@ if LOCALE == "ptBR" then
 
 L.Active = "Ativo"
 L.Active_Desc = "Selecionar a cor para o nome do alvo quando seu %s está ativo."
-L.AlertOverwritten = "Alertar quando sobrescrito"
-L.AlertOverwritten_Desc = "Alertar quando seu %s foi substituído."
 L.Alerts = "Alertas"
 L.Alerts_Desc = "Estas definições permitem que você alterar a forma como ShieldsUp avisa quando um escudo expirar ou for removido."
 L.AlertSound = "Reproduzir sons"
@@ -412,9 +381,6 @@ L.None = "Nenhum"
 L.Opacity = "Opacidade"
 L.OptionsDesc = "Estas opções permitem modificar a forma como ShieldsUp acompanha os Escudos Elementais."
 L.Outline = "Contorno"
-L.Overwritten = "Sobrescrito"
-L.Overwritten_Desc = "Selecionar a cor para o nome do alvo quando seu %s foi substituído."
-L.OverwrittenBy = "Seu %1$s foi substituído por %2$s!"
 L.PaddingH = "Espaçamento horizontal"
 L.PaddingH_Desc = "Definir a quantidade de espaço horizontal entre os marcadores de cargas."
 L.PaddingV = "Espaçamento vertical"
@@ -447,8 +413,6 @@ if LOCALE == "ruRU" then
 
 L.Active = "Обычные"
 L.Active_Desc = "Использовать этот цвет для цели, на которой %s."
-L.AlertOverwritten = "Уведомление когда заменен"
-L.AlertOverwritten_Desc = "Также уведомление, когда другой шаман заменяет ваш щит."
 L.Alerts = "Предупреждения"
 L.Alerts_Desc = "Эти настройки позволяют настроить, как ShieldsUp уведомляет вас, когда щит истекает или рассеивается."
 L.AlertSound = "Звук"
@@ -483,9 +447,6 @@ L.None = "Нету"
 L.Opacity = "Opacity"
 L.OptionsDesc = "ShieldsUp отслеживает щитов шамана. Эти настройки позволяют настроить внешний вид и поведение модификации."
 L.Outline = "Контур"
-L.Overwritten = "Перебит"
-L.Overwritten_Desc = "Использовать этот цвет для цели, на которой %s, в случае если чужой щит перебил ваш на этой цели."
-L.OverwrittenBy = "Ваш %1$s быз изменен на %2$s!"
 L.PaddingH = "Горизонтальный отступ"
 L.PaddingH_Desc = "Установить горизонтальный отступ между элементами текста."
 L.PaddingV = "Вертикальный отступ"
@@ -518,8 +479,8 @@ if LOCALE == "koKR" then
 
 --L.Active = "Active"
 --L.Active_Desc = "Set the color for the target name when your %s is active."
---L.AlertOverwritten = "Alert on overwrites"
---L.AlertOverwritten_Desc = "Also alert when someone overwrites your %s."
+--BLANK
+--BLANK
 L.Alerts = "알라미"
 L.Alerts_Desc = "방어막이 만료 또는 제거되었을 때 경고를하는 방법 최대 보호막 구성하려면이 설정을 사용하십시오."
 L.AlertSound = "경보 소리"
@@ -554,9 +515,9 @@ L.LightningAbbrev = "번개"
 --L.Opacity = "Opacity"
 --L.OptionsDesc = "Use these options to control the appearance of the ShieldsUp display."
 --L.Outline = "Outline"
---L.Overwritten = "Overwritten"
---L.Overwritten_Desc = "Set the color for the target name when your %s has been overwritten."
---L.OverwrittenBy = "Your %1$s has been overwritten by %2$s!"
+--BLANK
+--BLANK
+--BLANK
 --L.PaddingH = "Horizontal padding"
 --L.PaddingH_Desc = "Change the padding between the two shield counters."
 L.PaddingV = "수직 여백"
@@ -589,8 +550,8 @@ if LOCALE == "zhCN" then
 
 L.Active = "激活"
 L.Active_Desc = "设定当你的 %s 已激活时目标名字的颜色。"
---L.AlertOverwritten = "Alert on overwrites"
---L.AlertOverwritten_Desc = "Also alert when someone overwrites your %s."
+--BLANK
+--BLANK
 L.Alerts = "警报"
 L.Alerts_Desc = "使用这些警报来配置当一个护盾过期或者被移除时发出 ShieldsUp 警报。"
 L.AlertSound = "音效警报"
@@ -625,9 +586,7 @@ L.None = "无"
 L.Opacity = "不透明度"
 L.OptionsDesc = "ShieldsUp是一个萨满护盾的监视器。使用这些设定来配置插件的外观和行为。"
 L.Outline = "描边"
-L.Overwritten = "覆盖"
-L.Overwritten_Desc = "设定当你的 %s 被其他人覆盖时目标名字的颜色。"
---L.OverwrittenBy = "Your %1$s has been overwritten by %2$s!"
+--BLANK
 L.PaddingH = "水平间距"
 L.PaddingH_Desc = "设定计数器的水平距离。"
 L.PaddingV = "垂直间距"
@@ -660,8 +619,6 @@ if LOCALE == "zhTW" then
 
 L.Active = "激活"
 L.Active_Desc = "設定當你的 %s 已激活時目標名字的顏色。"
-L.AlertOverwritten = "被覆蓋時提示"
-L.AlertOverwritten_Desc = "當%s被其他薩滿覆蓋時提示。"
 L.Alerts = "警報"
 L.Alerts_Desc = "使用這些警報來配置當一個護盾過期或者被移除時發出 ShieldsUp 警報。"
 L.AlertSound = "音效警報"
@@ -696,9 +653,7 @@ L.None = "無"
 L.Opacity = "不透明度"
 --L.OptionsDesc = "Use these options to control the appearance of the ShieldsUp display."
 L.Outline = "描邊"
-L.Overwritten = "覆蓋"
-L.Overwritten_Desc = "設定當你的 %s 被其他人覆蓋時目標名字的顏色。"
---L.OverwrittenBy = "Your %1$s has been overwritten by %2$s!"
+--BLANK
 L.PaddingH = "水平間距"
 L.PaddingH_Desc = "設定計數器的水平距離。"
 L.PaddingV = "垂直間距"
