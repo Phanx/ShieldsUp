@@ -4,13 +4,6 @@
 	Copyright (c) 2008-2014 Phanx <addons@phanx.net>. All rights reserved.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/addons/wow/shieldsup
-
-	Please DO NOT upload this addon to other websites, or post modified
-	versions of it. However, you are welcome to include a copy of it
-	WITHOUT CHANGES in compilations posted on Curse and/or WoWInterface.
-	You are also welcome to use any/all of its code in your own addon, as
-	long as you do not use my name or the name of this addon ANYWHERE in
-	your addon, including its name, outside of an optional attribution.
 ----------------------------------------------------------------------]]
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
@@ -211,21 +204,8 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 		ShieldsUp:UpdateDisplay()
 	end
 
-	local ColorOverwritten = self.CreateColorPicker(ColorPanel, L.Overwritten, format(L.Overwritten_Desc, L.EarthShield))
-	ColorOverwritten:SetPoint("TOPLEFT", ColorActive, "BOTTOMLEFT", 0, -8)
-	function ColorOverwritten:GetColor()
-		local color = db.color.overwritten
-		return color.r, color.g, color.b
-	end
-	function ColorOverwritten:Callback(r, g, b)
-		db.color.overwritten.r = r
-		db.color.overwritten.g = g
-		db.color.overwritten.b = b
-		ShieldsUp:UpdateDisplay()
-	end
-
 	local ColorMissing = self.CreateColorPicker(ColorPanel, L.Missing, L.Missing_Desc)
-	ColorMissing:SetPoint("TOPLEFT", ColorOverwritten, "BOTTOMLEFT", 0, -8)
+	ColorMissing:SetPoint("TOPLEFT", ColorActive, "BOTTOMLEFT", 0, -8)
 	function ColorMissing:GetColor()
 		local color = db.color.alert
 		return color.r, color.g, color.b
@@ -265,7 +245,6 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 		ColorLightning:SetValue(db.color.lightning)
 		ColorWater:SetValue(db.color.water)
 		ColorActive:SetValue(db.color.normal)
-		ColorOverwritten:SetValue(db.color.overwritten)
 		ColorMissing:SetValue(db.color.alert)
 	end
 end)
@@ -328,13 +307,7 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 		db.alert.earth.text = checked
 	end
 
-	local AlertOverwritten = self.CreateCheckbox(EarthPanel, L.AlertOverwritten, format(L.AlertOverwritten_Desc, L.EarthShield))
-	AlertOverwritten:SetPoint("TOPLEFT", EarthText, "BOTTOMLEFT", 0, -8)
-	function AlertOverwritten:Callback(checked)
-		db.alert.earth.overwritten = checked
-	end
-
-	EarthPanel:SetHeight(16 + EarthSound:GetHeight() + 8 + EarthText:GetHeight() + 8 + AlertOverwritten:GetHeight() + 16)
+	EarthPanel:SetHeight(16 + EarthSound:GetHeight() + 8 + EarthText:GetHeight() + 16)
 
 	---------------------------------------------------------------------
 
@@ -511,7 +484,6 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 
 		EarthText:SetChecked(db.alert.earth.text)
 		EarthSound:SetValue(db.alert.earth.sound)
-		AlertOverwritten:SetChecked(db.alert.earth.overwritten)
 
 		WaterText:SetChecked(db.alert.water.text)
 		WaterSound:SetValue(db.alert.water.sound)

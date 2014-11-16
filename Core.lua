@@ -4,13 +4,6 @@
 	Copyright (c) 2008-2014 Phanx <addons@phanx.net>. All rights reserved.
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/addons/wow/shieldsup
-
-	Please DO NOT upload this addon to other websites, or post modified
-	versions of it. However, you are welcome to include a copy of it
-	WITHOUT CHANGES in compilations posted on Curse and/or WoWInterface.
-	You are also welcome to use any/all of its code in your own addon, as
-	long as you do not use my name or the name of this addon ANYWHERE in
-	your addon, including its name, outside of an optional attribution.
 ----------------------------------------------------------------------]]
 
 local ADDON_NAME, private = ...
@@ -46,7 +39,6 @@ local earthTime = 0
 local earthGUID = ""
 local earthName = ""
 local earthUnit = ""
-local earthOverwritten = false
 local earthPending = nil
 
 local waterCount = 0
@@ -84,7 +76,6 @@ local defaults = {
 		lightning = { r = 0.25, g = 0.65, b = 1 },
 		water = { r = 0.25, g = 0.65, b = 1 },
 		normal = { r = 1, g = 1, b = 1 },
-		overwritten = { r = 1, g = 1, b = 0 },
 		alert = { r = 1, g = 0, b = 0 },
 		useClassColor = false,
 	},
@@ -93,7 +84,6 @@ local defaults = {
 		earth = {
 			text = true,
 			sound = "Tribal Bell",
-			overwritten = false,
 		},
 		water = {
 			text = true,
@@ -133,26 +123,26 @@ end
 ------------------------------------------------------------------------
 
 local function GetAuraCharges(unit, aura)
-	local name, _, _, charges, _, _, _, caster = UnitAura(unit, aura)
-	-- Debug(3, "GetAuraCharges(%s, %s) -> %s, %s", unit, aura, tostring(charges), tostring(caster == "player"))
+	local name, _, _, charges = UnitBuff(unit, aura, nil, "PLAYER")
+	-- Debug(3, "GetAuraCharges(%s, %s) -> %s", unit, aura, tostring(charges))
 	if name then
-		return charges > 1 and charges or 1, caster == "player", caster
+		return charges > 1 and charges or 1
 	else
 		return 0
 	end
 end
 
 local function UnitHasEarthShield(unit)
-	local name, _, _, charges, _, duration, expires, caster = UnitAura(unit, EARTH_SHIELD)
-	if name and caster == "player" then
+	local name, _, _, charges, _, duration, expires = UnitBuff(unit, EARTH_SHIELD, nil, "PLAYER")
+	if name then
 		earthCount = charges
 		earthGUID  = unit == "player" and playerGUID or UnitGUID(unit)
 		earthName  = unit == "player" and playerName or UnitName(unit)
 		earthUnit  = unit
 		earthTime  = expires - duration
 		-- Debug(2, "Earth Shield found on", unit)
+		return true
 	end
-	return not not name
 end
 
 ------------------------------------------------------------------------
@@ -398,9 +388,9 @@ do
 		end
 
 		if unit == earthUnit then
-			local charges, mine, caster = GetAuraCharges(unit, EARTH_SHIELD)
-			-- Debug(4, "UNIT_AURA, charges = %d, earthCount = %d, mine = %s, earthOverwritten = %s, UnitIsVisible = %s", charges, earthCount, tostring(mine), tostring(earthOverwritten), tostring(UnitIsVisible(unit)))
-			if charges == 1 and not mine and not UnitIsVisible(unit) then
+			local charges = GetAuraCharges(unit, EARTH_SHIELD)
+			-- Debug(4, "UNIT_AURA, charges = %d, earthCount = %d, UnitIsVisible = %s", charges, earthCount, tostring(UnitIsVisible(unit)))
+			if charges == 1 and not UnitIsVisible(unit) then
 				-- Do nothing!
 			elseif charges < earthCount then
 				if charges == 0 then
@@ -414,46 +404,11 @@ do
 				earthCount = charges
 				update = true
 			elseif charges > earthCount then
-				-- Debug(3, "Earth Shield charges increased.")
-				if mine and not earthOverwritten then
-					-- This buff is mine, and it was mine before
-					-- Debug(2, "I refreshed Earth Shield on %s.", earthName)
-					earthCount = charges
-				elseif mine and earthOverwritten then
-					-- The buff is mine, and it was not mine before
-					-- Debug(2, "I overwrote someone's Earth Shield on %s.", earthName)
-					earthCount = charges
-					earthOverwritten = false
-				elseif not mine and not earthOverwritten then
-					-- This buff is not mine, and it was mine before
-					-- Debug(2, "%s overwrote my Earth Shield on %s.", UnitName(caster), earthName)
-					earthCount = charges
-					earthOverwritten = true
-					if db.alert.earth.overwritten then
-						ChatFrame1:AddMessage(format("%s overwrote my Earth Shield on %s!", UnitName(caster), earthName))
-					end
-				elseif not mine and earthOverwritten then
-					-- This buff is not mine, and it was not mine before
-					-- Debug(2, "Someone refreshed their Earth Shield on %s.", earthName)
-					earthCount = charges
-				end
+				-- Debug(2, "I refreshed Earth Shield on %s.", earthName)
+				earthCount = charges
 				update = true
-			elseif charges > 0 then
-				-- Debug(4, "Earth Shield charges did not change.")
-				if mine and earthOverwritten then
-					-- Debug(2, "I overwrote someone's Earth Shield on %s.", earthName)
-					earthOverwritten = false
-					update = true
-				elseif not mine and not earthOverwritten then
-					-- Debug(2, "Someone overwrote my Earth Shield on %s.", earthName)
-					earthOverwritten = true
-					update = true
-					if db.alert.earth.overwritten then
-						ChatFrame1:AddMessage(format("%s overwrote my Earth Shield!", UnitName(caster)))
-					end
-				end
 			else
-				-- Debug(4, "Earth Shield charges did not change from zero.")
+				-- Debug(4, "Earth Shield charges did not change.")
 			end
 		end
 
@@ -466,7 +421,6 @@ do
 				earthGUID = UnitGUID(unit)
 				earthName = earthPending
 				earthUnit = unit
-				earthOverwritten = false
 
 				earthPending = nil
 
@@ -595,8 +549,6 @@ function ShieldsUp:UpdateDisplay()
 		-- Debug(4, "name", db.namePosition)
 		if earthCount == 0 then
 			color = db.color.alert
-		elseif earthOverwritten then
-			color = db.color.overwritten
 		elseif db.color.useClassColor then
 			local _, class = UnitClass(earthUnit)
 			color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
@@ -604,11 +556,7 @@ function ShieldsUp:UpdateDisplay()
 			color = db.color.normal
 		end
 		self.nameText:SetTextColor(color.r, color.g, color.b)
-		if earthOverwritten and tonumber(ENABLE_COLORBLIND_MODE) > 0 then
-			self.nameText:SetFormattedText("* %s *", earthName)
-		else
-			self.nameText:SetText(earthName)
-		end
+		self.nameText:SetText(earthName)
 	else
 		-- Debug(4, "name", "HIDDEN")
 		self.nameText:SetText("")
