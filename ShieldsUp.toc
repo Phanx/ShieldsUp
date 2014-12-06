@@ -2,12 +2,13 @@
 ## Version: @project-version@
 
 ## Title: ShieldsUp
-## Notes: Text-based shaman shield monitor.
-## Notes-deDE: Textbasierter Überwacher für deinen Elementarschilde.
-## Notes-esES: Rastreador textual para tus escudos elementales.
-## Notes-esMX: Rastreador textual para tus escudos elementales.
-## Notes-frFR: Traqueur textuel pour vos boucliers élémentaires.
-## Notes-ptBR: Rastreador textual para seus escudos elementares.
+## Notes: Text-based monitor for your Earth, Lightning and Water Shields.
+## Notes-deDE: Textbasierter Überwacher für deine Erd-, Blitzschlag- und Wasserschilde.
+## Notes-esES: Rastreador textual para tus escudos de tierra, relámpagos y agua.
+## Notes-esMX: Rastreador textual para tus escudos de tierra, relámpagos y agua.
+## Notes-frFR: Traqueur textuel pour vos boucliers de terre, foudre et l'eau.
+## Notes-itIT: Inseguitore testale per i vostri scudi di terra, fulmine e acqua.
+## Notes-ptBR: Rastreador textual para seus Escudos da Terra, Raios e Água.
 
 ## Author: Phanx
 ## X-Email: addons@phanx.net
