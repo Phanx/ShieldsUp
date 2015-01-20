@@ -20,6 +20,7 @@ externals:
    Libs/PhanxConfig-ColorPicker: git://github.com/Phanx/PhanxConfig-ColorPicker.git
    Libs/PhanxConfig-Dropdown: git://github.com/Phanx/PhanxConfig-Dropdown.git
    Libs/PhanxConfig-Header: git://github.com/Phanx/PhanxConfig-Header.git
+   Libs/PhanxConfig-MediaDropdown: git://github.com/Phanx/PhanxConfig-MediaDropdown.git
    Libs/PhanxConfig-OptionsPanel: git://github.com/Phanx/PhanxConfig-OptionsPanel.git
    Libs/PhanxConfig-Panel: git://github.com/Phanx/PhanxConfig-Panel.git
    Libs/PhanxConfig-Slider: git://github.com/Phanx/PhanxConfig-Slider.git

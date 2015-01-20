@@ -23,7 +23,6 @@ local CreateOptionsPanel = LibStub("PhanxConfig-OptionsPanel").CreateOptionsPane
 
 optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function(self)
 	local db = ShieldsUpDB
-	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 	local UIWIDTH = UIParent:GetWidth()
 	local UIHEIGHT = UIParent:GetHeight()
@@ -72,43 +71,21 @@ optionsPanels[#optionsPanels + 1] = CreateOptionsPanel(ADDON_NAME, nil, function
 		ShieldsUp:UpdateLayout()
 	end
 
-	---------------------------------------------------------------------
-
-	local Font = self:CreateDropdown(L.Font, nil, SharedMedia:List("font"))
+	local Font = self:CreateMediaDropdown(L.Font, nil, "font")
 	Font:SetPoint("TOPLEFT", Notes, "BOTTOM", 8, -12)
 	Font:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 0, -12)
-	do
-		function Font:OnValueChanged(value)
-			local _, height, flags = self.valueText:GetFont()
-			self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
-
-			db.font.face = value
-			ShieldsUp:UpdateLayout()
-		end
-
-		function Font:OnListButtonChanged(button, value, selected)
-			if button:IsShown() then
-				button:GetFontString():SetFont(SharedMedia:Fetch("font", value), UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
-			end
-		end
-
-		Font.__SetValue = Font.SetValue
-		function Font:SetValue(value)
-			local _, height, flags = self.valueText:GetFont()
-			self.valueText:SetFont(SharedMedia:Fetch("font", value), height, flags)
-			self:__SetValue(value)
-		end
+	function Font:OnValueChanged(value)
+		db.font.face = value
+		ShieldsUp:UpdateLayout()
 	end
 
 	local Outline = self:CreateDropdown(L.Outline)
 	Outline:SetPoint("TOPLEFT", Font, "BOTTOMLEFT", 0, -12)
 	Outline:SetPoint("TOPRIGHT", Font, "BOTTOMRIGHT", 0, -12)
-
 	function Outline:OnValueChanged(value)
 		db.font.outline = value
 		ShieldsUp:UpdateLayout()
 	end
-
 	Outline:SetList({
 		{ value = "NONE", text = L.None },
 		{ value = "OUTLINE", text = L.Thin },
@@ -253,7 +230,6 @@ end)
 
 optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, function(self)
 	local db = ShieldsUpDB
-	local SharedMedia = LibStub("LibSharedMedia-3.0", true)
 
 	local Title, Notes = self:CreateHeader(self.name, L.Alerts_Desc)
 
@@ -269,36 +245,11 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 	EarthPanel:SetPoint("TOPLEFT", Notes, "BOTTOMLEFT", -4, -24 - AlertWhileHidden:GetHeight())
 	EarthPanel:SetPoint("TOPRIGHT", Notes, "BOTTOM", -4, -24 - AlertWhileHidden:GetHeight())
 
-	local EarthSound = self.CreateDropdown(EarthPanel, L.AlertSound, format(L.AlertSound_Desc, L.EarthShield), SharedMedia:List("sound"))
+	local EarthSound = self.CreateMediaDropdown(EarthPanel, L.AlertSound, format(L.AlertSound_Desc, L.EarthShield), "sound")
 	EarthSound:SetPoint("TOPLEFT", EarthPanel, 16, -16)
 	EarthSound:SetPoint("TOPRIGHT", EarthPanel, -16, -16)
 	function EarthSound:OnValueChanged(value)
 		db.alert.earth.sound = value
-	end
-	do
-		local function PlayButton_OnClick(self)
-			PlaySoundFile(self.sound, "Master")
-		end
-		function EarthSound:OnListButtonChanged(button, value, selected)
-			if not button.playButton then
-				local play = CreateFrame("Button", nil, button)
-				play:SetPoint("RIGHT", button, -2, 0)
-				play:SetSize(16, 16)
-				play:SetScript("OnClick", PlayButton_OnClick)
-				button.playButton = play
-
-				local bg = play:CreateTexture(nil, "BACKGROUND")
-				bg:SetTexture("Interface\\Common\\VoiceChat-Speaker")
-				bg:SetAllPoints(true)
-				play.bg = bg
-
-				local hl = play:CreateTexture(nil, "HIGHLIGHT")
-				hl:SetTexture("Interface\\Common\\VoiceChat-On")
-				hl:SetAllPoints(true)
-				play.highlight = hl
-			end
-			button.playButton.sound = SharedMedia:Fetch("sound", value)
-		end
 	end
 
 	local EarthText = self.CreateCheckbox(EarthPanel, L.AlertText, format(L.AlertText_Desc, L.EarthShield))
@@ -315,36 +266,11 @@ optionsPanels[#optionsPanels +1] = CreateOptionsPanel(L.Alerts, ADDON_NAME, func
 	WaterPanel:SetPoint("TOPLEFT", Notes, "BOTTOM", 4, -24 - AlertWhileHidden:GetHeight())
 	WaterPanel:SetPoint("TOPRIGHT", Notes, "BOTTOMRIGHT", 4, -24 - AlertWhileHidden:GetHeight())
 
-	local WaterSound = self.CreateDropdown(WaterPanel, L.AlertSound, format(L.AlertSound_Desc, L.WaterShield), SharedMedia:List("sound"))
+	local WaterSound = self.CreateMediaDropdown(WaterPanel, L.AlertSound, format(L.AlertSound_Desc, L.WaterShield), "sound")
 	WaterSound:SetPoint("TOPLEFT", WaterPanel, 16, -16)
 	WaterSound:SetPoint("TOPRIGHT", WaterPanel, -16, -16)
 	function WaterSound:OnValueChanged(value)
 		db.alert.water.sound = value
-	end
-	do
-		local function PlayButton_OnClick(self)
-			PlaySoundFile(self.sound, "Master")
-		end
-		function WaterSound:OnListButtonChanged(button, value, selected)
-			if not button.playButton then
-				local play = CreateFrame("Button", nil, button)
-				play:SetPoint("RIGHT", button, -2, 0)
-				play:SetSize(16, 16)
-				play:SetScript("OnClick", PlayButton_OnClick)
-				button.playButton = play
-
-				local bg = play:CreateTexture(nil, "BACKGROUND")
-				bg:SetTexture("Interface\\Common\\VoiceChat-Speaker")
-				bg:SetAllPoints(true)
-				play.bg = bg
-
-				local hl = play:CreateTexture(nil, "HIGHLIGHT")
-				hl:SetTexture("Interface\\Common\\VoiceChat-On")
-				hl:SetAllPoints(true)
-				play.highlight = hl
-			end
-			button.playButton.sound = SharedMedia:Fetch("sound", value)
-		end
 	end
 
 	local WaterText = self.CreateCheckbox(WaterPanel, L.AlertText, format(L.AlertText_Desc, L.WaterShield))

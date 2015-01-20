@@ -12,7 +12,7 @@
 
 ## Author: Phanx
 ## X-Email: addons@phanx.net
-## X-Copyright: Copyright (c) 2008-2014 Phanx. All rights reserved.
+## X-Copyright: Copyright (c) 2008-2015 Phanx. All rights reserved.
 ## X-Credits: Inspired by Infineon's beSch.
 ## X-Website: https://github.com/Phanx/ShieldsUp
 
@@ -31,6 +31,7 @@ Libs\PhanxConfig-Checkbox\PhanxConfig-Checkbox.lua
 Libs\PhanxConfig-ColorPicker\PhanxConfig-ColorPicker.lua
 Libs\PhanxConfig-Dropdown\PhanxConfig-Dropdown.lua
 Libs\PhanxConfig-Header\PhanxConfig-Header.lua
+Libs\PhanxConfig-MediaDropdown\PhanxConfig-MediaDropdown.lua
 Libs\PhanxConfig-OptionsPanel\PhanxConfig-OptionsPanel.lua
 Libs\PhanxConfig-Panel\PhanxConfig-Panel.lua
 Libs\PhanxConfig-Slider\PhanxConfig-Slider.lua
