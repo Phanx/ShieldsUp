@@ -27,6 +27,7 @@ Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibAboutPanel\LibAboutPanel.lua
 Libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
 Libs\LibSink-2.0\LibSink-2.0.lua
+Libs\PhanxAddonStub\AddonStub.lua
 Libs\PhanxConfig-Checkbox\PhanxConfig-Checkbox.lua
 Libs\PhanxConfig-ColorPicker\PhanxConfig-ColorPicker.lua
 Libs\PhanxConfig-Dropdown\PhanxConfig-Dropdown.lua

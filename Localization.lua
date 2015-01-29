@@ -10,10 +10,9 @@
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
-local _, private = ...
+local _, ShieldsUp = ...
+local L = ShieldsUp.L
 local LOCALE = GetLocale()
-local L = {}
-private.L = L
 
 L.Active = "Active"
 L.Active_Desc = "Set the color for the target name when your %s is active."

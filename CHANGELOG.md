@@ -1,3 +1,7 @@
+### Version 6.0.3.49
+
+* Rewritten from the ground up
+
 ### Version 6.0.3.48
 
 * Remove Earth Shield overwrite detection, since a target can now have more than one Earth Shield on them at a time
