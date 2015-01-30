@@ -5,7 +5,7 @@
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/addons/wow/shieldsup
 ----------------------------------------------------------------------]]
--- TODO: add name position dropdown, consider spacing max values
+-- TODO: reconsider spacing max values
 
 if select(2, UnitClass("player")) ~= "SHAMAN" then return end
 
@@ -35,94 +35,106 @@ optionsPanels[#optionsPanels + 1] = LibStub("PhanxConfig-OptionsPanel"):New(SHIE
 	end
 
 	local offsetY = self:CreateSlider(L["Vertical Position"], L["Relative to the center of the screen."], -UIHEIGHT, UIHEIGHT, 5)
-	offsetY:SetPoint("TOPLEFT", offsetX, "BOTTOMLEFT", 0, -12)
-	offsetY:SetPoint("TOPRIGHT", offsetX, "BOTTOMRIGHT", 0, -12)
+	offsetY:SetPoint("TOPLEFT", offsetX, "BOTTOMLEFT", 0, -10)
+	offsetY:SetPoint("TOPRIGHT", offsetX, "BOTTOMRIGHT", 0, -10)
 	function offsetY:OnValueChanged(value)
 		db.offsetY = ((value / UIHEIGHT) + 1) / 2
 		ShieldsUp:RestorePosition()
 	end
 
 	local spacingX = self:CreateSlider(L["Horizontal Spacing"], nil, 0, 400, 1)
-	spacingX:SetPoint("TOPLEFT", offsetY, "BOTTOMLEFT", 0, -12)
-	spacingX:SetPoint("TOPRIGHT", offsetY, "BOTTOMRIGHT", 0, -12)
+	spacingX:SetPoint("TOPLEFT", offsetY, "BOTTOMLEFT", 0, -10)
+	spacingX:SetPoint("TOPRIGHT", offsetY, "BOTTOMRIGHT", 0, -10)
 	function spacingX:OnValueChanged(value)
 		db.spacingX = value
 		ShieldsUp:ApplySettings()
 	end
 
 	local spacingY = self:CreateSlider(L["Vertical Spacing"], nil, 0, 100, 1)
-	spacingY:SetPoint("TOPLEFT", spacingX, "BOTTOMLEFT", 0, -12)
-	spacingY:SetPoint("TOPRIGHT", spacingX, "BOTTOMRIGHT", 0, -12)
+	spacingY:SetPoint("TOPLEFT", spacingX, "BOTTOMLEFT", 0, -10)
+	spacingY:SetPoint("TOPRIGHT", spacingX, "BOTTOMRIGHT", 0, -10)
 	function spacingY:OnValueChanged(value)
 		db.spacingY = value
 		ShieldsUp:ApplySettings()
 	end
 
 	local opacity = self:CreateSlider(L["Opacity"], nil, 0.1, 1, 0.05, true)
-	opacity:SetPoint("TOPLEFT", spacingY, "BOTTOMLEFT", 0, -12)
-	opacity:SetPoint("TOPRIGHT", spacingY, "BOTTOMRIGHT", 0, -12)
+	opacity:SetPoint("TOPLEFT", spacingY, "BOTTOMLEFT", 0, -10)
+	opacity:SetPoint("TOPRIGHT", spacingY, "BOTTOMRIGHT", 0, -10)
 	function opacity:OnValueChanged(value)
 		db.alpha = value
 		ShieldsUp:ApplySettings()
 	end
 
-	local lock = self:CreateCheckbox(L["Locked"])
-	lock:SetPoint("TOPLEFT", opacity, "BOTTOMLEFT", 0, -12)
-	function lock:OnValueChanged(value)
-		ShieldsUp:LockDisplay(value)
+	local namePosition = self:CreateDropdown(L["Name Position"], nil, {
+		{ value = "TOP",    text = L["Top"] },
+		{ value = "BOTTOM", text = L["Bottom"] },
+		{ value = "NONE",   text = L["Hidden"] },
+	})
+	namePosition:SetPoint("TOPLEFT", opacity, "BOTTOMLEFT", 0, -10)
+	namePosition:SetPoint("TOPRIGHT", opacity, "BOTTOMRIGHT", 0, -10)
+	function namePosition:OnValueChanged(value)
+		db.namePosition = value
+		ShieldsUp:ApplySettings()
 	end
 
 	---------------------------------------------------------------------
 
-	local nameFont = self:CreateMediaDropdown(L["Name Font"], nil, "font")
-	nameFont:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -12)
-	nameFont:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -12)
-	function nameFont:OnValueChanged(value)
-		db.nameFont = value
-		ShieldsUp:ApplySettings()
-	end
-
-	local nameSize = self:CreateSlider(L["Name Size"], nil, 6, 32, 1)
-	nameSize:SetPoint("TOPLEFT", nameFont, "BOTTOMLEFT", 0, -12)
-	nameSize:SetPoint("TOPRIGHT", nameFont, "BOTTOMRIGHT", 0, -12)
-	function nameSize:OnValueChanged(value)
-		db.nameSize = value
-		ShieldsUp:ApplySettings()
-	end
-
 	local numberFont = self:CreateMediaDropdown(L["Number Font"], nil, "font")
-	numberFont:SetPoint("TOPLEFT", nameSize, "BOTTOMLEFT", 0, -12)
-	numberFont:SetPoint("TOPRIGHT", nameSize, "BOTTOMRIGHT", 0, -12)
+	numberFont:SetPoint("TOPLEFT", notes, "BOTTOM", 8, -12)
+	numberFont:SetPoint("TOPRIGHT", notes, "BOTTOMRIGHT", 0, -12)
 	function numberFont:OnValueChanged(value)
 		db.numberFont = value
 		ShieldsUp:ApplySettings()
 	end
 
 	local numberSize = self:CreateSlider(L["Number Size"], nil, 6, 32, 1)
-	numberSize:SetPoint("TOPLEFT", numberFont, "BOTTOMLEFT", 0, -12)
-	numberSize:SetPoint("TOPRIGHT", numberFont, "BOTTOMRIGHT", 0, -12)
+	numberSize:SetPoint("TOPLEFT", numberFont, "BOTTOMLEFT", 0, -10)
+	numberSize:SetPoint("TOPRIGHT", numberFont, "BOTTOMRIGHT", 0, -10)
 	function numberSize:OnValueChanged(value)
 		db.numberSize = value
 		ShieldsUp:ApplySettings()
 	end
 
+	local nameFont = self:CreateMediaDropdown(L["Name Font"], nil, "font")
+	nameFont:SetPoint("TOPLEFT", numberSize, "BOTTOMLEFT", 0, -10)
+	nameFont:SetPoint("TOPRIGHT", numberSize, "BOTTOMRIGHT", 0, -10)
+	function nameFont:OnValueChanged(value)
+		db.nameFont = value
+		ShieldsUp:ApplySettings()
+	end
+
+	local nameSize = self:CreateSlider(L["Name Size"], nil, 6, 32, 1)
+	nameSize:SetPoint("TOPLEFT", nameFont, "BOTTOMLEFT", 0, -10)
+	nameSize:SetPoint("TOPRIGHT", nameFont, "BOTTOMRIGHT", 0, -10)
+	function nameSize:OnValueChanged(value)
+		db.nameSize = value
+		ShieldsUp:ApplySettings()
+	end
+
 	local outline = self:CreateDropdown(L["Text Outline"], nil, {
-		{ value = "NONE", text = L["None"] },
-		{ value = "OUTLINE", text = L["Outline"] },
-		{ value = "THICKOUTLINE", text = L["Thick Outline"] },
+		{ value = "NONE",         text = L["None"] },
+		{ value = "OUTLINE",      text = L["Thin"] },
+		{ value = "THICKOUTLINE", text = L["Thick"] },
 	})
-	outline:SetPoint("TOPLEFT", numberSize, "BOTTOMLEFT", 0, -12)
-	outline:SetPoint("TOPRIGHT", numberSize, "BOTTOMRIGHT", 0, -12)
+	outline:SetPoint("TOPLEFT", nameSize, "BOTTOMLEFT", 0, -10)
+	outline:SetPoint("TOPRIGHT", nameSize, "BOTTOMRIGHT", 0, -10)
 	function outline:OnValueChanged(value)
 		db.outline = value
 		ShieldsUp:ApplySettings()
 	end
 
 	local shadow = self:CreateCheckbox(L["Text Shadow"])
-	shadow:SetPoint("TOPLEFT", outline, "BOTTOMLEFT", 0, -12)
+	shadow:SetPoint("TOPLEFT", outline, "BOTTOMLEFT", 0, -10)
 	function shadow:OnValueChanged(value)
 		db.shadow = value
 		ShieldsUp:ApplySettings()
+	end
+
+	local lock = self:CreateCheckbox(L["Locked"])
+	lock:SetPoint("TOPLEFT", shadow, "BOTTOMLEFT", 0, -6)
+	function lock:OnValueChanged(value)
+		ShieldsUp:LockDisplay(value)
 	end
 
 	---------------------------------------------------------------------
@@ -216,10 +228,11 @@ optionsPanels[#optionsPanels + 1] = LibStub("PhanxConfig-OptionsPanel"):New(SHIE
 		opacity:SetValue(db.alpha)
 		lock:SetValue(ShieldsUpFrame.locked)
 
-		nameFont:SetValue(db.nameFont)
-		nameSize:SetValue(db.nameSize)
 		numberFont:SetValue(db.numberFont)
 		numberSize:SetValue(db.numberSize)
+		nameFont:SetValue(db.nameFont)
+		nameSize:SetValue(db.nameSize)
+		namePosition:SetValue(db.namePosition)
 		outline:SetValue(db.outline)
 		shadow:SetChecked(db.shadow)
 
@@ -239,7 +252,7 @@ end)
 optionsPanels[#optionsPanels + 1] = LibStub("PhanxConfig-OptionsPanel"):New(L["Behavior"], SHIELDSUP, function(self)
 	local db = ShieldsUpDB
 
-	local title, notes = self:CreateHeader(self.name, L.Alerts_Desc)
+	local title, notes = self:CreateHeader(self.name, L["Use these options to change when ShieldsUp is visible and how it alerts you about lost shields."])
 
 	---------------------------------------------------------------------
 
