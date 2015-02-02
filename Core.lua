@@ -226,7 +226,7 @@ function ShieldsUp:Alert(spell)
 	if db.alerts[spellKey].text then
 		if spell == EARTH_SHIELD then
 			local name = earthGUID == playerGUID and L[">> YOU <<"] or earthName
-			self:Pour(format("%s faded from \124cff%02x%02x%02x%02x%02x%02x%s!", spell, earthColor.r, earthColor.g, earthColor.b, name), color.r, color.g, color.b)
+			self:Pour(format("%s faded from |c%s%s!", spell, earthColor.colorStr or strsub(GREEN_FONT_COLOR_CODE, 3), name), color.r, color.g, color.b)
 		else
 			self:Pour(format("%s faded!", spell), color.r, color.g, color.b)
 		end
