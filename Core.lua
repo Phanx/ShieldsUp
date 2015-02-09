@@ -5,6 +5,8 @@
 	http://www.wowinterface.com/downloads/info9165-ShieldsUp.html
 	http://www.curse.com/addons/wow/shieldsup
 ----------------------------------------------------------------------]]
+-- TODO:
+-- Find out why alerts show for other shamans' ES
 
 local SHIELDSUP, ShieldsUp = ...
 if select(2, UnitClass("player")) ~= "SHAMAN" then return DisableAddOn(SHIELDSUP) end
@@ -13,15 +15,15 @@ local L = ShieldsUp.L
 local LibSharedMedia = LibStub("LibSharedMedia-3.0")
 local LibSink = LibStub("LibSink-2.0")
 
-local f, db, playerGUID
-local earthCount, waterCount = 0, -1
-local earthKnown, earthGUID, earthName, earthColor
-local waterSpell, waterStacks = LIGHTNING_SHIELD
-
 local EARTH_SHIELD     = GetSpellInfo(974)
 local WATER_SHIELD     = GetSpellInfo(52127)
 local LIGHTNING_SHIELD = GetSpellInfo(324)
 L.EarthShield, L.WaterShield, L.LightningShield = EARTH_SHIELD, WATER_SHIELD, LIGHTNING_SHIELD
+
+local f, db, playerGUID
+local earthCount, waterCount = 0, -1
+local earthKnown, earthGUID, earthName, earthColor
+local waterSpell, waterStacks = LIGHTNING_SHIELD
 
 local spellToKey = {
 	[EARTH_SHIELD] = "earth",
@@ -99,10 +101,25 @@ function ShieldsUp:OnLogin()
 	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	self:RegisterEvent("UNIT_AURA")
 
+	self:SetupDisplay() -- frame created and assigned to f here
+
+	self:RegisterUnitEvent("UNIT_ENTERING_VEHICLE", "player", "Hide", f)
+	self:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player", "Show", f)
+	if UnitInVehicle("player") then
+		f:Hide()
+	end
+
+	self:RegisterEvent("PET_BATTLE_PET_BATTLE_OPENING_START", "Hide", f)
+	self:RegisterEvent("PET_BATTLE_CLOSE", "Show", f)
+	if C_PetBattles.IsInBattle() then
+		f:Hide()
+	end
+
 	self:PLAYER_SPECIALIZATION_CHANGED()
 	self:PLAYER_ENTERING_WORLD()
 end
 
+local waterSpellPrev, waterStacksPrev -- event spams when joining LFR etc.
 function ShieldsUp:PLAYER_SPECIALIZATION_CHANGED()
 	local spec = GetSpecialization()
 	-- Earth Shield?
@@ -111,7 +128,11 @@ function ShieldsUp:PLAYER_SPECIALIZATION_CHANGED()
 	waterSpell = spec == 3 and WATER_SHIELD or LIGHTNING_SHIELD
 	-- can stack if Elemental with Fulmination
 	waterStacks = spec == 1 and IsSpellKnown(88766)
-	print("Spec changed", waterSpell, waterStacks)
+	if waterSpell ~= waterSpellPrev or waterStacks ~= waterStacksPrev then
+		print("Spec changed", waterSpell, waterStacks)
+		waterSpellPrev, waterStacksPrev = waterSpell, waterStacks
+		self:UpdateDisplay()
+	end
 end
 
 function ShieldsUp:PLAYER_ENTERING_WORLD()
@@ -240,9 +261,6 @@ end
 
 function ShieldsUp:UpdateDisplay()
 	--print("UpdateDisplay")
-	if not f then
-		return self:SetupDisplay()
-	end
 	local mode = earthKnown and earthGUID ~= playerGUID and IsInGroup() and 2 or 1
 	if mode ~= f.mode then
 		--print("Mode", mode)
@@ -350,7 +368,7 @@ end
 
 function ShieldsUp:SavePosition()
 	if not f then return end
-	local x, y = f:GetCenter()	
+	local x, y = f:GetCenter()
 	local w, h = UIParent:GetWidth(), UIParent:GetHeight()
 	db.offsetX = x / w
 	db.offsetY = y / h
